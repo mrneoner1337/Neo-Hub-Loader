@@ -7,10 +7,18 @@ GitHub: mrneoner1337 | Roblox: LegoSurgeon
 ══════════════════════════════════════════════════════════════════
 ]]--
 
--- ═══ RELOAD ═══
+-- ═══ УСТАНОВКА ИСТОЧНИКА ДЛЯ RELOAD ═══
 if not _G.NesficateHubSource then
 	_G.NesficateHubSource = "https://raw.githubusercontent.com/mrneoner1337/Neo-Hub-Loader/main/neoloader.lua"
 end
+
+-- Сохранить ссылку в файл
+pcall(function()
+	local ConfigDir = "NeoHub"
+	if not isfolder(ConfigDir) then makefolder(ConfigDir) end
+	writefile(ConfigDir.."/reload_source.txt", _G.NesficateHubSource)
+end)
+
 -- ═══ SERVICES ═══
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -32,61 +40,15 @@ local function getChar() return Player.Character or Player.CharacterAdded:Wait()
 local function getHum() return getChar():WaitForChild("Humanoid") end
 local function getRoot() return getChar():WaitForChild("HumanoidRootPart") end
 
--- ═══ DISCORD RICH PRESENCE ═══
-local DiscordRPCSettings = {
-	Enabled = false,
-	ApplicationId = "",
-	State = "Using Neo's Hub v3.0",
-	Details = "",
-	LargeImage = "https://allwebs.ru/images/2026/04/03/89d7228a8296f41d74595a1a93d21013.png",
-	LargeText = "Neo's Hub v3.0 — Universal Menu",
-	SmallImage = "https://allwebs.ru/images/2026/04/03/89d7228a8296f41d74595a1a93d21013.png",
-	SmallText = "by @mrneoner",
-	Button1Label = "Get Neo's Hub",
-	Button1URL = "https://github.com/mrneoner1337",
-	Button2Label = "Discord",
-	Button2URL = "https://discord.gg/mrneoner",
-}
-
-pcall(function()
-	local pName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Roblox"
-	DiscordRPCSettings.Details = "Playing " .. pName
-end)
-
-local function ApplyDiscordRPC()
-	pcall(function()
-		if not DiscordRPCSettings.Enabled then return end
-		if DiscordSdk or (getgenv and getgenv().DiscordSdk) then
-			local sdk = DiscordSdk or getgenv().DiscordSdk
-			sdk:SetActivity({
-				state = DiscordRPCSettings.State,
-				details = DiscordRPCSettings.Details,
-				timestamps = { start = os.time() },
-				assets = {
-					large_image = DiscordRPCSettings.LargeImage,
-					large_text = DiscordRPCSettings.LargeText,
-					small_image = DiscordRPCSettings.SmallImage,
-					small_text = DiscordRPCSettings.SmallText,
-				},
-				buttons = {
-					{ label = DiscordRPCSettings.Button1Label, url = DiscordRPCSettings.Button1URL },
-					{ label = DiscordRPCSettings.Button2Label, url = DiscordRPCSettings.Button2URL },
-				}
-			})
-		end
-	end)
-end
-
--- Apply default RPC on load
-pcall(function()
-	DiscordRPCSettings.Enabled = true
-	ApplyDiscordRPC()
-end)
-
 -- ═══ STORE SCRIPT SOURCE FOR RELOAD ═══
-if not _G.NesficateHubScript then
-	pcall(function() end)
+if not _G.NesficateHubSource then
+	_G.NesficateHubSource = "https://raw.githubusercontent.com/mrneoner1337/Neo-Hub-Loader/main/neoloader.lua"
 end
+
+pcall(function()
+	if not isfolder("NeoHub") then makefolder("NeoHub") end
+	writefile("NeoHub/reload_source.txt", _G.NesficateHubSource)
+end)
 
 -- ═══════════════════════════════════════════
 -- LOCALIZATION
@@ -105,6 +67,7 @@ local Langs = {
 		tab_visual = "Visual",
 		tab_misc = "Misc",
 		tab_settings = "Settings",
+		tab_themes = "Themes",
 		tab_credits = "Credits",
 		fly = "Fly",
 		fly_speed = "Fly Speed",
@@ -230,24 +193,6 @@ local Langs = {
 		subtext_color = "Subtext Color",
 		danger_color = "Danger Color",
 		configs_path = "Configs path:",
-		discord_rpc = "Discord Rich Presence",
-		discord_rpc_enabled = "Enable RPC",
-		discord_rpc_state = "State",
-		discord_rpc_details = "Details",
-		discord_rpc_large_image = "Large Image URL",
-		discord_rpc_large_text = "Large Image Text",
-		discord_rpc_small_image = "Small Image URL",
-		discord_rpc_small_text = "Small Image Text",
-		discord_rpc_btn1_label = "Button 1 Label",
-		discord_rpc_btn1_url = "Button 1 URL",
-		discord_rpc_btn2_label = "Button 2 Label",
-		discord_rpc_btn2_url = "Button 2 URL",
-		discord_rpc_apply = "Apply RPC",
-		discord_rpc_title = "Discord Rich Presence Settings",
-		discord_rpc_close = "Close",
-		discord_rpc_app_id = "Application ID",
-		ui_scale = "UI Scale",
-		esp_preview_title = "ESP Preview",
 		keybind_already_used = "Key '%s' is already used by '%s'!",
 		sect_screen_info = "Screen Info",
 		fps_counter = "FPS Counter",
@@ -258,7 +203,6 @@ local Langs = {
 		crosshair_color = "Crosshair Color",
 		crosshair_size = "Crosshair Size",
 		crosshair_thickness = "Crosshair Thickness",
-		third_person_dist = "Third Person Distance",
 		fov_changer = "FOV Changer",
 		day_night_cycle = "Day/Night Cycle",
 		custom_skybox = "Custom Skybox",
@@ -276,6 +220,7 @@ local Langs = {
 		delete_theme = "Delete Theme",
 		theme_name = "Theme name...",
 		select_theme = "Select Theme",
+		resize_hint = "Drag corner to resize",
 	},
 	RU = {
 		hub_name = "Neo's Hub",
@@ -290,6 +235,7 @@ local Langs = {
 		tab_visual = "Визуал",
 		tab_misc = "Разное",
 		tab_settings = "Настройки",
+		tab_themes = "Темы",
 		tab_credits = "Авторы",
 		fly = "Полёт",
 		fly_speed = "Скорость полёта",
@@ -415,24 +361,6 @@ local Langs = {
 		subtext_color = "Цвет подтекста",
 		danger_color = "Цвет опасности",
 		configs_path = "Путь к конфигам:",
-		discord_rpc = "Discord Rich Presence",
-		discord_rpc_enabled = "Включить RPC",
-		discord_rpc_state = "Состояние",
-		discord_rpc_details = "Детали",
-		discord_rpc_large_image = "URL большого изображения",
-		discord_rpc_large_text = "Текст большого изображения",
-		discord_rpc_small_image = "URL маленького изображения",
-		discord_rpc_small_text = "Текст маленького изображения",
-		discord_rpc_btn1_label = "Текст кнопки 1",
-		discord_rpc_btn1_url = "URL кнопки 1",
-		discord_rpc_btn2_label = "Текст кнопки 2",
-		discord_rpc_btn2_url = "URL кнопки 2",
-		discord_rpc_apply = "Применить RPC",
-		discord_rpc_title = "Настройки Discord Rich Presence",
-		discord_rpc_close = "Закрыть",
-		discord_rpc_app_id = "Application ID",
-		ui_scale = "Масштаб интерфейса",
-		esp_preview_title = "Предпросмотр ESP",
 		keybind_already_used = "Клавиша '%s' уже используется для '%s'!",
 		sect_screen_info = "Информация на экране",
 		fps_counter = "Счётчик FPS",
@@ -443,7 +371,6 @@ local Langs = {
 		crosshair_color = "Цвет прицела",
 		crosshair_size = "Размер прицела",
 		crosshair_thickness = "Толщина прицела",
-		third_person_dist = "Дистанция камеры",
 		fov_changer = "Изменить FOV",
 		day_night_cycle = "Цикл дня/ночи",
 		custom_skybox = "Кастомный скайбокс",
@@ -461,6 +388,7 @@ local Langs = {
 		delete_theme = "Удалить тему",
 		theme_name = "Имя темы...",
 		select_theme = "Выбрать тему",
+		resize_hint = "Тяните за угол для изменения размера",
 	},
 	JP = {
 		hub_name = "Neo's Hub",
@@ -475,6 +403,7 @@ local Langs = {
 		tab_visual = "ビジュアル",
 		tab_misc = "その他",
 		tab_settings = "設定",
+		tab_themes = "テーマ",
 		tab_credits = "クレジット",
 		fly = "フライ",
 		fly_speed = "フライ速度",
@@ -600,24 +529,6 @@ local Langs = {
 		subtext_color = "サブテキスト色",
 		danger_color = "危険色",
 		configs_path = "設定パス:",
-		discord_rpc = "Discord Rich Presence",
-		discord_rpc_enabled = "RPC有効化",
-		discord_rpc_state = "ステート",
-		discord_rpc_details = "詳細",
-		discord_rpc_large_image = "大画像URL",
-		discord_rpc_large_text = "大画像テキスト",
-		discord_rpc_small_image = "小画像URL",
-		discord_rpc_small_text = "小画像テキスト",
-		discord_rpc_btn1_label = "ボタン1ラベル",
-		discord_rpc_btn1_url = "ボタン1 URL",
-		discord_rpc_btn2_label = "ボタン2ラベル",
-		discord_rpc_btn2_url = "ボタン2 URL",
-		discord_rpc_apply = "RPC適用",
-		discord_rpc_title = "Discord Rich Presence設定",
-		discord_rpc_close = "閉じる",
-		discord_rpc_app_id = "アプリケーションID",
-		ui_scale = "UIスケール",
-		esp_preview_title = "ESPプレビュー",
 		keybind_already_used = "キー '%s' は '%s' で使用中！",
 		sect_screen_info = "画面情報",
 		fps_counter = "FPSカウンター",
@@ -628,7 +539,6 @@ local Langs = {
 		crosshair_color = "クロスヘア色",
 		crosshair_size = "クロスヘアサイズ",
 		crosshair_thickness = "クロスヘア太さ",
-		third_person_dist = "三人称距離",
 		fov_changer = "FOV変更",
 		day_night_cycle = "昼夜サイクル",
 		custom_skybox = "カスタムスカイボックス",
@@ -646,6 +556,7 @@ local Langs = {
 		delete_theme = "テーマ削除",
 		theme_name = "テーマ名...",
 		select_theme = "テーマ選択",
+		resize_hint = "角をドラッグしてリサイズ",
 	},
 	ES = {
 		hub_name = "Neo's Hub",
@@ -660,6 +571,7 @@ local Langs = {
 		tab_visual = "Visual",
 		tab_misc = "Varios",
 		tab_settings = "Ajustes",
+		tab_themes = "Temas",
 		tab_credits = "Créditos",
 		fly = "Volar",
 		fly_speed = "Velocidad de vuelo",
@@ -785,24 +697,6 @@ local Langs = {
 		subtext_color = "Color de subtexto",
 		danger_color = "Color de peligro",
 		configs_path = "Ruta de configs:",
-		discord_rpc = "Discord Rich Presence",
-		discord_rpc_enabled = "Activar RPC",
-		discord_rpc_state = "Estado",
-		discord_rpc_details = "Detalles",
-		discord_rpc_large_image = "URL imagen grande",
-		discord_rpc_large_text = "Texto imagen grande",
-		discord_rpc_small_image = "URL imagen pequeña",
-		discord_rpc_small_text = "Texto imagen pequeña",
-		discord_rpc_btn1_label = "Etiqueta botón 1",
-		discord_rpc_btn1_url = "URL botón 1",
-		discord_rpc_btn2_label = "Etiqueta botón 2",
-		discord_rpc_btn2_url = "URL botón 2",
-		discord_rpc_apply = "Aplicar RPC",
-		discord_rpc_title = "Configuración Discord Rich Presence",
-		discord_rpc_close = "Cerrar",
-		discord_rpc_app_id = "ID de Aplicación",
-		ui_scale = "Escala de interfaz",
-		esp_preview_title = "Vista previa ESP",
 		keybind_already_used = "¡La tecla '%s' ya está usada por '%s'!",
 		sect_screen_info = "Info en pantalla",
 		fps_counter = "Contador FPS",
@@ -813,7 +707,6 @@ local Langs = {
 		crosshair_color = "Color del punto",
 		crosshair_size = "Tamaño del punto",
 		crosshair_thickness = "Grosor del punto",
-		third_person_dist = "Distancia tercera persona",
 		fov_changer = "Cambiar FOV",
 		day_night_cycle = "Ciclo día/noche",
 		custom_skybox = "Skybox personalizado",
@@ -831,6 +724,7 @@ local Langs = {
 		delete_theme = "Eliminar tema",
 		theme_name = "Nombre del tema...",
 		select_theme = "Seleccionar tema",
+		resize_hint = "Arrastre la esquina para redimensionar",
 	},
 }
 
@@ -855,7 +749,6 @@ local S = {
 	AutoLoadConfig = "",
 	ParticleStyle = "None",
 	ShowKeybindPanel = false,
-	UIScale = 1.0,
 	BlurBackground = false,
 	-- Screen Info
 	FPSCounter = false,
@@ -869,7 +762,6 @@ local S = {
 	CrosshairColor = {255, 255, 255},
 	CrosshairSize = 10,
 	CrosshairThickness = 2,
-	ThirdPersonDist = 12,
 	FOV = 70,
 	DayNightTime = 14,
 	CustomSkybox = "",
@@ -989,9 +881,7 @@ pcall(function() CoreGui:FindFirstChild("NeoHub"):Destroy() end)
 pcall(function() CoreGui:FindFirstChild("NHLoader"):Destroy() end)
 pcall(function() CoreGui:FindFirstChild("NHKeybindPanel"):Destroy() end)
 pcall(function() CoreGui:FindFirstChild("NHToast"):Destroy() end)
-pcall(function() CoreGui:FindFirstChild("NHDiscordRPC"):Destroy() end)
 pcall(function() CoreGui:FindFirstChild("NHColorPicker"):Destroy() end)
-pcall(function() CoreGui:FindFirstChild("NHESPPreview"):Destroy() end)
 pcall(function() CoreGui:FindFirstChild("NHNotification"):Destroy() end)
 pcall(function() CoreGui:FindFirstChild("NHScreenInfo"):Destroy() end)
 pcall(function() CoreGui:FindFirstChild("NHCrosshair"):Destroy() end)
@@ -1069,9 +959,7 @@ local function PanicUnload()
 	pcall(function() CoreGui:FindFirstChild("NHLoader"):Destroy() end)
 	pcall(function() CoreGui:FindFirstChild("NHKeybindPanel"):Destroy() end)
 	pcall(function() CoreGui:FindFirstChild("NHToast"):Destroy() end)
-	pcall(function() CoreGui:FindFirstChild("NHDiscordRPC"):Destroy() end)
 	pcall(function() CoreGui:FindFirstChild("NHColorPicker"):Destroy() end)
-	pcall(function() CoreGui:FindFirstChild("NHESPPreview"):Destroy() end)
 	pcall(function() CoreGui:FindFirstChild("NHNotification"):Destroy() end)
 	pcall(function() CoreGui:FindFirstChild("NHScreenInfo"):Destroy() end)
 	pcall(function() CoreGui:FindFirstChild("NHCrosshair"):Destroy() end)
@@ -1084,7 +972,7 @@ local function CopyToClipboard(text)
 	end)
 end
 
--- ═══ CUSTOM NOTIFICATION SYSTEM ═══
+-- ═══ CUSTOM NOTIFICATION SYSTEM (ROUNDED & BEAUTIFUL) ═══
 local NotificationGui
 local NotificationContainer
 local function SetupNotificationSystem()
@@ -1092,12 +980,12 @@ local function SetupNotificationSystem()
 	NotificationGui = Create("ScreenGui", {Name = "NHNotification", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 	pcall(ProtectGui, NotificationGui); NotificationGui.Parent = CoreGui
 	NotificationContainer = Create("Frame", {
-		Size = UDim2.new(0, 320, 1, -20),
-		Position = UDim2.new(1, -330, 0, 10),
+		Size = UDim2.new(0, 340, 1, -20),
+		Position = UDim2.new(1, -350, 0, 10),
 		BackgroundTransparency = 1,
 		Parent = NotificationGui
 	})
-	Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8), VerticalAlignment = Enum.VerticalAlignment.Top, Parent = NotificationContainer})
+	Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 10), VerticalAlignment = Enum.VerticalAlignment.Top, Parent = NotificationContainer})
 end
 SetupNotificationSystem()
 
@@ -1107,73 +995,101 @@ local function Notify(title, text, duration)
 	local notif = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
 		BackgroundColor3 = TC(S.Theme.Bg),
+		BackgroundTransparency = 0.05,
 		BorderSizePixel = 0,
 		ClipsDescendants = true,
 		Parent = NotificationContainer
 	})
-	Corner(notif, 12)
-	Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1.5, Transparency = 0.3, Parent = notif})
+	Corner(notif, 16)
 	
-	-- Accent bar
-	local accentBar = Create("Frame", {
-		Size = UDim2.new(0, 4, 0.8, 0),
-		Position = UDim2.new(0, 8, 0.1, 0),
-		BackgroundColor3 = TC(S.Theme.Accent),
-		BorderSizePixel = 0,
+	-- Gradient overlay for beauty
+	local gradient = Create("UIGradient", {
+		Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 200, 220))
+		}),
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0.95),
+			NumberSequenceKeypoint.new(1, 0.98)
+		}),
+		Rotation = 45,
 		Parent = notif
 	})
-	Corner(accentBar, 2)
+	
+	-- Stroke
+	local stroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Transparency = 0.3, Parent = notif})
+	Corner(notif, 16)
+	
+	-- Inner container
+	local inner = Create("Frame", {
+		Size = UDim2.new(1, -16, 1, -16),
+		Position = UDim2.new(0, 8, 0, 8),
+		BackgroundTransparency = 1,
+		Parent = notif
+	})
+	
+	-- Accent circle
+	local accentCircle = Create("Frame", {
+		Size = UDim2.new(0, 44, 0, 44),
+		Position = UDim2.new(0, 0, 0, 8),
+		BackgroundColor3 = TC(S.Theme.Accent),
+		BackgroundTransparency = 0.1,
+		BorderSizePixel = 0,
+		Parent = inner
+	})
+	Corner(accentCircle, 22)
 	
 	-- Icon
 	local icon = Create("TextLabel", {
-		Size = UDim2.new(0, 24, 0, 24),
-		Position = UDim2.new(0, 20, 0, 12),
+		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
-		Text = "🔔",
-		TextSize = 16,
+		Text = "✨",
+		TextSize = 20,
 		Font = Enum.Font.GothamBold,
-		Parent = notif
+		TextColor3 = Color3.new(1, 1, 1),
+		Parent = accentCircle
 	})
 	
 	-- Title
 	local titleLbl = Create("TextLabel", {
-		Size = UDim2.new(1, -60, 0, 20),
-		Position = UDim2.new(0, 50, 0, 10),
+		Size = UDim2.new(1, -60, 0, 22),
+		Position = UDim2.new(0, 54, 0, 6),
 		BackgroundTransparency = 1,
 		Text = title,
-		TextColor3 = TC(S.Theme.Accent),
-		Font = Enum.Font.GothamBold,
-		TextSize = 14,
+		TextColor3 = TC(S.Theme.Text),
+		Font = Enum.Font.GothamBlack,
+		TextSize = 15,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextTruncate = Enum.TextTruncate.AtEnd,
-		Parent = notif
+		Parent = inner
 	})
 	
 	-- Text
 	local textLbl = Create("TextLabel", {
-		Size = UDim2.new(1, -60, 0, 40),
-		Position = UDim2.new(0, 50, 0, 30),
+		Size = UDim2.new(1, -60, 0, 36),
+		Position = UDim2.new(0, 54, 0, 28),
 		BackgroundTransparency = 1,
 		Text = text,
-		TextColor3 = TC(S.Theme.Text),
+		TextColor3 = TC(S.Theme.SubText),
 		Font = Enum.Font.GothamSemibold,
 		TextSize = 12,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
 		TextWrapped = true,
-		Parent = notif
+		Parent = inner
 	})
 	
-	-- Progress bar
+	-- Progress bar background
 	local progressBg = Create("Frame", {
-		Size = UDim2.new(1, -16, 0, 3),
-		Position = UDim2.new(0, 8, 1, -8),
+		Size = UDim2.new(1, 0, 0, 4),
+		Position = UDim2.new(0, 0, 1, -12),
 		BackgroundColor3 = TC(S.Theme.ToggleOff),
 		BorderSizePixel = 0,
-		Parent = notif
+		Parent = inner
 	})
 	Corner(progressBg, 2)
 	
+	-- Progress bar fill
 	local progressFill = Create("Frame", {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundColor3 = TC(S.Theme.Accent),
@@ -1182,38 +1098,65 @@ local function Notify(title, text, duration)
 	})
 	Corner(progressFill, 2)
 	
+	-- Glow effect
+	local glow = Create("ImageLabel", {
+		Size = UDim2.new(1, 40, 1, 40),
+		Position = UDim2.new(0, -20, 0, -20),
+		BackgroundTransparency = 1,
+		Image = "rbxassetid://5028857084",
+		ImageColor3 = TC(S.Theme.Accent),
+		ImageTransparency = 0.85,
+		ScaleType = Enum.ScaleType.Slice,
+		SliceCenter = Rect.new(24, 24, 276, 276),
+		Parent = notif
+	})
+	
 	-- Animate in
-	tween(notif, {Size = UDim2.new(1, 0, 0, 80)}, 0.3, Enum.EasingStyle.Back)
+	tween(notif, {Size = UDim2.new(1, 0, 0, 90)}, 0.4, Enum.EasingStyle.Back)
 	
 	-- Progress animation
 	tween(progressFill, {Size = UDim2.new(0, 0, 1, 0)}, duration or 4, Enum.EasingStyle.Linear)
 	
+	-- Pulse accent circle
+	task.spawn(function()
+		while notif.Parent do
+			tween(accentCircle, {BackgroundTransparency = 0.3}, 0.5)
+			task.wait(0.5)
+			tween(accentCircle, {BackgroundTransparency = 0.1}, 0.5)
+			task.wait(0.5)
+		end
+	end)
+	
 	-- Animate out
 	task.delay(duration or 4, function()
-		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.3)
-		task.delay(0.35, function() pcall(function() notif:Destroy() end) end)
+		tween(stroke, {Transparency = 1}, 0.3)
+		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+		task.delay(0.45, function() pcall(function() notif:Destroy() end) end)
 	end)
 end
 
--- ═══ CUSTOM TOAST (side notification) ═══
+-- ═══ CUSTOM TOAST ═══
 local ToastGui
 local function ShowToast(text, duration)
 	pcall(function() if ToastGui then ToastGui:Destroy() end end)
 	ToastGui = Create("ScreenGui", {Name = "NHToast", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 	pcall(ProtectGui, ToastGui); ToastGui.Parent = CoreGui
 	local toast = Create("Frame", {
-		Size = UDim2.new(0, 320, 0, 50), Position = UDim2.new(1, 10, 0.5, -25),
+		Size = UDim2.new(0, 340, 0, 56), Position = UDim2.new(1, 10, 0.5, -28),
 		BackgroundColor3 = TC(S.Theme.Bg), BorderSizePixel = 0, Parent = ToastGui
-	}); Corner(toast, 12)
-	Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1.5, Transparency = 0.4, Parent = toast})
-	local accentBar = Create("Frame", {Size = UDim2.new(0, 4, 0.7, 0), Position = UDim2.new(0, 8, 0.15, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = toast}); Corner(accentBar, 2)
-	Create("TextLabel", {Size = UDim2.new(1, -28, 1, 0), Position = UDim2.new(0, 20, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Left, Parent = toast})
-	tween(toast, {Position = UDim2.new(1, -330, 0.5, -25)}, 0.5, Enum.EasingStyle.Back)
+	}); Corner(toast, 16)
+	Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Transparency = 0.3, Parent = toast})
+	
+	local accentBar = Create("Frame", {Size = UDim2.new(0, 5, 0.7, 0), Position = UDim2.new(0, 10, 0.15, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = toast}); Corner(accentBar, 3)
+	Create("TextLabel", {Size = UDim2.new(1, -32, 1, 0), Position = UDim2.new(0, 24, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Left, Parent = toast})
+	
+	tween(toast, {Position = UDim2.new(1, -350, 0.5, -28)}, 0.5, Enum.EasingStyle.Back)
 	task.delay(duration or 4, function()
-		tween(toast, {Position = UDim2.new(1, 10, 0.5, -25)}, 0.4)
+		tween(toast, {Position = UDim2.new(1, 10, 0.5, -28)}, 0.4)
 		task.delay(0.5, function() pcall(function() ToastGui:Destroy() end) end)
 	end)
 end
+
 -- ═══ BLUR BACKGROUND SYSTEM ═══
 local BlurEffect = nil
 local function CreateBlur()
@@ -1239,9 +1182,8 @@ local function HideBlur()
 end
 
 CreateBlur()
-
 -- ═══════════════════════════════════════════
--- LOADING SCREEN (no backdrop darkening)
+-- LOADING SCREEN
 -- ═══════════════════════════════════════════
 local LoaderGui = Create("ScreenGui", {Name = "NHLoader", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 pcall(ProtectGui, LoaderGui)
@@ -1327,9 +1269,6 @@ pcall(function()
 	end
 end)
 
--- ═══ UI SCALE ═══
-local UIScaleObj = Create("UIScale", {Scale = S.UIScale or 1.0, Parent = Gui})
-
 local Main = Create("Frame", {
 	Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0),
 	BackgroundColor3 = TC(S.Theme.Bg), ClipsDescendants = true, Parent = Gui
@@ -1337,8 +1276,13 @@ local Main = Create("Frame", {
 Corner(Main, 16)
 Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1.5, Transparency = 0.5, Parent = Main})
 
-local fullSize = UDim2.new(0, 740, 0, 480)
-tween(Main, {Size = fullSize, Position = UDim2.new(0.5, -370, 0.5, -240)}, 0.7, Enum.EasingStyle.Back)
+local defaultWidth, defaultHeight = 740, 480
+local minWidth, minHeight = 500, 350
+local maxWidth, maxHeight = 1000, 700
+local currentWidth, currentHeight = defaultWidth, defaultHeight
+
+local fullSize = UDim2.new(0, defaultWidth, 0, defaultHeight)
+tween(Main, {Size = fullSize, Position = UDim2.new(0.5, -defaultWidth/2, 0.5, -defaultHeight/2)}, 0.7, Enum.EasingStyle.Back)
 
 -- Minimized title bar
 local MinimizedBar = Create("Frame", {Size = UDim2.new(1, 0, 0, 40), BackgroundTransparency = 1, Visible = false, ZIndex = 10, Parent = Main})
@@ -1348,7 +1292,71 @@ Corner(MinBarExpand, 8)
 
 local minimized = false
 
--- Drag (FIXED: only drag from title area, not from sliders/content)
+-- ═══ RESIZE HANDLE (Corner drag to resize) ═══
+local ResizeHandle = Create("TextButton", {
+	Size = UDim2.new(0, 20, 0, 20),
+	Position = UDim2.new(1, -20, 1, -20),
+	BackgroundColor3 = TC(S.Theme.Accent),
+	BackgroundTransparency = 0.5,
+	Text = "",
+	BorderSizePixel = 0,
+	ZIndex = 50,
+	Parent = Main
+})
+Corner(ResizeHandle, 6)
+
+-- Resize icon (diagonal lines)
+local resizeIcon = Create("TextLabel", {
+	Size = UDim2.new(1, 0, 1, 0),
+	BackgroundTransparency = 1,
+	Text = "⤡",
+	TextColor3 = Color3.new(1, 1, 1),
+	Font = Enum.Font.GothamBold,
+	TextSize = 12,
+	ZIndex = 51,
+	Parent = ResizeHandle
+})
+
+-- Resize functionality
+local isResizing = false
+local resizeStartPos, resizeStartSize
+
+ResizeHandle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		isResizing = true
+		resizeStartPos = input.Position
+		resizeStartSize = Main.Size
+		tween(ResizeHandle, {BackgroundTransparency = 0.2}, 0.1)
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		isResizing = false
+		tween(ResizeHandle, {BackgroundTransparency = 0.5}, 0.1)
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if isResizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - resizeStartPos
+		local newWidth = math.clamp(resizeStartSize.X.Offset + delta.X, minWidth, maxWidth)
+		local newHeight = math.clamp(resizeStartSize.Y.Offset + delta.Y, minHeight, maxHeight)
+		currentWidth, currentHeight = newWidth, newHeight
+		Main.Size = UDim2.new(0, newWidth, 0, newHeight)
+	end
+end)
+
+ResizeHandle.MouseEnter:Connect(function()
+	tween(ResizeHandle, {BackgroundTransparency = 0.3, Size = UDim2.new(0, 24, 0, 24)}, 0.15)
+end)
+ResizeHandle.MouseLeave:Connect(function()
+	if not isResizing then
+		tween(ResizeHandle, {BackgroundTransparency = 0.5, Size = UDim2.new(0, 20, 0, 20)}, 0.15)
+	end
+end)
+
+-- Drag (only from title area)
 do
 	local dragging, dragStart, startPos
 	local DRAG_HEIGHT = 50
@@ -1357,6 +1365,8 @@ do
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			local relY = input.Position.Y - Main.AbsolutePosition.Y
 			local relX = input.Position.X - Main.AbsolutePosition.X
+			-- Don't drag from resize handle area
+			if relX > Main.AbsoluteSize.X - 30 and relY > Main.AbsoluteSize.Y - 30 then return end
 			if minimized or relY <= DRAG_HEIGHT then
 				dragging = true; dragStart = input.Position; startPos = Main.Position
 				input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
@@ -1419,10 +1429,14 @@ local TabFrame = Create("Frame", {Size = UDim2.new(1, 0, 1, -105), Position = UD
 Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 3), Parent = TabFrame})
 Pad(TabFrame, 6, 6, 6, 6)
 
+-- Tab data with new Themes tab
 local tabData = {
-	{key = "tab_movement", icon = "🚀 ", order = 1}, {key = "tab_visual", icon = "👁 ", order = 2},
-	{key = "tab_misc", icon = "⚡ ", order = 3}, {key = "tab_settings", icon = "⚙️ ", order = 4},
-	{key = "tab_credits", icon = "❤️ ", order = 5},
+	{key = "tab_movement", icon = "🚀 ", order = 1}, 
+	{key = "tab_visual", icon = "👁 ", order = 2},
+	{key = "tab_misc", icon = "⚡ ", order = 3}, 
+	{key = "tab_settings", icon = "⚙️ ", order = 4},
+	{key = "tab_themes", icon = "🎨 ", order = 5},
+	{key = "tab_credits", icon = "❤️ ", order = 6},
 }
 
 local tabButtons, tabPages, activeTab = {}, {}, nil
@@ -1455,10 +1469,10 @@ local function ToggleMinimize()
 	minimized = not minimized
 	if minimized then
 		tween(Main, {Size = minSize}, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-		task.delay(0.1, function() ContentArea.Visible = false; Sidebar.Visible = false; MinimizedBar.Visible = true end)
+		task.delay(0.1, function() ContentArea.Visible = false; Sidebar.Visible = false; MinimizedBar.Visible = true; ResizeHandle.Visible = false end)
 	else
-		MinimizedBar.Visible = false; ContentArea.Visible = true; Sidebar.Visible = true
-		tween(Main, {Size = fullSize}, 0.4, Enum.EasingStyle.Back)
+		MinimizedBar.Visible = false; ContentArea.Visible = true; Sidebar.Visible = true; ResizeHandle.Visible = true
+		tween(Main, {Size = UDim2.new(0, currentWidth, 0, currentHeight)}, 0.4, Enum.EasingStyle.Back)
 	end
 end
 
@@ -1515,10 +1529,10 @@ local function SwitchTab(key)
 end
 
 for _, td in ipairs(tabData) do
-	local btn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 1, Text = "", BorderSizePixel = 0, LayoutOrder = td.order, Parent = TabFrame})
+	local btn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 38), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 1, Text = "", BorderSizePixel = 0, LayoutOrder = td.order, Parent = TabFrame})
 	Corner(btn, 10)
 	Create("Frame", {Name = "Indicator", Size = UDim2.new(0, 3, 0.6, 0), Position = UDim2.new(0, 0, 0.2, 0), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, BorderSizePixel = 0, Parent = btn}); Corner(btn:FindFirstChild("Indicator"), 2)
-	Create("TextLabel", {Size = UDim2.new(1, -18, 1, 0), Position = UDim2.new(0, 18, 0, 0), BackgroundTransparency = 1, Text = td.icon .. L(td.key), TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = btn})
+	Create("TextLabel", {Size = UDim2.new(1, -18, 1, 0), Position = UDim2.new(0, 18, 0, 0), BackgroundTransparency = 1, Text = td.icon .. L(td.key), TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = btn})
 	btn.MouseEnter:Connect(function() if activeTab ~= td.key then tween(btn, {BackgroundTransparency = 0.85, BackgroundColor3 = TC(S.Theme.Accent)}, 0.15) end end)
 	btn.MouseLeave:Connect(function() if activeTab ~= td.key then tween(btn, {BackgroundTransparency = 1}, 0.15) end end)
 	btn.MouseButton1Click:Connect(function() SwitchTab(td.key) end)
@@ -1527,19 +1541,19 @@ end
 
 -- ═══ UI COMPONENTS ═══
 
--- Updated keybind popup WITHOUT darkening, WITH duplicate key check
+-- Keybind popup (no darkening)
 local function ShowKeybindPopup(name, callback)
 	if keybindPopupOpen then return end; keybindPopupOpen = true
 	ShowBlur()
 	
 	local popup = Create("Frame", {Size = UDim2.new(0, 300, 0, 140), Position = UDim2.new(0.5, -150, 0.5, -70), BackgroundColor3 = TC(S.Theme.Bg), BorderSizePixel = 0, ZIndex = 101, Parent = Gui})
-	Corner(popup, 14); Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Parent = popup})
+	Corner(popup, 16); Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Parent = popup})
 	
 	Create("TextLabel", {Size = UDim2.new(1, 0, 0, 30), Position = UDim2.new(0, 0, 0, 12), BackgroundTransparency = 1, Text = L("set_keybind") .. ": " .. name, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 15, ZIndex = 102, Parent = popup})
 	local statusLbl = Create("TextLabel", {Size = UDim2.new(1, 0, 0, 20), Position = UDim2.new(0, 0, 0, 45), BackgroundTransparency = 1, Text = L("press_key"), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 17, ZIndex = 102, Parent = popup})
 	local warningLbl = Create("TextLabel", {Size = UDim2.new(1, -20, 0, 20), Position = UDim2.new(0, 10, 0, 68), BackgroundTransparency = 1, Text = "", TextColor3 = TC(S.Theme.Danger), Font = Enum.Font.GothamSemibold, TextSize = 11, ZIndex = 102, TextWrapped = true, Parent = popup})
 	
-	local pcancel = Create("TextButton", {Size = UDim2.new(0, 80, 0, 30), Position = UDim2.new(0.5, -40, 1, -40), BackgroundColor3 = TC(S.Theme.Card), Text = "Cancel", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 102, Parent = popup}); Corner(pcancel, 8)
+	local pcancel = Create("TextButton", {Size = UDim2.new(0, 80, 0, 30), Position = UDim2.new(0.5, -40, 1, -40), BackgroundColor3 = TC(S.Theme.Card), Text = "Cancel", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 102, Parent = popup}); Corner(pcancel, 10)
 	
 	local conn
 	local function cleanup() 
@@ -1561,7 +1575,6 @@ local function ShowKeybindPopup(name, callback)
 				return 
 			end
 			
-			-- Check if key is already used
 			local existingUser = FindKeybindByKey(keyName)
 			if existingUser and existingUser ~= name then
 				warningLbl.Text = string.format(L("keybind_already_used"), keyName, existingUser)
@@ -1604,7 +1617,7 @@ local function Section(parent, text)
 end
 
 local function Toggle(parent, text, default, callback, keybindName)
-	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 10)
+	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	Create("TextLabel", {Size = UDim2.new(1, -80, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}):SetAttribute("OrigTT", 0)
 	local tbg = Create("Frame", {Size = UDim2.new(0, 48, 0, 26), Position = UDim2.new(1, -62, 0.5, -13), BackgroundColor3 = default and TC(S.Theme.ToggleOn) or TC(S.Theme.ToggleOff), BorderSizePixel = 0, Parent = container}); tbg:SetAttribute("OrigBT", 0); Corner(tbg, 13)
 	local circ = Create("Frame", {Size = UDim2.new(0, 20, 0, 20), Position = default and UDim2.new(1, -23, 0.5, -10) or UDim2.new(0, 3, 0.5, -10), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, Parent = tbg}); circ:SetAttribute("OrigBT", 0); Corner(circ, 10)
@@ -1628,9 +1641,9 @@ local function Toggle(parent, text, default, callback, keybindName)
 end
 
 local function Slider(parent, text, min, max, default, callback)
-	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 60), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 10)
+	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 60), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	local vlbl = Create("TextLabel", {Size = UDim2.new(1, -60, 0, 24), Position = UDim2.new(0, 16, 0, 4), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}); vlbl:SetAttribute("OrigTT", 0)
-	local badge = Create("TextLabel", {Size = UDim2.new(0, 44, 0, 22), Position = UDim2.new(1, -54, 0, 5), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 6)
+	local badge = Create("TextLabel", {Size = UDim2.new(0, 44, 0, 22), Position = UDim2.new(1, -54, 0, 5), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 8)
 	local bar = Create("Frame", {Size = UDim2.new(1, -32, 0, 10), Position = UDim2.new(0, 16, 0, 38), BackgroundColor3 = TC(S.Theme.ToggleOff), BorderSizePixel = 0, Parent = container}); bar:SetAttribute("OrigBT", 0); Corner(bar, 5)
 	local fill = Create("Frame", {Size = UDim2.new(math.clamp((default - min) / (max - min), 0, 1), 0, 1, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = bar}); fill:SetAttribute("OrigBT", 0); Corner(fill, 5)
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1,1,1)), ColorSequenceKeypoint.new(1, Color3.fromRGB(200,200,255))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.1), NumberSequenceKeypoint.new(1, 0.4)}), Parent = fill})
@@ -1660,9 +1673,9 @@ local function Slider(parent, text, min, max, default, callback)
 end
 
 local function SliderCompact(parent, text, min, max, default, callback)
-	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 10)
+	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	Create("TextLabel", {Size = UDim2.new(0.42, 0, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}):SetAttribute("OrigTT", 0)
-	local badge = Create("TextLabel", {Size = UDim2.new(0, 38, 0, 22), Position = UDim2.new(1, -48, 0.5, -11), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 6)
+	local badge = Create("TextLabel", {Size = UDim2.new(0, 38, 0, 22), Position = UDim2.new(1, -48, 0.5, -11), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 8)
 	local bar = Create("Frame", {Size = UDim2.new(0.36, 0, 0, 8), Position = UDim2.new(0.44, 0, 0.5, -4), BackgroundColor3 = TC(S.Theme.ToggleOff), BorderSizePixel = 0, Parent = container}); bar:SetAttribute("OrigBT", 0); Corner(bar, 4)
 	local fill = Create("Frame", {Size = UDim2.new(math.clamp((default - min) / (max - min), 0, 1), 0, 1, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = bar}); fill:SetAttribute("OrigBT", 0); Corner(fill, 4)
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1,1,1)), ColorSequenceKeypoint.new(1, Color3.fromRGB(200,200,255))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.1), NumberSequenceKeypoint.new(1, 0.4)}), Parent = fill})
@@ -1676,7 +1689,7 @@ local function SliderCompact(parent, text, min, max, default, callback)
 end
 
 local function Button(parent, text, callback, danger, keybindName)
-	local btn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = danger and Color3.fromRGB(45, 22, 22) or TC(S.Theme.Card), Text = "", BorderSizePixel = 0, Parent = parent}); btn:SetAttribute("OrigBT", 0); Corner(btn, 10)
+	local btn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = danger and Color3.fromRGB(45, 22, 22) or TC(S.Theme.Card), Text = "", BorderSizePixel = 0, Parent = parent}); btn:SetAttribute("OrigBT", 0); Corner(btn, 12)
 	Create("TextLabel", {Size = UDim2.new(1, -40, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = danger and TC(S.Theme.Danger) or TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = btn}):SetAttribute("OrigTT", 0)
 	local arrow = Create("TextLabel", {Size = UDim2.new(0, 20, 1, 0), Position = UDim2.new(1, -30, 0, 0), BackgroundTransparency = 1, Text = ">", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 18, Parent = btn}); arrow:SetAttribute("OrigTT", 0)
 	btn.MouseEnter:Connect(function() tween(btn, {BackgroundColor3 = danger and Color3.fromRGB(65, 28, 28) or TC(S.Theme.CardHover)}, 0.15); tween(arrow, {Position = UDim2.new(1, -26, 0, 0)}, 0.2) end)
@@ -1688,7 +1701,7 @@ local function Button(parent, text, callback, danger, keybindName)
 end
 
 local function InfoCard(parent, text, copyable)
-	local f = Create("Frame", {Size = UDim2.new(1, 0, 0, 32), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); f:SetAttribute("OrigBT", 0); Corner(f, 8)
+	local f = Create("Frame", {Size = UDim2.new(1, 0, 0, 32), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); f:SetAttribute("OrigBT", 0); Corner(f, 10)
 	local l = Create("TextLabel", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = f}); l:SetAttribute("OrigTT", 0)
 	if copyable then
 		local cbtn = Create("TextButton", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", Parent = f})
@@ -1700,17 +1713,17 @@ local function InfoCard(parent, text, copyable)
 end
 
 local function Dropdown(parent, text, options, callback)
-	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, ClipsDescendants = true, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 10)
+	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, ClipsDescendants = true, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	Create("TextLabel", {Size = UDim2.new(0.5, -10, 0, 42), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}):SetAttribute("OrigTT", 0)
-	local selected = Create("TextButton", {Size = UDim2.new(0.45, 0, 0, 32), Position = UDim2.new(0.52, 0, 0, 5), BackgroundColor3 = TC(S.Theme.CardHover), Text = options[1] or "—", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, Parent = container}); selected:SetAttribute("OrigTT", 0); Corner(selected, 8)
+	local selected = Create("TextButton", {Size = UDim2.new(0.45, 0, 0, 32), Position = UDim2.new(0.52, 0, 0, 5), BackgroundColor3 = TC(S.Theme.CardHover), Text = options[1] or "—", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, Parent = container}); selected:SetAttribute("OrigTT", 0); Corner(selected, 10)
 	local arrow2 = Create("TextLabel", {Size = UDim2.new(0, 16, 1, 0), Position = UDim2.new(1, -20, 0, 0), BackgroundTransparency = 1, Text = "v", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 11, Parent = selected}); arrow2:SetAttribute("OrigTT", 0)
 	local open = false
-	local listFrame = Create("Frame", {Size = UDim2.new(0.45, 0, 0, 0), Position = UDim2.new(0.52, 0, 0, 40), BackgroundColor3 = TC(S.Theme.CardHover), BorderSizePixel = 0, ClipsDescendants = true, Parent = container}); Corner(listFrame, 8)
+	local listFrame = Create("Frame", {Size = UDim2.new(0.45, 0, 0, 0), Position = UDim2.new(0.52, 0, 0, 40), BackgroundColor3 = TC(S.Theme.CardHover), BorderSizePixel = 0, ClipsDescendants = true, Parent = container}); Corner(listFrame, 10)
 	Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2), Parent = listFrame}); Pad(listFrame, 4, 4, 4, 4)
 	local function buildOptions(opts)
 		for _, ch in pairs(listFrame:GetChildren()) do if ch:IsA("TextButton") then ch:Destroy() end end
 		for _, opt in ipairs(opts) do
-			local ob = Create("TextButton", {Size = UDim2.new(1, 0, 0, 30), BackgroundColor3 = TC(S.Theme.Card), Text = opt, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 13, BorderSizePixel = 0, Parent = listFrame}); Corner(ob, 6)
+			local ob = Create("TextButton", {Size = UDim2.new(1, 0, 0, 30), BackgroundColor3 = TC(S.Theme.Card), Text = opt, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 13, BorderSizePixel = 0, Parent = listFrame}); Corner(ob, 8)
 			ob.MouseEnter:Connect(function() tween(ob, {BackgroundColor3 = TC(S.Theme.Accent)}, 0.1) end)
 			ob.MouseLeave:Connect(function() tween(ob, {BackgroundColor3 = TC(S.Theme.Card)}, 0.1) end)
 			ob.MouseButton1Click:Connect(function() selected.Text = opt; open = false; tween(container, {Size = UDim2.new(1, 0, 0, 42)}, 0.25); tween(listFrame, {Size = UDim2.new(0.45, 0, 0, 0)}, 0.2); arrow2.Rotation = 0; callback(opt) end)
@@ -1725,7 +1738,7 @@ local function Dropdown(parent, text, options, callback)
 	return {Refresh = function(newOpts) options = newOpts; buildOptions(newOpts) end, SetSelected = function(val) selected.Text = val end}
 end
 
--- ═══ FIXED COLOR PICKER ═══
+-- ═══ COLOR PICKER ═══
 local function ShowColorPickerPopup(title, default, onApply)
 	pcall(function() CoreGui:FindFirstChild("NHColorPicker"):Destroy() end)
 	ShowBlur()
@@ -1736,7 +1749,6 @@ local function ShowColorPickerPopup(title, default, onApply)
 	local popup = Create("Frame", {Size = UDim2.new(0, 340, 0, 420), Position = UDim2.new(0.5, -170, 0.5, -210), BackgroundColor3 = TC(S.Theme.Bg), BorderSizePixel = 0, ZIndex = 201, Parent = cpGui})
 	Corner(popup, 16); Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Parent = popup})
 
-	-- Title
 	Create("TextLabel", {Size = UDim2.new(1, -40, 0, 30), Position = UDim2.new(0, 14, 0, 8), BackgroundTransparency = 1, Text = title, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 202, Parent = popup})
 
 	local currentH, currentS2, currentV = 0, 1, 1
@@ -1744,13 +1756,11 @@ local function ShowColorPickerPopup(title, default, onApply)
 		currentH, currentS2, currentV = Color3.fromRGB(default[1], default[2], default[3]):ToHSV()
 	end
 
-	-- Preview
-	local preview = Create("Frame", {Size = UDim2.new(0, 60, 0, 60), Position = UDim2.new(1, -74, 0, 42), BackgroundColor3 = Color3.fromHSV(currentH, currentS2, currentV), BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(preview, 12)
+	local preview = Create("Frame", {Size = UDim2.new(0, 60, 0, 60), Position = UDim2.new(1, -74, 0, 42), BackgroundColor3 = Color3.fromHSV(currentH, currentS2, currentV), BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(preview, 14)
 	Create("UIStroke", {Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.5, Parent = preview})
 
-	-- SV palette
 	local paletteSize = 200
-	local paletteFrame = Create("Frame", {Size = UDim2.new(0, paletteSize, 0, paletteSize), Position = UDim2.new(0, 14, 0, 42), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(paletteFrame, 8)
+	local paletteFrame = Create("Frame", {Size = UDim2.new(0, paletteSize, 0, paletteSize), Position = UDim2.new(0, 14, 0, 42), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(paletteFrame, 10)
 
 	local hueOverlay = Create("Frame", {Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = Color3.fromHSV(currentH, 1, 1), BorderSizePixel = 0, ZIndex = 203, Parent = paletteFrame})
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(1, 1, 1))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)}), Parent = hueOverlay})
@@ -1758,28 +1768,24 @@ local function ShowColorPickerPopup(title, default, onApply)
 	local blackOverlay = Create("Frame", {Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, ZIndex = 204, Parent = paletteFrame})
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)), ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0)}), Rotation = 90, Parent = blackOverlay})
 
-	-- SV cursor
 	local svCursor = Create("Frame", {Size = UDim2.new(0, 14, 0, 14), Position = UDim2.new(currentS2, -7, 1 - currentV, -7), BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 206, Parent = paletteFrame})
 	local svCursorInner = Create("Frame", {Size = UDim2.new(0, 12, 0, 12), Position = UDim2.new(0, 1, 0, 1), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 207, Parent = svCursor}); Corner(svCursorInner, 6)
 	Create("UIStroke", {Color = Color3.new(0, 0, 0), Thickness = 2, Parent = svCursorInner})
 
-	-- Hue bar
 	local hueBarW = 20
-	local hueBar = Create("Frame", {Size = UDim2.new(0, hueBarW, 0, paletteSize), Position = UDim2.new(0, 14 + paletteSize + 10, 0, 42), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(hueBar, 6)
+	local hueBar = Create("Frame", {Size = UDim2.new(0, hueBarW, 0, paletteSize), Position = UDim2.new(0, 14 + paletteSize + 10, 0, 42), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(hueBar, 8)
 
 	local hueColors = {}
 	for i = 0, 6 do table.insert(hueColors, ColorSequenceKeypoint.new(i / 6, Color3.fromHSV(i / 6, 1, 1))) end
 	Create("UIGradient", {Color = ColorSequence.new(hueColors), Rotation = 90, Parent = hueBar})
 
-	-- Hue cursor
 	local hueCursor = Create("Frame", {Size = UDim2.new(1, 4, 0, 6), Position = UDim2.new(0, -2, currentH, -3), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 206, Parent = hueBar}); Corner(hueCursor, 3)
 	Create("UIStroke", {Color = Color3.new(0, 0, 0), Thickness = 1.5, Parent = hueCursor})
 
-	-- RGB boxes
 	local rgbY = 42 + paletteSize + 12
 	local function makeRGBBox(label, xOff, defVal)
 		Create("TextLabel", {Size = UDim2.new(0, 14, 0, 20), Position = UDim2.new(0, xOff, 0, rgbY), BackgroundTransparency = 1, Text = label, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 12, ZIndex = 202, Parent = popup})
-		local box = Create("TextBox", {Size = UDim2.new(0, 50, 0, 26), Position = UDim2.new(0, xOff + 16, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = tostring(defVal), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(box, 6)
+		local box = Create("TextBox", {Size = UDim2.new(0, 50, 0, 26), Position = UDim2.new(0, xOff + 16, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = tostring(defVal), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(box, 8)
 		return box
 	end
 	local c = Color3.fromHSV(currentH, currentS2, currentV)
@@ -1787,9 +1793,8 @@ local function ShowColorPickerPopup(title, default, onApply)
 	local gBox = makeRGBBox("G", 90, math.floor(c.G * 255))
 	local bBox = makeRGBBox("B", 166, math.floor(c.B * 255))
 
-	-- Hex box
 	Create("TextLabel", {Size = UDim2.new(0, 20, 0, 20), Position = UDim2.new(0, 240, 0, rgbY), BackgroundTransparency = 1, Text = "#", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, ZIndex = 202, Parent = popup})
-	local hexBox = Create("TextBox", {Size = UDim2.new(0, 70, 0, 26), Position = UDim2.new(0, 258, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255)), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(hexBox, 6)
+	local hexBox = Create("TextBox", {Size = UDim2.new(0, 70, 0, 26), Position = UDim2.new(0, 258, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255)), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(hexBox, 8)
 
 	local function updateFromHSV()
 		local col = Color3.fromHSV(currentH, currentS2, currentV)
@@ -1802,28 +1807,24 @@ local function ShowColorPickerPopup(title, default, onApply)
 		svCursorInner.BackgroundColor3 = col
 	end
 
-	-- SV drag
 	local svDragging = false
 	local svBtn = Create("TextButton", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", ZIndex = 208, Parent = paletteFrame})
 	svBtn.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then svDragging = true; currentS2 = math.clamp((i.Position.X - paletteFrame.AbsolutePosition.X) / paletteFrame.AbsoluteSize.X, 0, 1); currentV = math.clamp(1 - (i.Position.Y - paletteFrame.AbsolutePosition.Y) / paletteFrame.AbsoluteSize.Y, 0, 1); updateFromHSV() end end)
 	UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then svDragging = false end end)
 	UIS.InputChanged:Connect(function(i) if svDragging and i.UserInputType == Enum.UserInputType.MouseMovement then currentS2 = math.clamp((i.Position.X - paletteFrame.AbsolutePosition.X) / paletteFrame.AbsoluteSize.X, 0, 1); currentV = math.clamp(1 - (i.Position.Y - paletteFrame.AbsolutePosition.Y) / paletteFrame.AbsoluteSize.Y, 0, 1); updateFromHSV() end end)
 
-	-- Hue drag
 	local hueDragging = false
 	local hueBtn = Create("TextButton", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", ZIndex = 208, Parent = hueBar})
 	hueBtn.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then hueDragging = true; currentH = math.clamp((i.Position.Y - hueBar.AbsolutePosition.Y) / hueBar.AbsoluteSize.Y, 0, 1); updateFromHSV() end end)
 	UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then hueDragging = false end end)
 	UIS.InputChanged:Connect(function(i) if hueDragging and i.UserInputType == Enum.UserInputType.MouseMovement then currentH = math.clamp((i.Position.Y - hueBar.AbsolutePosition.Y) / hueBar.AbsoluteSize.Y, 0, 1); updateFromHSV() end end)
 
-	-- RGB input
 	local function applyRGB()
 		local r = math.clamp(tonumber(rBox.Text) or 0, 0, 255); local g = math.clamp(tonumber(gBox.Text) or 0, 0, 255); local b = math.clamp(tonumber(bBox.Text) or 0, 0, 255)
 		currentH, currentS2, currentV = Color3.fromRGB(r, g, b):ToHSV(); updateFromHSV()
 	end
 	rBox.FocusLost:Connect(applyRGB); gBox.FocusLost:Connect(applyRGB); bBox.FocusLost:Connect(applyRGB)
 
-	-- Hex input
 	hexBox.FocusLost:Connect(function()
 		local hex = hexBox.Text:gsub("#", "")
 		if #hex == 6 then
@@ -1832,19 +1833,17 @@ local function ShowColorPickerPopup(title, default, onApply)
 		end
 	end)
 
-	-- Preset colors row
 	local presetY = rgbY + 36
 	local presetColors = {{255,0,0},{255,127,0},{255,255,0},{0,255,0},{0,255,255},{0,127,255},{0,0,255},{127,0,255},{255,0,255},{255,255,255},{128,128,128},{0,0,0}}
 	for i, pc in ipairs(presetColors) do
-		local psw = Create("TextButton", {Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(0, 14 + (i-1) * 26, 0, presetY), BackgroundColor3 = Color3.fromRGB(pc[1], pc[2], pc[3]), Text = "", BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(psw, 6)
+		local psw = Create("TextButton", {Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(0, 14 + (i-1) * 26, 0, presetY), BackgroundColor3 = Color3.fromRGB(pc[1], pc[2], pc[3]), Text = "", BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(psw, 8)
 		Create("UIStroke", {Color = Color3.new(1,1,1), Thickness = 1, Transparency = 0.7, Parent = psw})
 		psw.MouseButton1Click:Connect(function() currentH, currentS2, currentV = Color3.fromRGB(pc[1], pc[2], pc[3]):ToHSV(); updateFromHSV() end)
 	end
 
-	-- Apply & Close buttons (FIXED POSITIONS)
 	local btnY = presetY + 36
-	local applyBtn = Create("TextButton", {Size = UDim2.new(0, 140, 0, 36), Position = UDim2.new(0, 14, 0, btnY), BackgroundColor3 = TC(S.Theme.Accent), Text = "Apply", TextColor3 = Color3.new(1,1,1), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(applyBtn, 10)
-	local closeBtn = Create("TextButton", {Size = UDim2.new(0, 140, 0, 36), Position = UDim2.new(0, 168, 0, btnY), BackgroundColor3 = TC(S.Theme.Card), Text = L("discord_rpc_close"), TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(closeBtn, 10)
+	local applyBtn = Create("TextButton", {Size = UDim2.new(0, 140, 0, 36), Position = UDim2.new(0, 14, 0, btnY), BackgroundColor3 = TC(S.Theme.Accent), Text = "Apply", TextColor3 = Color3.new(1,1,1), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(applyBtn, 12)
+	local closeBtn = Create("TextButton", {Size = UDim2.new(0, 140, 0, 36), Position = UDim2.new(0, 168, 0, btnY), BackgroundColor3 = TC(S.Theme.Card), Text = L("close"), TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(closeBtn, 12)
 
 	applyBtn.MouseButton1Click:Connect(function()
 		local col = Color3.fromHSV(currentH, currentS2, currentV)
@@ -1855,18 +1854,16 @@ local function ShowColorPickerPopup(title, default, onApply)
 	end)
 	closeBtn.MouseButton1Click:Connect(function() HideBlur(); cpGui:Destroy() end)
 
-	-- Popup drag
 	do local dr, ds, sp
 		popup.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then local ry = i.Position.Y - popup.AbsolutePosition.Y; if ry <= 36 then dr = true; ds = i.Position; sp = popup.Position; i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dr = false end end) end end end)
 		UIS.InputChanged:Connect(function(i) if dr and i.UserInputType == Enum.UserInputType.MouseMovement then local d = i.Position - ds; popup.Position = UDim2.new(sp.X.Scale, sp.X.Offset + d.X, sp.Y.Scale, sp.Y.Offset + d.Y) end end)
 	end
 end
 
--- Color picker button
 local function ColorPicker(parent, text, default, callback)
-	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 10)
+	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	Create("TextLabel", {Size = UDim2.new(0.6, 0, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}):SetAttribute("OrigTT", 0)
-	local preview = Create("Frame", {Size = UDim2.new(0, 30, 0, 30), Position = UDim2.new(1, -48, 0.5, -15), BackgroundColor3 = TC(default), BorderSizePixel = 0, Parent = container}); preview:SetAttribute("OrigBT", 0); Corner(preview, 8)
+	local preview = Create("Frame", {Size = UDim2.new(0, 30, 0, 30), Position = UDim2.new(1, -48, 0.5, -15), BackgroundColor3 = TC(default), BorderSizePixel = 0, Parent = container}); preview:SetAttribute("OrigBT", 0); Corner(preview, 10)
 	Create("UIStroke", {Color = Color3.new(1, 1, 1), Thickness = 1, Transparency = 0.7, Parent = preview})
 
 	local pickBtn = Create("TextButton", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", Parent = container})
@@ -1876,153 +1873,6 @@ local function ColorPicker(parent, text, default, callback)
 	container.MouseEnter:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.12) end)
 	container.MouseLeave:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.Card)}, 0.12) end)
 end
--- ═══ ESP PREVIEW WINDOW ═══
-local function ShowESPPreview()
-	pcall(function() CoreGui:FindFirstChild("NHESPPreview"):Destroy() end)
-	ShowBlur()
-	
-	local epGui = Create("ScreenGui", {Name = "NHESPPreview", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
-	pcall(ProtectGui, epGui); epGui.Parent = CoreGui
-
-	local epW = Create("Frame", {Size = UDim2.new(0, 280, 0, 360), Position = UDim2.new(0.5, -140, 0.5, -180), BackgroundColor3 = TC(S.Theme.Bg), BorderSizePixel = 0, ZIndex = 150, Parent = epGui})
-	Corner(epW, 16); Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Parent = epW})
-
-	Create("TextLabel", {Size = UDim2.new(1, -40, 0, 30), Position = UDim2.new(0, 14, 0, 6), BackgroundTransparency = 1, Text = L("esp_preview_title"), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 15, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 151, Parent = epW})
-	local epClose = Create("TextButton", {Size = UDim2.new(0, 28, 0, 28), Position = UDim2.new(1, -34, 0, 5), BackgroundColor3 = TC(S.Theme.Card), Text = "X", TextColor3 = TC(S.Theme.Danger), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 152, Parent = epW}); Corner(epClose, 8)
-	epClose.MouseButton1Click:Connect(function() HideBlur(); epGui:Destroy() end)
-
-	local previewArea = Create("Frame", {Size = UDim2.new(1, -20, 0, 280), Position = UDim2.new(0, 10, 0, 40), BackgroundColor3 = Color3.fromRGB(8, 8, 14), BorderSizePixel = 0, ZIndex = 151, ClipsDescendants = true, Parent = epW}); Corner(previewArea, 10)
-
-	local thumbUrl = ""
-	pcall(function()
-		thumbUrl = Players:GetUserThumbnailAsync(Player.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size352x352)
-	end)
-
-	local avatarImg = Create("ImageLabel", {
-		Size = UDim2.new(0, 120, 0, 140),
-		Position = UDim2.new(0.5, -60, 0.5, -70),
-		BackgroundTransparency = 1,
-		Image = thumbUrl,
-		ZIndex = 153,
-		Parent = previewArea
-	})
-
-	local espColor = TC(S.ESPColor)
-	local boxFrame = Create("Frame", {Size = UDim2.new(0, 130, 0, 180), Position = UDim2.new(0.5, -65, 0.5, -90), BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 154, Parent = previewArea})
-	local espStroke = Create("UIStroke", {Color = espColor, Thickness = 2, Transparency = S.ESPBoxes and 0 or 0.7, Parent = boxFrame}); Corner(boxFrame, 4)
-
-	local fillOverlay = Create("Frame", {Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = espColor, BackgroundTransparency = S.ESPFillTransparency, BorderSizePixel = 0, ZIndex = 152, Parent = boxFrame}); Corner(fillOverlay, 4)
-
-	local nameTag = Create("TextLabel", {Size = UDim2.new(0, 200, 0, 18), Position = UDim2.new(0.5, -100, 0, 10), BackgroundTransparency = 1, Text = Player.DisplayName .. " [" .. Player.Name .. "]", TextColor3 = Color3.new(1, 1, 1), Font = Enum.Font.GothamBold, TextSize = 13, TextStrokeTransparency = 0.3, ZIndex = 155, Visible = S.ESPShowName, Parent = previewArea})
-
-	local healthTag = Create("TextLabel", {Size = UDim2.new(0, 200, 0, 14), Position = UDim2.new(0.5, -100, 0, 28), BackgroundTransparency = 1, Text = "100 / 100", TextColor3 = Color3.fromRGB(100, 255, 100), Font = Enum.Font.GothamSemibold, TextSize = 11, TextStrokeTransparency = 0.3, ZIndex = 155, Visible = S.ESPShowHealth, Parent = previewArea})
-
-	local tracerLine = Create("Frame", {Size = UDim2.new(0, 2, 0, 60), Position = UDim2.new(0.5, -1, 1, -60), BackgroundColor3 = espColor, BorderSizePixel = 0, ZIndex = 155, Visible = S.ESPTracers, Parent = previewArea})
-
-	Create("TextLabel", {Size = UDim2.new(0, 100, 0, 14), Position = UDim2.new(0.5, -50, 1, -18), BackgroundTransparency = 1, Text = "42 studs", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 10, ZIndex = 155, Parent = previewArea})
-
-	if S.ESPRainbow then
-		task.spawn(function()
-			while epGui.Parent do
-				local col = Color3.fromHSV((tick() % 5) / 5, 1, 1)
-				espStroke.Color = col; fillOverlay.BackgroundColor3 = col; tracerLine.BackgroundColor3 = col
-				task.wait(0.05)
-			end
-		end)
-	end
-
-	do local dr, ds, sp
-		epW.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then local ry = i.Position.Y - epW.AbsolutePosition.Y; if ry <= 40 then dr = true; ds = i.Position; sp = epW.Position; i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dr = false end end) end end end)
-		UIS.InputChanged:Connect(function(i) if dr and i.UserInputType == Enum.UserInputType.MouseMovement then local d = i.Position - ds; epW.Position = UDim2.new(sp.X.Scale, sp.X.Offset + d.X, sp.Y.Scale, sp.Y.Offset + d.Y) end end)
-	end
-end
-
--- ═══ DISCORD RPC SETTINGS WINDOW (with drag, no darkening) ═══
-local function ShowDiscordRPCWindow()
-	pcall(function() CoreGui:FindFirstChild("NHDiscordRPC"):Destroy() end)
-	ShowBlur()
-	
-	local rpcGui = Create("ScreenGui", {Name = "NHDiscordRPC", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
-	pcall(ProtectGui, rpcGui); rpcGui.Parent = CoreGui
-
-	local rpcW = Create("Frame", {Size = UDim2.new(0, 440, 0, 560), Position = UDim2.new(0.5, -220, 0.5, -280), BackgroundColor3 = TC(S.Theme.Bg), BorderSizePixel = 0, ZIndex = 181, Parent = rpcGui})
-	Corner(rpcW, 16); Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Parent = rpcW})
-
-	Create("TextLabel", {Size = UDim2.new(1, -40, 0, 30), Position = UDim2.new(0, 16, 0, 10), BackgroundTransparency = 1, Text = L("discord_rpc_title"), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 17, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 182, Parent = rpcW})
-	local rpcClose = Create("TextButton", {Size = UDim2.new(0, 30, 0, 30), Position = UDim2.new(1, -38, 0, 8), BackgroundColor3 = TC(S.Theme.Card), Text = "X", TextColor3 = TC(S.Theme.Danger), Font = Enum.Font.GothamBold, TextSize = 16, BorderSizePixel = 0, ZIndex = 183, Parent = rpcW}); Corner(rpcClose, 8)
-	rpcClose.MouseButton1Click:Connect(function() HideBlur(); rpcGui:Destroy() end)
-
-	local rpcScroll = Create("ScrollingFrame", {Size = UDim2.new(1, -20, 1, -52), Position = UDim2.new(0, 10, 0, 46), BackgroundTransparency = 1, ScrollBarThickness = 4, ScrollBarImageColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, CanvasSize = UDim2.new(0, 0, 0, 0), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 182, Parent = rpcW})
-	Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 6), Parent = rpcScroll}); Pad(rpcScroll, 4, 4, 4, 4)
-
-	-- Preview card
-	local previewCard = Create("Frame", {Size = UDim2.new(1, 0, 0, 80), BackgroundColor3 = Color3.fromRGB(30, 32, 36), BorderSizePixel = 0, ZIndex = 183, Parent = rpcScroll}); Corner(previewCard, 10)
-	local previewImg = Create("ImageLabel", {Size = UDim2.new(0, 56, 0, 56), Position = UDim2.new(0, 12, 0.5, -28), BackgroundTransparency = 1, Image = DiscordRPCSettings.LargeImage, ZIndex = 184, Parent = previewCard}); Corner(previewImg, 10)
-	local previewTitle = Create("TextLabel", {Size = UDim2.new(1, -84, 0, 20), Position = UDim2.new(0, 78, 0, 12), BackgroundTransparency = 1, Text = DiscordRPCSettings.LargeText, TextColor3 = Color3.new(1,1,1), Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 184, Parent = previewCard})
-	local previewDetails = Create("TextLabel", {Size = UDim2.new(1, -84, 0, 16), Position = UDim2.new(0, 78, 0, 32), BackgroundTransparency = 1, Text = DiscordRPCSettings.Details, TextColor3 = Color3.fromRGB(180, 180, 180), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 184, Parent = previewCard})
-	local previewState = Create("TextLabel", {Size = UDim2.new(1, -84, 0, 16), Position = UDim2.new(0, 78, 0, 48), BackgroundTransparency = 1, Text = DiscordRPCSettings.State, TextColor3 = Color3.fromRGB(160, 160, 160), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 184, Parent = previewCard})
-
-	local function RPCField(label, default, settingKey)
-		local row = Create("Frame", {Size = UDim2.new(1, 0, 0, 50), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, ZIndex = 183, Parent = rpcScroll}); Corner(row, 8)
-		Create("TextLabel", {Size = UDim2.new(1, -10, 0, 18), Position = UDim2.new(0, 12, 0, 4), BackgroundTransparency = 1, Text = label, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 184, Parent = row})
-		local box = Create("TextBox", {Size = UDim2.new(1, -20, 0, 24), Position = UDim2.new(0, 10, 0, 22), BackgroundColor3 = TC(S.Theme.CardHover), Text = default, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 12, BorderSizePixel = 0, ZIndex = 184, ClearTextOnFocus = false, TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd, Parent = row}); Corner(box, 6)
-		Pad(box, 0, 0, 6, 6)
-		box.FocusLost:Connect(function()
-			DiscordRPCSettings[settingKey] = box.Text
-			pcall(function()
-				previewTitle.Text = DiscordRPCSettings.LargeText
-				previewDetails.Text = DiscordRPCSettings.Details
-				previewState.Text = DiscordRPCSettings.State
-				previewImg.Image = DiscordRPCSettings.LargeImage
-			end)
-		end)
-		return box
-	end
-
-	-- Enable toggle
-	local enRow = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, ZIndex = 183, Parent = rpcScroll}); Corner(enRow, 8)
-	Create("TextLabel", {Size = UDim2.new(0.6, 0, 1, 0), Position = UDim2.new(0, 12, 0, 0), BackgroundTransparency = 1, Text = L("discord_rpc_enabled"), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 184, Parent = enRow})
-	local enTbg = Create("Frame", {Size = UDim2.new(0, 44, 0, 24), Position = UDim2.new(1, -56, 0.5, -12), BackgroundColor3 = DiscordRPCSettings.Enabled and TC(S.Theme.ToggleOn) or TC(S.Theme.ToggleOff), BorderSizePixel = 0, ZIndex = 184, Parent = enRow}); Corner(enTbg, 12)
-	local enCirc = Create("Frame", {Size = UDim2.new(0, 18, 0, 18), Position = DiscordRPCSettings.Enabled and UDim2.new(1, -21, 0.5, -9) or UDim2.new(0, 3, 0.5, -9), BackgroundColor3 = Color3.new(1,1,1), BorderSizePixel = 0, ZIndex = 185, Parent = enTbg}); Corner(enCirc, 9)
-	local enBtn = Create("TextButton", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", ZIndex = 186, Parent = enRow})
-	enBtn.MouseButton1Click:Connect(function()
-		DiscordRPCSettings.Enabled = not DiscordRPCSettings.Enabled
-		tween(enTbg, {BackgroundColor3 = DiscordRPCSettings.Enabled and TC(S.Theme.ToggleOn) or TC(S.Theme.ToggleOff)}, 0.2)
-		tween(enCirc, {Position = DiscordRPCSettings.Enabled and UDim2.new(1, -21, 0.5, -9) or UDim2.new(0, 3, 0.5, -9)}, 0.2, Enum.EasingStyle.Back)
-	end)
-
-	-- Application ID field
-	RPCField(L("discord_rpc_app_id"), DiscordRPCSettings.ApplicationId or "", "ApplicationId")
-	
-	-- Other fields
-	RPCField(L("discord_rpc_state"), DiscordRPCSettings.State, "State")
-	RPCField(L("discord_rpc_details"), DiscordRPCSettings.Details, "Details")
-	RPCField(L("discord_rpc_large_image"), DiscordRPCSettings.LargeImage, "LargeImage")
-	RPCField(L("discord_rpc_large_text"), DiscordRPCSettings.LargeText, "LargeText")
-	RPCField(L("discord_rpc_small_image"), DiscordRPCSettings.SmallImage, "SmallImage")
-	RPCField(L("discord_rpc_small_text"), DiscordRPCSettings.SmallText, "SmallText")
-	RPCField(L("discord_rpc_btn1_label"), DiscordRPCSettings.Button1Label, "Button1Label")
-	RPCField(L("discord_rpc_btn1_url"), DiscordRPCSettings.Button1URL, "Button1URL")
-	RPCField(L("discord_rpc_btn2_label"), DiscordRPCSettings.Button2Label, "Button2Label")
-	RPCField(L("discord_rpc_btn2_url"), DiscordRPCSettings.Button2URL, "Button2URL")
-
-	-- Apply button
-	local applyRow = Create("Frame", {Size = UDim2.new(1, 0, 0, 44), BackgroundTransparency = 1, ZIndex = 183, Parent = rpcScroll})
-	local applyBtn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 40), BackgroundColor3 = TC(S.Theme.Accent), Text = L("discord_rpc_apply"), TextColor3 = Color3.new(1,1,1), Font = Enum.Font.GothamBold, TextSize = 15, BorderSizePixel = 0, ZIndex = 184, Parent = applyRow}); Corner(applyBtn, 10)
-	applyBtn.MouseButton1Click:Connect(function()
-		ApplyDiscordRPC()
-		Notify(L("hub_name"), "Discord RPC Applied!", 3)
-		tween(applyBtn, {BackgroundColor3 = Color3.fromRGB(80, 220, 100)}, 0.15)
-		task.delay(0.5, function() tween(applyBtn, {BackgroundColor3 = TC(S.Theme.Accent)}, 0.2) end)
-	end)
-
-	-- Drag
-	do local dr, ds, sp
-		rpcW.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then local ry = i.Position.Y - rpcW.AbsolutePosition.Y; if ry <= 44 then dr = true; ds = i.Position; sp = rpcW.Position; i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dr = false end end) end end end)
-		UIS.InputChanged:Connect(function(i) if dr and i.UserInputType == Enum.UserInputType.MouseMovement then local d = i.Position - ds; rpcW.Position = UDim2.new(sp.X.Scale, sp.X.Offset + d.X, sp.Y.Scale, sp.Y.Offset + d.Y) end end)
-	end
-end
-
 -- ═══ SCREEN INFO GUI (FPS, Coordinates) ═══
 local ScreenInfoGui = Create("ScreenGui", {Name = "NHScreenInfo", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 pcall(ProtectGui, ScreenInfoGui); ScreenInfoGui.Parent = CoreGui
@@ -2037,7 +1887,7 @@ local FPSFrame = Create("Frame", {
 	Visible = S.FPSCounter or false,
 	Parent = ScreenInfoGui
 })
-Corner(FPSFrame, 8)
+Corner(FPSFrame, 10)
 Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.5, Parent = FPSFrame})
 local FPSLabel = Create("TextLabel", {
 	Size = UDim2.new(1, 0, 1, 0),
@@ -2094,7 +1944,7 @@ local CoordsFrame = Create("Frame", {
 	Visible = S.Coordinates or false,
 	Parent = ScreenInfoGui
 })
-Corner(CoordsFrame, 8)
+Corner(CoordsFrame, 10)
 Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.5, Parent = CoordsFrame})
 local CoordsLabel = Create("TextLabel", {
 	Size = UDim2.new(1, 0, 1, 0),
@@ -2160,16 +2010,20 @@ local function UpdateCrosshair()
 	local gap = 4
 	
 	-- Top
-	Create("Frame", {Size = UDim2.new(0, thickness, 0, size), Position = UDim2.new(0.5, -thickness/2, 0.5, -size - gap), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	local top = Create("Frame", {Size = UDim2.new(0, thickness, 0, size), Position = UDim2.new(0.5, -thickness/2, 0.5, -size - gap), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	Corner(top, 2)
 	-- Bottom
-	Create("Frame", {Size = UDim2.new(0, thickness, 0, size), Position = UDim2.new(0.5, -thickness/2, 0.5, gap), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	local bottom = Create("Frame", {Size = UDim2.new(0, thickness, 0, size), Position = UDim2.new(0.5, -thickness/2, 0.5, gap), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	Corner(bottom, 2)
 	-- Left
-	Create("Frame", {Size = UDim2.new(0, size, 0, thickness), Position = UDim2.new(0.5, -size - gap, 0.5, -thickness/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	local left = Create("Frame", {Size = UDim2.new(0, size, 0, thickness), Position = UDim2.new(0.5, -size - gap, 0.5, -thickness/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	Corner(left, 2)
 	-- Right
-	Create("Frame", {Size = UDim2.new(0, size, 0, thickness), Position = UDim2.new(0.5, gap, 0.5, -thickness/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	local right = Create("Frame", {Size = UDim2.new(0, size, 0, thickness), Position = UDim2.new(0.5, gap, 0.5, -thickness/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	Corner(right, 2)
 	-- Center dot
-	local dot = Create("Frame", {Size = UDim2.new(0, thickness, 0, thickness), Position = UDim2.new(0.5, -thickness/2, 0.5, -thickness/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
-	Corner(dot, thickness/2)
+	local dot = Create("Frame", {Size = UDim2.new(0, thickness + 2, 0, thickness + 2), Position = UDim2.new(0.5, -(thickness + 2)/2, 0.5, -(thickness + 2)/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
+	Corner(dot, (thickness + 2)/2)
 end
 
 if S.Crosshair then UpdateCrosshair() end
@@ -2177,11 +2031,12 @@ if S.Crosshair then UpdateCrosshair() end
 -- ═══ KEYBIND PANEL ═══
 local KBPanelGui = Create("ScreenGui", {Name = "NHKeybindPanel", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 pcall(ProtectGui, KBPanelGui); KBPanelGui.Parent = CoreGui
-local KBPanel = Create("Frame", {Size = UDim2.new(0, 230, 0, 60), Position = UDim2.new(0, 10, 0.5, -100), BackgroundColor3 = TC(S.Theme.Bg), BackgroundTransparency = 0.15, BorderSizePixel = 0, Visible = S.ShowKeybindPanel or false, Parent = KBPanelGui}); Corner(KBPanel, 12)
+local KBPanel = Create("Frame", {Size = UDim2.new(0, 230, 0, 60), Position = UDim2.new(0, 10, 0.5, -100), BackgroundColor3 = TC(S.Theme.Bg), BackgroundTransparency = 0.15, BorderSizePixel = 0, Visible = S.ShowKeybindPanel or false, Parent = KBPanelGui}); Corner(KBPanel, 14)
 local KBPanelStroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.5, Parent = KBPanel})
-local KBPanelTitle = Create("TextLabel", {Size = UDim2.new(1, -10, 0, 24), Position = UDim2.new(0, 10, 0, 4), BackgroundTransparency = 1, Text = "Keybinds", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = KBPanel})
+local KBPanelTitle = Create("TextLabel", {Size = UDim2.new(1, -10, 0, 24), Position = UDim2.new(0, 10, 0, 4), BackgroundTransparency = 1, Text = "⌨️ Keybinds", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = KBPanel})
 local KBList = Create("Frame", {Size = UDim2.new(1, -16, 1, -32), Position = UDim2.new(0, 8, 0, 28), BackgroundTransparency = 1, ClipsDescendants = true, Parent = KBPanel})
 Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2), Parent = KBList})
+
 do local dragging, dStart, sPos
 	KBPanel.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true; dStart = i.Position; sPos = KBPanel.Position; i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dragging = false end end) end end)
 	UIS.InputChanged:Connect(function(i) if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then local d = i.Position - dStart; KBPanel.Position = UDim2.new(sPos.X.Scale, sPos.X.Offset + d.X, sPos.Y.Scale, sPos.Y.Offset + d.Y) end end)
@@ -2387,15 +2242,77 @@ do
 	end
 
 	Section(p, L("sect_esp"))
+	
+	-- ═══ INLINE ESP PREVIEW ═══
+	local espPreviewContainer = Create("Frame", {Size = UDim2.new(1, 0, 0, 200), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); espPreviewContainer:SetAttribute("OrigBT", 0); Corner(espPreviewContainer, 12)
+	
+	Create("TextLabel", {Size = UDim2.new(1, 0, 0, 24), Position = UDim2.new(0, 0, 0, 6), BackgroundTransparency = 1, Text = "👁 " .. L("esp_preview"), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, Parent = espPreviewContainer}):SetAttribute("OrigTT", 0)
+	
+	local previewArea = Create("Frame", {Size = UDim2.new(1, -20, 0, 160), Position = UDim2.new(0, 10, 0, 32), BackgroundColor3 = Color3.fromRGB(8, 8, 14), BorderSizePixel = 0, ClipsDescendants = true, Parent = espPreviewContainer}); previewArea:SetAttribute("OrigBT", 0); Corner(previewArea, 10)
+
+	local thumbUrl = ""
+	pcall(function()
+		thumbUrl = Players:GetUserThumbnailAsync(Player.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size352x352)
+	end)
+
+	local avatarImg = Create("ImageLabel", {
+		Size = UDim2.new(0, 80, 0, 100),
+		Position = UDim2.new(0.5, -40, 0.5, -50),
+		BackgroundTransparency = 1,
+		Image = thumbUrl,
+		Parent = previewArea
+	})
+
+	local espPreviewColor = TC(S.ESPColor)
+	local boxFrame = Create("Frame", {Size = UDim2.new(0, 90, 0, 130), Position = UDim2.new(0.5, -45, 0.5, -65), BackgroundTransparency = 1, BorderSizePixel = 0, Parent = previewArea})
+	local espStroke = Create("UIStroke", {Color = espPreviewColor, Thickness = 2, Transparency = S.ESPBoxes and 0 or 0.7, Parent = boxFrame}); Corner(boxFrame, 4)
+
+	local fillOverlay = Create("Frame", {Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = espPreviewColor, BackgroundTransparency = S.ESPFillTransparency, BorderSizePixel = 0, ZIndex = 0, Parent = boxFrame}); Corner(fillOverlay, 4)
+
+	local nameTag = Create("TextLabel", {Size = UDim2.new(0, 200, 0, 16), Position = UDim2.new(0.5, -100, 0, 8), BackgroundTransparency = 1, Text = Player.DisplayName, TextColor3 = Color3.new(1, 1, 1), Font = Enum.Font.GothamBold, TextSize = 12, TextStrokeTransparency = 0.3, Visible = S.ESPShowName, Parent = previewArea}):SetAttribute("OrigTT", 0)
+
+	local healthTag = Create("TextLabel", {Size = UDim2.new(0, 200, 0, 12), Position = UDim2.new(0.5, -100, 0, 24), BackgroundTransparency = 1, Text = "100 / 100", TextColor3 = Color3.fromRGB(100, 255, 100), Font = Enum.Font.GothamSemibold, TextSize = 10, TextStrokeTransparency = 0.3, Visible = S.ESPShowHealth, Parent = previewArea}):SetAttribute("OrigTT", 0)
+
+	local tracerLine = Create("Frame", {Size = UDim2.new(0, 2, 0, 30), Position = UDim2.new(0.5, -1, 1, -32), BackgroundColor3 = espPreviewColor, BorderSizePixel = 0, Visible = S.ESPTracers, Parent = previewArea})
+	Corner(tracerLine, 1)
+
+	Create("TextLabel", {Size = UDim2.new(0, 80, 0, 12), Position = UDim2.new(0.5, -40, 1, -14), BackgroundTransparency = 1, Text = "42 studs", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 9, Parent = previewArea}):SetAttribute("OrigTT", 0)
+
+	-- Update preview function
+	local function updateESPPreview()
+		local col = TC(S.ESPColor)
+		espStroke.Color = col
+		espStroke.Transparency = S.ESPBoxes and 0 or 0.7
+		fillOverlay.BackgroundColor3 = col
+		fillOverlay.BackgroundTransparency = S.ESPFillTransparency
+		tracerLine.BackgroundColor3 = col
+		tracerLine.Visible = S.ESPTracers
+		nameTag.Visible = S.ESPShowName
+		healthTag.Visible = S.ESPShowHealth
+	end
+
+	-- Rainbow preview animation
+	task.spawn(function()
+		while espPreviewContainer.Parent do
+			if S.ESPRainbow then
+				local col = Color3.fromHSV((tick() % 5) / 5, 1, 1)
+				espStroke.Color = col
+				fillOverlay.BackgroundColor3 = col
+				tracerLine.BackgroundColor3 = col
+			end
+			task.wait(0.05)
+		end
+	end)
+
 	Toggle(p, L("esp"), S.ESP, function(on) S.ESP = on; refreshESP(); if on and S.ESPRainbow then startRainbow() end end, "ESP")
-	Toggle(p, L("esp_names"), S.ESPShowName, function(on) S.ESPShowName = on; refreshESP() end)
-	Toggle(p, L("esp_health"), S.ESPShowHealth, function(on) S.ESPShowHealth = on; refreshESP() end)
+	Toggle(p, L("esp_names"), S.ESPShowName, function(on) S.ESPShowName = on; refreshESP(); updateESPPreview() end)
+	Toggle(p, L("esp_health"), S.ESPShowHealth, function(on) S.ESPShowHealth = on; refreshESP(); updateESPPreview() end)
 	Toggle(p, L("esp_team"), S.ESPTeamCheck, function(on) S.ESPTeamCheck = on; refreshESP() end)
-	Toggle(p, L("esp_boxes"), S.ESPBoxes, function(on) S.ESPBoxes = on; refreshESP() end, "BoxESP")
-	Toggle(p, L("esp_rainbow"), S.ESPRainbow, function(on) S.ESPRainbow = on; if on and S.ESP then startRainbow() else if rainbowConn then rainbowConn:Disconnect(); rainbowConn = nil end end end, "RainbowESP")
+	Toggle(p, L("esp_boxes"), S.ESPBoxes, function(on) S.ESPBoxes = on; refreshESP(); updateESPPreview() end, "BoxESP")
+	Toggle(p, L("esp_tracers"), S.ESPTracers, function(on) S.ESPTracers = on; refreshESP(); updateESPPreview() end, "Tracers")
+	Toggle(p, L("esp_rainbow"), S.ESPRainbow, function(on) S.ESPRainbow = on; if on and S.ESP then startRainbow() else if rainbowConn then rainbowConn:Disconnect(); rainbowConn = nil end end; updateESPPreview() end, "RainbowESP")
 	Slider(p, L("esp_dist"), 100, 5000, S.ESPDistance, function(v) S.ESPDistance = v end)
-	Slider(p, L("esp_fill"), 0, 100, math.floor(S.ESPFillTransparency * 100), function(v) S.ESPFillTransparency = v / 100; refreshESP() end)
-	Button(p, L("esp_preview"), function() ShowESPPreview() end)
+	Slider(p, L("esp_fill"), 0, 100, math.floor(S.ESPFillTransparency * 100), function(v) S.ESPFillTransparency = v / 100; refreshESP(); updateESPPreview() end)
 	
 	-- Chams
 	Toggle(p, L("chams"), S.Chams, function(on) S.Chams = on; RefreshChams() end, "Chams")
@@ -2419,10 +2336,6 @@ do
 
 	-- Camera Section
 	Section(p, L("sect_camera"))
-	Slider(p, L("third_person_dist"), 0, 50, S.ThirdPersonDist or 12, function(v)
-		S.ThirdPersonDist = v
-		pcall(function() Player.CameraMaxZoomDistance = v; Player.CameraMinZoomDistance = 0 end)
-	end)
 	Slider(p, L("fov_changer"), 30, 120, S.FOV or 70, function(v)
 		S.FOV = v
 		pcall(function() workspace.CurrentCamera.FieldOfView = v end)
@@ -2456,7 +2369,7 @@ do
 	
 	-- Custom Skybox
 	Section(p, L("custom_skybox"))
-	local skyboxInput = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); skyboxInput:SetAttribute("OrigBT", 0); Corner(skyboxInput, 10)
+	local skyboxInput = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); skyboxInput:SetAttribute("OrigBT", 0); Corner(skyboxInput, 12)
 	local skyboxBox = Create("TextBox", {Size = UDim2.new(1, -20, 1, 0), Position = UDim2.new(0, 10, 0, 0), BackgroundTransparency = 1, PlaceholderText = "Skybox Asset ID (e.g., rbxassetid://12345)", PlaceholderColor3 = TC(S.Theme.SubText), Text = S.CustomSkybox or "", TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Parent = skyboxInput}); skyboxBox:SetAttribute("OrigTT", 0)
 	
 	Button(p, "Apply Skybox", function()
@@ -2564,9 +2477,9 @@ do
 	InfoCard(p, L("right_click_hint"))
 	Toggle(p, L("show_keybind_panel"), S.ShowKeybindPanel or false, function(on) S.ShowKeybindPanel = on; KBPanel.Visible = on end)
 
-	local tmKeyC = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); tmKeyC:SetAttribute("OrigBT", 0); Corner(tmKeyC, 10)
+	local tmKeyC = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); tmKeyC:SetAttribute("OrigBT", 0); Corner(tmKeyC, 12)
 	Create("TextLabel", {Size = UDim2.new(0.55, -10, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = L("toggle_key"), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = tmKeyC}):SetAttribute("OrigTT", 0)
-	local tmKeyBtn = Create("TextButton", {Size = UDim2.new(0.38, 0, 0, 32), Position = UDim2.new(0.58, 0, 0.5, -16), BackgroundColor3 = TC(S.Theme.CardHover), Text = S.Keybinds.ToggleMenu or "RightControl", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, Parent = tmKeyC}); tmKeyBtn:SetAttribute("OrigTT", 0); Corner(tmKeyBtn, 8)
+	local tmKeyBtn = Create("TextButton", {Size = UDim2.new(0.38, 0, 0, 32), Position = UDim2.new(0.58, 0, 0.5, -16), BackgroundColor3 = TC(S.Theme.CardHover), Text = S.Keybinds.ToggleMenu or "RightControl", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, Parent = tmKeyC}); tmKeyBtn:SetAttribute("OrigTT", 0); Corner(tmKeyBtn, 10)
 	Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.7, Parent = tmKeyBtn})
 	local tmL = false
 	tmKeyBtn.MouseButton1Click:Connect(function()
@@ -2574,7 +2487,6 @@ do
 		local conn; conn = UIS.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.Keyboard then 
 				local keyName = input.KeyCode.Name
-				-- Check for duplicate
 				local existingUser = FindKeybindByKey(keyName)
 				if existingUser and existingUser ~= "ToggleMenu" then
 					Notify(L("hub_name"), string.format(L("keybind_already_used"), keyName, existingUser), 3)
@@ -2590,7 +2502,6 @@ do
 	tmKeyC.MouseEnter:Connect(function() tween(tmKeyC, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.12) end)
 	tmKeyC.MouseLeave:Connect(function() tween(tmKeyC, {BackgroundColor3 = TC(S.Theme.Card)}, 0.12) end)
 
-	-- Clear all keybinds button
 	Button(p, L("clear_all_keybinds"), function()
 		for _, kb in ipairs(KeybindRegistry) do kb.key = "None" end
 		for k, _ in pairs(S.Keybinds) do if k ~= "ToggleMenu" then S.Keybinds[k] = "None" end end
@@ -2600,11 +2511,11 @@ do
 
 	Section(p, L("configs"))
 	
-	-- Configs path info (small label)
-	local pathCard = Create("Frame", {Size = UDim2.new(1, 0, 0, 28), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); pathCard:SetAttribute("OrigBT", 0); Corner(pathCard, 8)
-	Create("TextLabel", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = L("configs_path") .. " " .. ConfigDir .. "/Configs/", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = pathCard}):SetAttribute("OrigTT", 0)
+	-- Configs path info
+	local pathCard = Create("Frame", {Size = UDim2.new(1, 0, 0, 28), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); pathCard:SetAttribute("OrigBT", 0); Corner(pathCard, 10)
+	Create("TextLabel", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = "📁 " .. L("configs_path") .. " " .. ConfigDir .. "/Configs/", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = pathCard}):SetAttribute("OrigTT", 0)
 
-	local cfgIF = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); cfgIF:SetAttribute("OrigBT", 0); Corner(cfgIF, 10)
+	local cfgIF = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); cfgIF:SetAttribute("OrigBT", 0); Corner(cfgIF, 12)
 	local cfgBox = Create("TextBox", {Size = UDim2.new(1, -20, 1, 0), Position = UDim2.new(0, 10, 0, 0), BackgroundTransparency = 1, PlaceholderText = L("config_name"), PlaceholderColor3 = TC(S.Theme.SubText), Text = "", TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Parent = cfgIF}); cfgBox:SetAttribute("OrigTT", 0)
 	local configDD = Dropdown(p, L("select_config"), GetConfigs(), function(val) cfgBox.Text = val end)
 	Button(p, L("save_config"), function() local n = cfgBox.Text; if n == "" then n = "default" end; SaveConfig(n); configDD.Refresh(GetConfigs()); Notify(L("hub_name"), "'" .. n .. "' " .. L("saved"), 3) end)
@@ -2613,7 +2524,6 @@ do
 		task.defer(function()
 			local m = {Fly=S.Fly, SpeedOverride=S.Speed, JumpOverride=S.JumpBoost, InfJump=S.InfJump, Noclip=S.Noclip, ESP=S.ESP, Fullbright=S.Fullbright, NoFog=S.NoFog, AntiLag=S.AntiLag, ClickTP=S.ClickTP, AntiAFK=S.AntiAFK, Ragdoll=S.Ragdoll, FPSCounter=S.FPSCounter, Coordinates=S.Coordinates, Crosshair=S.Crosshair, Chams=S.Chams, OrbitPlayer=S.OrbitPlayer}
 			for rn, val in pairs(m) do if ToggleRefs[rn] and val ~= nil then ToggleRefs[rn].Set(val) end end; UpdateKeybindPanel()
-			-- Update screen info
 			FPSFrame.Visible = S.FPSCounter
 			CoordsFrame.Visible = S.Coordinates
 			UpdateCrosshair()
@@ -2623,24 +2533,6 @@ do
 	Button(p, L("autoload_set"), function() local n = cfgBox.Text; if n == "" then n = "default" end; SetAutoLoad(n); Notify(L("hub_name"), "Auto-load -> '" .. n .. "'", 3) end)
 	Button(p, L("delete_config"), function() local n = cfgBox.Text; if n == "" then return end; DeleteConfig(n); cfgBox.Text = ""; configDD.Refresh(GetConfigs()); Notify(L("hub_name"), "'" .. n .. "' " .. L("deleted"), 3) end, true)
 	Button(p, L("refresh_configs"), function() configDD.Refresh(GetConfigs()) end)
-
-	-- ═══ DISCORD RICH PRESENCE ═══
-	Section(p, L("discord_rpc"))
-	
-	-- Application ID input directly in settings
-	local appIdFrame = Create("Frame", {Size = UDim2.new(1, 0, 0, 50), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); appIdFrame:SetAttribute("OrigBT", 0); Corner(appIdFrame, 10)
-	Create("TextLabel", {Size = UDim2.new(1, -10, 0, 18), Position = UDim2.new(0, 12, 0, 4), BackgroundTransparency = 1, Text = L("discord_rpc_app_id"), TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = appIdFrame}):SetAttribute("OrigTT", 0)
-	local appIdBox = Create("TextBox", {Size = UDim2.new(1, -20, 0, 24), Position = UDim2.new(0, 10, 0, 22), BackgroundColor3 = TC(S.Theme.CardHover), Text = DiscordRPCSettings.ApplicationId or "", TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 12, BorderSizePixel = 0, ClearTextOnFocus = false, TextXAlignment = Enum.TextXAlignment.Left, Parent = appIdFrame}); Corner(appIdBox, 6)
-	appIdBox.FocusLost:Connect(function() DiscordRPCSettings.ApplicationId = appIdBox.Text end)
-	
-	Button(p, L("discord_rpc") .. " Settings", function() ShowDiscordRPCWindow() end)
-
-	-- ═══ UI SCALE ═══
-	Section(p, L("ui_scale"))
-	Slider(p, L("ui_scale"), 50, 150, math.floor((S.UIScale or 1) * 100), function(v)
-		S.UIScale = v / 100
-		UIScaleObj.Scale = S.UIScale
-	end)
 
 	-- ═══ EXPERIMENTAL ═══
 	Section(p, L("experimental"))
@@ -2655,14 +2547,85 @@ do
 		end
 	end, "BlurBackground")
 
+	-- Resize hint
+	Section(p, "UI")
+	InfoCard(p, "↘ " .. L("resize_hint"))
+
+	Section(p, L("server"))
+	Button(p, L("server_hop"), function() pcall(function() local d = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100")); for _, sv in pairs(d.data) do if sv.id ~= game.JobId and sv.playing < sv.maxPlayers then TeleportService:TeleportToPlaceInstance(game.PlaceId, sv.id, Player); break end end end) end)
+	Button(p, L("rejoin"), function() TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Player) end)
+
+	Section(p, L("info"))
+	pcall(function() InfoCard(p, "🎮 Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name, true) end)
+	InfoCard(p, "📍 PlaceId: " .. game.PlaceId, true)
+	InfoCard(p, "🔗 JobId: " .. game.JobId, true)
+	InfoCard(p, "👥 Players: " .. #Players:GetPlayers() .. "/" .. Players.MaxPlayers, true)
+
+	Section(p, L("sect_danger"))
+	Button(p, L("reload_menu"), function()
+		Notify(L("hub_name"), L("reloading"), 2)
+		SaveConfig("_reload_temp")
+		
+		local rURL = _G.NesficateHubSource
+		local sURL = nil
+		pcall(function() 
+			if isfile(ConfigDir.."/reload_source.txt") then 
+				sURL = readfile(ConfigDir.."/reload_source.txt")
+				if sURL == "" then sURL = nil end
+			end 
+		end)
+		
+		task.wait(0.3)
+		pcall(function() Gui:Destroy() end)
+		pcall(function() KBPanelGui:Destroy() end)
+		pcall(function() ScreenInfoGui:Destroy() end)
+		pcall(function() CrosshairGui:Destroy() end)
+		pcall(function() NotificationGui:Destroy() end)
+		
+		task.wait(0.3)
+		local ok = false
+		
+		if not ok and rURL and rURL ~= "" then 
+			ok = pcall(function() 
+				loadstring(game:HttpGet(rURL))() 
+			end) 
+		end
+		
+		if not ok and sURL then 
+			ok = pcall(function() 
+				loadstring(game:HttpGet(sURL))() 
+			end) 
+		end
+		
+		if not ok then 
+			pcall(function() 
+				if isfile(ConfigDir.."/script.lua") then 
+					ok = pcall(function() 
+						loadstring(readfile(ConfigDir.."/script.lua"))() 
+					end) 
+				end 
+			end) 
+		end
+		
+		if not ok then 
+			Notify("Neo's Hub", L("reload_fail"), 8) 
+		end
+	end)
+	Button(p, L("panic"), function() PanicUnload() end, true)
+end
+
+-- ═══ PAGE: THEMES (NEW TAB) ═══
+do
+	local p = tabPages["tab_themes"]
+
 	-- ═══ CUSTOM THEMES ═══
 	Section(p, L("custom_themes"))
 	
 	-- Themes path info
-	local themePathCard = Create("Frame", {Size = UDim2.new(1, 0, 0, 28), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); themePathCard:SetAttribute("OrigBT", 0); Corner(themePathCard, 8)
-	Create("TextLabel", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = "Themes path: " .. ConfigDir .. "/Themes/", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = themePathCard}):SetAttribute("OrigTT", 0)
+	local themePathCard = Create("Frame", {Size = UDim2.new(1, 0, 0, 28), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); themePathCard:SetAttribute("OrigBT", 0); Corner(themePathCard, 10)
+	Create("TextLabel", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = "📁 Themes path: " .. ConfigDir .. "/Themes/", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = themePathCard}):SetAttribute("OrigTT", 0)
 	
-	local themeIF = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); themeIF:SetAttribute("OrigBT", 0); Corner(themeIF, 10)
+	local themeIF = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); themeIF:SetAttribute("OrigBT", 0); Corner(themeIF, 12)
 	local themeBox = Create("TextBox", {Size = UDim2.new(1, -20, 1, 0), Position = UDim2.new(0, 10, 0, 0), BackgroundTransparency = 1, PlaceholderText = L("theme_name"), PlaceholderColor3 = TC(S.Theme.SubText), Text = "", TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Parent = themeIF}); themeBox:SetAttribute("OrigTT", 0)
 	
 	local themeDD = Dropdown(p, L("select_theme"), GetThemes(), function(val) themeBox.Text = val end)
@@ -2709,7 +2672,6 @@ do
 		S.Theme.Accent = c; S.Theme.ToggleOn = c
 		for _, obj in pairs(Main:GetChildren()) do if obj:IsA("UIStroke") then obj.Color = TC(c) end end
 		UpdateKeybindPanel()
-		-- Update screen info strokes
 		pcall(function()
 			FPSFrame:FindFirstChildOfClass("UIStroke").Color = TC(c)
 			CoordsFrame:FindFirstChildOfClass("UIStroke").Color = TC(c)
@@ -2724,22 +2686,22 @@ do
 
 	Section(p, L("theme_presets"))
 	local themes = {
-		{"Default Purple", {111, 90, 255}, {16, 16, 22}, {12, 12, 17}}, 
-		{"Ocean Blue", {50, 150, 255}, {12, 18, 28}, {8, 14, 22}}, 
-		{"Crimson Red", {220, 50, 50}, {24, 14, 14}, {18, 10, 10}}, 
-		{"Emerald Green", {50, 205, 100}, {12, 22, 16}, {8, 18, 12}}, 
-		{"Golden Sun", {255, 190, 50}, {24, 22, 12}, {18, 16, 8}}, 
-		{"Pink Neon", {255, 80, 180}, {24, 14, 22}, {18, 10, 18}}, 
-		{"Arctic", {180, 200, 255}, {20, 22, 28}, {16, 18, 24}}, 
-		{"Midnight", {100, 100, 180}, {8, 8, 14}, {4, 4, 10}}, 
-		{"Sunset", {255, 120, 50}, {24, 16, 10}, {18, 12, 6}}, 
-		{"Cyan Diamond", {0, 220, 220}, {10, 22, 24}, {6, 18, 20}}
+		{"💜 Default Purple", {111, 90, 255}, {16, 16, 22}, {12, 12, 17}}, 
+		{"🌊 Ocean Blue", {50, 150, 255}, {12, 18, 28}, {8, 14, 22}}, 
+		{"❤️ Crimson Red", {220, 50, 50}, {24, 14, 14}, {18, 10, 10}}, 
+		{"💚 Emerald Green", {50, 205, 100}, {12, 22, 16}, {8, 18, 12}}, 
+		{"🌟 Golden Sun", {255, 190, 50}, {24, 22, 12}, {18, 16, 8}}, 
+		{"💗 Pink Neon", {255, 80, 180}, {24, 14, 22}, {18, 10, 18}}, 
+		{"❄️ Arctic", {180, 200, 255}, {20, 22, 28}, {16, 18, 24}}, 
+		{"🌙 Midnight", {100, 100, 180}, {8, 8, 14}, {4, 4, 10}}, 
+		{"🌅 Sunset", {255, 120, 50}, {24, 16, 10}, {18, 12, 6}}, 
+		{"💎 Cyan Diamond", {0, 220, 220}, {10, 22, 24}, {6, 18, 20}}
 	}
 	for _, td in ipairs(themes) do
 		local name, accent, bg, sb = td[1], td[2], td[3], td[4]
-		local tbtn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 40), BackgroundColor3 = TC(S.Theme.Card), Text = "", BorderSizePixel = 0, Parent = p}); tbtn:SetAttribute("OrigBT", 0); Corner(tbtn, 10)
-		local cprev = Create("Frame", {Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(0, 12, 0.5, -11), BackgroundColor3 = TC(accent), BorderSizePixel = 0, Parent = tbtn}); cprev:SetAttribute("OrigBT", 0); Corner(cprev, 11); Create("UIStroke", {Color = Color3.new(1, 1, 1), Thickness = 1, Transparency = 0.7, Parent = cprev})
-		Create("TextLabel", {Size = UDim2.new(1, -50, 1, 0), Position = UDim2.new(0, 44, 0, 0), BackgroundTransparency = 1, Text = name, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = tbtn}):SetAttribute("OrigTT", 0)
+		local tbtn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 44), BackgroundColor3 = TC(S.Theme.Card), Text = "", BorderSizePixel = 0, Parent = p}); tbtn:SetAttribute("OrigBT", 0); Corner(tbtn, 12)
+		local cprev = Create("Frame", {Size = UDim2.new(0, 28, 0, 28), Position = UDim2.new(0, 12, 0.5, -14), BackgroundColor3 = TC(accent), BorderSizePixel = 0, Parent = tbtn}); cprev:SetAttribute("OrigBT", 0); Corner(cprev, 14); Create("UIStroke", {Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.5, Parent = cprev})
+		Create("TextLabel", {Size = UDim2.new(1, -56, 1, 0), Position = UDim2.new(0, 50, 0, 0), BackgroundTransparency = 1, Text = name, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = tbtn}):SetAttribute("OrigTT", 0)
 		tbtn.MouseEnter:Connect(function() tween(tbtn, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.12) end)
 		tbtn.MouseLeave:Connect(function() tween(tbtn, {BackgroundColor3 = TC(S.Theme.Card)}, 0.12) end)
 		tbtn.MouseButton1Click:Connect(function()
@@ -2755,6 +2717,7 @@ do
 				FPSFrame:FindFirstChildOfClass("UIStroke").Color = TC(accent)
 				CoordsFrame:FindFirstChildOfClass("UIStroke").Color = TC(accent)
 			end)
+			Notify(L("hub_name"), "Theme applied: " .. name, 2)
 		end)
 	end
 
@@ -2762,31 +2725,6 @@ do
 	local pOpts = {L("particles_none"), L("particles_snow"), L("particles_stars"), L("particles_hearts"), L("particles_bubbles"), L("particles_rain")}
 	local pMap = {[L("particles_none")] = "None", [L("particles_snow")] = "Snow", [L("particles_stars")] = "Stars", [L("particles_hearts")] = "Hearts", [L("particles_bubbles")] = "Bubbles", [L("particles_rain")] = "Rain"}
 	Dropdown(p, L("particles"), pOpts, function(val) local style = pMap[val] or "None"; S.ParticleStyle = style; SpawnParticles(style) end)
-
-	Section(p, L("server"))
-	Button(p, L("server_hop"), function() pcall(function() local d = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100")); for _, sv in pairs(d.data) do if sv.id ~= game.JobId and sv.playing < sv.maxPlayers then TeleportService:TeleportToPlaceInstance(game.PlaceId, sv.id, Player); break end end end) end)
-	Button(p, L("rejoin"), function() TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Player) end)
-
-	Section(p, L("info"))
-	pcall(function() InfoCard(p, "Game: " .. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name, true) end)
-	InfoCard(p, "PlaceId: " .. game.PlaceId, true)
-	InfoCard(p, "JobId: " .. game.JobId, true)
-	InfoCard(p, "Players: " .. #Players:GetPlayers() .. "/" .. Players.MaxPlayers, true)
-
-	Section(p, L("sect_danger"))
-	Button(p, L("reload_menu"), function()
-		Notify(L("hub_name"), L("reloading"), 2); SaveConfig("_reload_temp")
-		local rURL = _G.NesficateHubSource; local rCode = _G.NesficateHubScript; local sURL = nil
-		pcall(function() if isfile(ConfigDir.."/reload_source.txt") then sURL = readfile(ConfigDir.."/reload_source.txt"); if sURL == "" then sURL = nil end end end)
-		task.wait(0.3); pcall(function() Gui:Destroy() end); pcall(function() KBPanelGui:Destroy() end); pcall(function() ScreenInfoGui:Destroy() end); pcall(function() CrosshairGui:Destroy() end); pcall(function() NotificationGui:Destroy() end); task.wait(0.3)
-		local ok = false
-		if not ok and rURL and rURL ~= "" then ok = pcall(function() loadstring(game:HttpGet(rURL))() end) end
-		if not ok and sURL then ok = pcall(function() loadstring(game:HttpGet(sURL))() end) end
-		if not ok and rCode and rCode ~= "" then ok = pcall(function() loadstring(rCode)() end) end
-		if not ok then pcall(function() if isfile(ConfigDir.."/script.lua") then ok = pcall(function() loadstring(readfile(ConfigDir.."/script.lua"))() end) end end) end
-		if not ok then Notify("Neo's Hub", L("reload_fail"), 8) end
-	end)
-	Button(p, L("panic"), function() PanicUnload() end, true)
 end
 
 -- ═══ PAGE: CREDITS ═══
@@ -2794,19 +2732,19 @@ do
 	local p = tabPages["tab_credits"]
 	local banner = Create("Frame", {Size = UDim2.new(1, 0, 0, 110), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); banner:SetAttribute("OrigBT", 0); Corner(banner, 14)
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, TC(S.Theme.Accent)), ColorSequenceKeypoint.new(0.6, Color3.fromRGB(30, 25, 50)), ColorSequenceKeypoint.new(1, TC(S.Theme.Card))}), Rotation = 25, Parent = banner})
-	Create("TextLabel", {Size = UDim2.new(1, 0, 0, 40), Position = UDim2.new(0, 0, 0, 15), BackgroundTransparency = 1, Text = "Neo's Hub", TextColor3 = Color3.new(1, 1, 1), Font = Enum.Font.GothamBlack, TextSize = 32, Parent = banner}):SetAttribute("OrigTT", 0)
+	Create("TextLabel", {Size = UDim2.new(1, 0, 0, 40), Position = UDim2.new(0, 0, 0, 15), BackgroundTransparency = 1, Text = "✨ Neo's Hub ✨", TextColor3 = Color3.new(1, 1, 1), Font = Enum.Font.GothamBlack, TextSize = 32, Parent = banner}):SetAttribute("OrigTT", 0)
 	Create("TextLabel", {Size = UDim2.new(1, 0, 0, 20), Position = UDim2.new(0, 0, 0, 55), BackgroundTransparency = 1, Text = L("version"), TextColor3 = Color3.fromRGB(200, 200, 220), Font = Enum.Font.GothamBold, TextSize = 15, Parent = banner}):SetAttribute("OrigTT", 0)
 	Create("TextLabel", {Size = UDim2.new(1, 0, 0, 16), Position = UDim2.new(0, 0, 0, 80), BackgroundTransparency = 1, Text = L("made_with"), TextColor3 = Color3.fromRGB(160, 160, 180), Font = Enum.Font.GothamSemibold, TextSize = 12, Parent = banner}):SetAttribute("OrigTT", 0)
 
 	Section(p, L("developer"))
 	local links = {
-		{"Discord", "mrneoner", nil},
-		{"Telegram", "wantpepa", "https://t.me/wantpepa"},
-		{"GitHub", "mrneoner1337", "https://github.com/mrneoner1337"},
-		{"Roblox", "LegoSurgeon", "https://www.roblox.com/users/profile"},
+		{"💬 Discord", "mrneoner", nil},
+		{"📱 Telegram", "@wantpepa", "https://t.me/wantpepa"},
+		{"🐙 GitHub", "mrneoner1337", "https://github.com/mrneoner1337"},
+		{"🎮 Roblox", "LegoSurgeon", "https://www.roblox.com/users/LegoSurgeon/profile"},
 	}
 	for _, s2 in ipairs(links) do
-		local card = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); card:SetAttribute("OrigBT", 0); Corner(card, 10)
+		local card = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); card:SetAttribute("OrigBT", 0); Corner(card, 12)
 		Create("TextLabel", {Size = UDim2.new(0.4, 0, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = s2[1], TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = card}):SetAttribute("OrigTT", 0)
 		local valLbl = Create("TextLabel", {Size = UDim2.new(0.55, -16, 1, 0), Position = UDim2.new(0.45, 0, 0, 0), BackgroundTransparency = 1, Text = s2[2], TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 15, TextXAlignment = Enum.TextXAlignment.Right, Parent = card}); valLbl:SetAttribute("OrigTT", 0)
 		local clickBtn = Create("TextButton", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", Parent = card})
@@ -2820,19 +2758,70 @@ do
 
 	Section(p, L("changelog"))
 	local changelogItems = {
-		"v3.0 — Theme editor, ragdoll, anti lag, custom toast, color picker",
-		"v3.0 — FPS counter, coordinates, crosshair, chams, orbit player",
-		"v3.0 — FOV changer, third person, day/night cycle, skybox",
-		"v3.0 — Custom themes save/load, blur background (experimental)",
-		"v2.5 — Loading screen, animations, i18n, keybind panel",
-		"v2.0 — Full rewrite, tab system, themes, configs",
-		"v1.5 — ESP + Stun + external scripts",
-		"v1.0 — Initial release"
+		{"v3.0", "🚀 Major Update", {
+			"Complete UI redesign with modern aesthetics",
+			"Custom theme save/load system",
+			"Full multi-language support (EN/RU/JP/ES)",
+			"Draggable FPS counter & coordinates display",
+			"Customizable crosshair system",
+			"Chams (Surface GUI highlighting)",
+			"Orbit player feature",
+			"FOV changer & day/night cycle control",
+			"Custom skybox support",
+			"Beautiful rounded notifications",
+			"Advanced color picker with RGB/HEX/presets",
+			"Improved keybind system with duplicate detection",
+			"Corner drag to resize window",
+			"Inline ESP preview in menu",
+			"Experimental blur background option",
+			"Separated Themes tab",
+		}},
+		{"v2.5", "✨ Polish Update", {
+			"Animated loading screen",
+			"Keybind panel with live status",
+			"10 theme presets",
+			"Performance optimizations",
+		}},
+		{"v2.0", "🔄 Complete Rewrite", {
+			"Full codebase rewrite",
+			"Tab-based navigation",
+			"Config save/load system",
+			"Theme system foundation",
+		}},
+		{"v1.5", "📦 Feature Expansion", {
+			"ESP system added",
+			"Stun feature",
+			"External script integration",
+			"Basic keybinds",
+		}},
+		{"v1.0", "🎉 Initial Release", {
+			"Basic movement features",
+			"Simple visual options",
+			"Core functionality",
+		}},
 	}
-	for _, ch in ipairs(changelogItems) do InfoCard(p, ch) end
+	
+	for _, ver in ipairs(changelogItems) do
+		local verFrame = Create("Frame", {Size = UDim2.new(1, 0, 0, 0), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.Y, Parent = p}); verFrame:SetAttribute("OrigBT", 0); Corner(verFrame, 12)
+		
+		local header = Create("Frame", {Size = UDim2.new(1, 0, 0, 36), BackgroundTransparency = 1, Parent = verFrame})
+		Create("TextLabel", {Size = UDim2.new(0, 60, 1, 0), Position = UDim2.new(0, 12, 0, 0), BackgroundTransparency = 1, Text = ver[1], TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBlack, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Left, Parent = header}):SetAttribute("OrigTT", 0)
+		Create("TextLabel", {Size = UDim2.new(1, -80, 1, 0), Position = UDim2.new(0, 72, 0, 0), BackgroundTransparency = 1, Text = ver[2], TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = header}):SetAttribute("OrigTT", 0)
+		
+		local contentFrame = Create("Frame", {Size = UDim2.new(1, -24, 0, 0), Position = UDim2.new(0, 12, 0, 36), BackgroundTransparency = 1, AutomaticSize = Enum.AutomaticSize.Y, Parent = verFrame})
+		Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2), Parent = contentFrame})
+		
+		for _, item in ipairs(ver[3]) do
+			Create("TextLabel", {Size = UDim2.new(1, 0, 0, 18), BackgroundTransparency = 1, Text = "• " .. item, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y, Parent = contentFrame}):SetAttribute("OrigTT", 0)
+		end
+		
+		-- Add bottom padding
+		Create("Frame", {Size = UDim2.new(1, 0, 0, 10), BackgroundTransparency = 1, Parent = contentFrame})
+	end
 	
 	Section(p, L("disclaimer"))
-	InfoCard(p, L("disc_text1")); InfoCard(p, L("disc_text2"))
+	InfoCard(p, "⚠️ " .. L("disc_text1"))
+	InfoCard(p, "📚 " .. L("disc_text2"))
 end
 
 -- ═══ APPLY AUTOLOAD ═══
@@ -2862,7 +2851,7 @@ UIS.InputBegan:Connect(function(input, gpe)
 			if minimized then
 				tween(Main, {Size = minSize}, 0.4, Enum.EasingStyle.Back)
 			else
-				tween(Main, {Size = fullSize}, 0.4, Enum.EasingStyle.Back)
+				tween(Main, {Size = UDim2.new(0, currentWidth, 0, currentHeight)}, 0.4, Enum.EasingStyle.Back)
 			end
 		else
 			tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
@@ -2873,11 +2862,10 @@ UIS.InputBegan:Connect(function(input, gpe)
 	for _, kb in ipairs(KeybindRegistry) do if kb.key and kb.key ~= "None" and keyName == kb.key then pcall(kb.callback); return end end
 end)
 
--- Apply FOV and Third Person on load
+-- Apply FOV on load
 task.defer(function()
 	pcall(function()
 		workspace.CurrentCamera.FieldOfView = S.FOV or 70
-		Player.CameraMaxZoomDistance = S.ThirdPersonDist or 12
 	end)
 end)
 
