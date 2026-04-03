@@ -6,7 +6,7 @@ Discord: mrneoner | Telegram: wantpepa
 GitHub: mrneoner1337 | Roblox: LegoSurgeon
 ══════════════════════════════════════════════════════════════════
 ]]--
-
+_G.NesficateHubSource = "https://raw.githubusercontent.com/mrneoner1337/Neo-Hub-Loader/main/neoloader.lua"
 -- ═══ SERVICES ═══
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
