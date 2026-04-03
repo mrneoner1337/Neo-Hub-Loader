@@ -86,7 +86,7 @@ local Langs = {
 		esp_tracers = "Tracers",
 		esp_rainbow = "Rainbow ESP",
 		esp_boxes = "Box ESP",
-		esp_preview = "ESP Preview",
+		esp_preview = "ESP Preview - Rewriting",
 		fullbright = "Fullbright",
 		no_fog = "No Fog",
 		anti_lag = "Anti Lag",
@@ -221,6 +221,15 @@ local Langs = {
 		theme_name = "Theme name...",
 		select_theme = "Select Theme",
 		resize_hint = "Drag corner to resize",
+		fps_unlocker = "FPS Unlocker",
+		max_zoom = "Max Camera Zoom",
+		sect_fling = "Fling & Spin",
+		fling = "Fling",
+		fling_power = "Fling Power",
+		walk_fling = "Walk Fling",
+		fly_fling = "Fly Fling",
+		spin = "Spin",
+		spin_speed = "Spin Speed",
 	},
 	RU = {
 		hub_name = "Neo's Hub",
@@ -254,7 +263,7 @@ local Langs = {
 		esp_tracers = "Трейсеры",
 		esp_rainbow = "Радужный ESP",
 		esp_boxes = "Коробочный ESP",
-		esp_preview = "Предпросмотр ESP",
+		esp_preview = "Предпросмотр ESP - Реворк",
 		fullbright = "Полная яркость",
 		no_fog = "Без тумана",
 		anti_lag = "Анти-Лаг",
@@ -389,6 +398,15 @@ local Langs = {
 		theme_name = "Имя темы...",
 		select_theme = "Выбрать тему",
 		resize_hint = "Тяните за угол для изменения размера",
+		fps_unlocker = "Разблокировка FPS",
+		max_zoom = "Макс. зум камеры",
+		sect_fling = "Fling & Spin",
+		fling = "Fling",
+		fling_power = "Сила Fling",
+		walk_fling = "Walk Fling",
+		fly_fling = "Fly Fling",
+		spin = "Spin",
+		spin_speed = "Скорость Spin",
 	},
 	JP = {
 		hub_name = "Neo's Hub",
@@ -422,7 +440,7 @@ local Langs = {
 		esp_tracers = "トレーサー",
 		esp_rainbow = "レインボーESP",
 		esp_boxes = "ボックスESP",
-		esp_preview = "ESPプレビュー",
+		esp_preview = "ESPプレビュー - 手直し",
 		fullbright = "フルブライト",
 		no_fog = "霧なし",
 		anti_lag = "アンチラグ",
@@ -557,6 +575,15 @@ local Langs = {
 		theme_name = "テーマ名...",
 		select_theme = "テーマ選択",
 		resize_hint = "角をドラッグしてリサイズ",
+		fps_unlocker = "FPSアンロッカー",
+		max_zoom = "最大カメラズーム",
+		sect_fling = "Fling & Spin",
+		fling = "Fling",
+		fling_power = "Fling力",
+		walk_fling = "Walk Fling",
+		fly_fling = "Fly Fling",
+		spin = "Spin",
+		spin_speed = "Spin速度",
 	},
 	ES = {
 		hub_name = "Neo's Hub",
@@ -590,7 +617,7 @@ local Langs = {
 		esp_tracers = "Trazadores",
 		esp_rainbow = "ESP Arcoíris",
 		esp_boxes = "ESP Cajas",
-		esp_preview = "Vista previa ESP",
+		esp_preview = "Vista previa ESP - Rehacer",
 		fullbright = "Brillo completo",
 		no_fog = "Sin niebla",
 		anti_lag = "Anti Lag",
@@ -725,6 +752,15 @@ local Langs = {
 		theme_name = "Nombre del tema...",
 		select_theme = "Seleccionar tema",
 		resize_hint = "Arrastre la esquina para redimensionar",
+		fps_unlocker = "Desbloqueo de FPS",
+		max_zoom = "Zoom máximo de cámara",
+		sect_fling = "Fling & Spin",
+		fling = "Fling",
+		fling_power = "Poder de Fling",
+		walk_fling = "Walk Fling",
+		fly_fling = "Fly Fling",
+		spin = "Spin",
+		spin_speed = "Velocidad de Spin",
 	},
 }
 
@@ -765,11 +801,19 @@ local S = {
 	FOV = 70,
 	DayNightTime = 14,
 	CustomSkybox = "",
+	MaxZoom = 128,
 	-- Orbit
 	OrbitPlayer = false,
 	OrbitSpeed = 1,
 	OrbitDistance = 15,
 	OrbitTarget = "",
+	-- Fling & Spin
+	Fling = false,
+	FlingPower = 500,
+	WalkFling = false,
+	FlyFling = false,
+	Spin = false,
+	SpinSpeed = 20,
 	Theme = {
 		Accent = {111, 90, 255},
 		Bg = {16, 16, 22},
@@ -945,9 +989,11 @@ local function PanicUnload()
 		S.Fullbright = false; S.NoFog = false; S.ClickTP = false
 		S.AntiLag = false; S.Ragdoll = false; S.OrbitPlayer = false
 		S.Chams = false; S.Crosshair = false; S.FPSCounter = false; S.Coordinates = false
+		S.Fling = false; S.WalkFling = false; S.FlyFling = false; S.Spin = false
 		local root = getRoot()
 		pcall(function() root:FindFirstChild("NHFly"):Destroy() end)
 		pcall(function() root:FindFirstChild("NHGyro"):Destroy() end)
+		pcall(function() root:FindFirstChild("NHSpin"):Destroy() end)
 		getHum().WalkSpeed = 16; getHum().JumpPower = 50
 		Lighting.Brightness = 1; Lighting.GlobalShadows = true
 		Lighting.Ambient = Color3.fromRGB(127, 127, 127)
@@ -1002,7 +1048,6 @@ local function Notify(title, text, duration)
 	})
 	Corner(notif, 16)
 	
-	-- Gradient overlay for beauty
 	local gradient = Create("UIGradient", {
 		Color = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
@@ -1016,11 +1061,9 @@ local function Notify(title, text, duration)
 		Parent = notif
 	})
 	
-	-- Stroke
 	local stroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Transparency = 0.3, Parent = notif})
 	Corner(notif, 16)
 	
-	-- Inner container
 	local inner = Create("Frame", {
 		Size = UDim2.new(1, -16, 1, -16),
 		Position = UDim2.new(0, 8, 0, 8),
@@ -1028,7 +1071,6 @@ local function Notify(title, text, duration)
 		Parent = notif
 	})
 	
-	-- Accent circle
 	local accentCircle = Create("Frame", {
 		Size = UDim2.new(0, 44, 0, 44),
 		Position = UDim2.new(0, 0, 0, 8),
@@ -1039,7 +1081,6 @@ local function Notify(title, text, duration)
 	})
 	Corner(accentCircle, 22)
 	
-	-- Icon
 	local icon = Create("TextLabel", {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
@@ -1050,7 +1091,6 @@ local function Notify(title, text, duration)
 		Parent = accentCircle
 	})
 	
-	-- Title
 	local titleLbl = Create("TextLabel", {
 		Size = UDim2.new(1, -60, 0, 22),
 		Position = UDim2.new(0, 54, 0, 6),
@@ -1064,7 +1104,6 @@ local function Notify(title, text, duration)
 		Parent = inner
 	})
 	
-	-- Text
 	local textLbl = Create("TextLabel", {
 		Size = UDim2.new(1, -60, 0, 36),
 		Position = UDim2.new(0, 54, 0, 28),
@@ -1079,7 +1118,6 @@ local function Notify(title, text, duration)
 		Parent = inner
 	})
 	
-	-- Progress bar background
 	local progressBg = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 4),
 		Position = UDim2.new(0, 0, 1, -12),
@@ -1089,7 +1127,6 @@ local function Notify(title, text, duration)
 	})
 	Corner(progressBg, 2)
 	
-	-- Progress bar fill
 	local progressFill = Create("Frame", {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundColor3 = TC(S.Theme.Accent),
@@ -1098,7 +1135,6 @@ local function Notify(title, text, duration)
 	})
 	Corner(progressFill, 2)
 	
-	-- Glow effect
 	local glow = Create("ImageLabel", {
 		Size = UDim2.new(1, 40, 1, 40),
 		Position = UDim2.new(0, -20, 0, -20),
@@ -1111,13 +1147,9 @@ local function Notify(title, text, duration)
 		Parent = notif
 	})
 	
-	-- Animate in
 	tween(notif, {Size = UDim2.new(1, 0, 0, 90)}, 0.4, Enum.EasingStyle.Back)
-	
-	-- Progress animation
 	tween(progressFill, {Size = UDim2.new(0, 0, 1, 0)}, duration or 4, Enum.EasingStyle.Linear)
 	
-	-- Pulse accent circle
 	task.spawn(function()
 		while notif.Parent do
 			tween(accentCircle, {BackgroundTransparency = 0.3}, 0.5)
@@ -1127,7 +1159,6 @@ local function Notify(title, text, duration)
 		end
 	end)
 	
-	-- Animate out
 	task.delay(duration or 4, function()
 		tween(stroke, {Transparency = 1}, 0.3)
 		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In)
@@ -1182,6 +1213,7 @@ local function HideBlur()
 end
 
 CreateBlur()
+
 -- ═══════════════════════════════════════════
 -- LOADING SCREEN
 -- ═══════════════════════════════════════════
@@ -1255,7 +1287,6 @@ task.spawn(function()
 end)
 
 task.wait(4.5)
-
 -- ═══════════════════════════════════════════
 -- MAIN GUI
 -- ═══════════════════════════════════════════
@@ -1292,28 +1323,35 @@ Corner(MinBarExpand, 8)
 
 local minimized = false
 
--- ═══ RESIZE HANDLE (Corner drag to resize) ═══
-local ResizeHandle = Create("TextButton", {
-	Size = UDim2.new(0, 20, 0, 20),
-	Position = UDim2.new(1, -20, 1, -20),
-	BackgroundColor3 = TC(S.Theme.Accent),
-	BackgroundTransparency = 0.5,
-	Text = "",
-	BorderSizePixel = 0,
+-- ═══ RESIZE HANDLE (Improved corner design) ═══
+local ResizeHandle = Create("Frame", {
+	Size = UDim2.new(0, 18, 0, 18),
+	Position = UDim2.new(1, -22, 1, -22),
+	BackgroundTransparency = 1,
 	ZIndex = 50,
 	Parent = Main
 })
-Corner(ResizeHandle, 6)
 
--- Resize icon (diagonal lines)
-local resizeIcon = Create("TextLabel", {
+-- Create diagonal lines for resize indicator
+for i = 1, 3 do
+	local line = Create("Frame", {
+		Size = UDim2.new(0, 2, 0, 6 + (i-1)*4),
+		Position = UDim2.new(0, 4 + (i-1)*5, 1, -8 - (i-1)*4),
+		Rotation = 45,
+		BackgroundColor3 = TC(S.Theme.Accent),
+		BackgroundTransparency = 0.3,
+		BorderSizePixel = 0,
+		ZIndex = 51,
+		Parent = ResizeHandle
+	})
+	Corner(line, 1)
+end
+
+local resizeBtn = Create("TextButton", {
 	Size = UDim2.new(1, 0, 1, 0),
 	BackgroundTransparency = 1,
-	Text = "⤡",
-	TextColor3 = Color3.new(1, 1, 1),
-	Font = Enum.Font.GothamBold,
-	TextSize = 12,
-	ZIndex = 51,
+	Text = "",
+	ZIndex = 52,
 	Parent = ResizeHandle
 })
 
@@ -1321,19 +1359,27 @@ local resizeIcon = Create("TextLabel", {
 local isResizing = false
 local resizeStartPos, resizeStartSize
 
-ResizeHandle.InputBegan:Connect(function(input)
+resizeBtn.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		isResizing = true
 		resizeStartPos = input.Position
 		resizeStartSize = Main.Size
-		tween(ResizeHandle, {BackgroundTransparency = 0.2}, 0.1)
+		for _, line in pairs(ResizeHandle:GetChildren()) do
+			if line:IsA("Frame") then
+				tween(line, {BackgroundTransparency = 0}, 0.1)
+			end
+		end
 	end
 end)
 
 UIS.InputEnded:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		isResizing = false
-		tween(ResizeHandle, {BackgroundTransparency = 0.5}, 0.1)
+		for _, line in pairs(ResizeHandle:GetChildren()) do
+			if line:IsA("Frame") then
+				tween(line, {BackgroundTransparency = 0.3}, 0.1)
+			end
+		end
 	end
 end)
 
@@ -1347,12 +1393,20 @@ UIS.InputChanged:Connect(function(input)
 	end
 end)
 
-ResizeHandle.MouseEnter:Connect(function()
-	tween(ResizeHandle, {BackgroundTransparency = 0.3, Size = UDim2.new(0, 24, 0, 24)}, 0.15)
+resizeBtn.MouseEnter:Connect(function()
+	for _, line in pairs(ResizeHandle:GetChildren()) do
+		if line:IsA("Frame") then
+			tween(line, {BackgroundTransparency = 0.1}, 0.15)
+		end
+	end
 end)
-ResizeHandle.MouseLeave:Connect(function()
+resizeBtn.MouseLeave:Connect(function()
 	if not isResizing then
-		tween(ResizeHandle, {BackgroundTransparency = 0.5, Size = UDim2.new(0, 20, 0, 20)}, 0.15)
+		for _, line in pairs(ResizeHandle:GetChildren()) do
+			if line:IsA("Frame") then
+				tween(line, {BackgroundTransparency = 0.3}, 0.15)
+			end
+		end
 	end
 end)
 
@@ -1365,7 +1419,6 @@ do
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			local relY = input.Position.Y - Main.AbsolutePosition.Y
 			local relX = input.Position.X - Main.AbsolutePosition.X
-			-- Don't drag from resize handle area
 			if relX > Main.AbsoluteSize.X - 30 and relY > Main.AbsoluteSize.Y - 30 then return end
 			if minimized or relY <= DRAG_HEIGHT then
 				dragging = true; dragStart = input.Position; startPos = Main.Position
@@ -1429,7 +1482,6 @@ local TabFrame = Create("Frame", {Size = UDim2.new(1, 0, 1, -105), Position = UD
 Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 3), Parent = TabFrame})
 Pad(TabFrame, 6, 6, 6, 6)
 
--- Tab data with new Themes tab
 local tabData = {
 	{key = "tab_movement", icon = "🚀 ", order = 1}, 
 	{key = "tab_visual", icon = "👁 ", order = 2},
@@ -1541,7 +1593,7 @@ end
 
 -- ═══ UI COMPONENTS ═══
 
--- Keybind popup (no darkening)
+-- Keybind popup
 local function ShowKeybindPopup(name, callback)
 	if keybindPopupOpen then return end; keybindPopupOpen = true
 	ShowBlur()
@@ -1589,7 +1641,6 @@ local function ShowKeybindPopup(name, callback)
 		end
 	end)
 	
-	-- Drag popup
 	do
 		local dr, ds, sp
 		popup.InputBegan:Connect(function(i)
@@ -1643,17 +1694,24 @@ end
 local function Slider(parent, text, min, max, default, callback)
 	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 60), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	local vlbl = Create("TextLabel", {Size = UDim2.new(1, -60, 0, 24), Position = UDim2.new(0, 16, 0, 4), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}); vlbl:SetAttribute("OrigTT", 0)
-	local badge = Create("TextLabel", {Size = UDim2.new(0, 44, 0, 22), Position = UDim2.new(1, -54, 0, 5), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 8)
+	
+	-- Editable value badge
+	local badge = Create("TextBox", {Size = UDim2.new(0, 50, 0, 22), Position = UDim2.new(1, -60, 0, 5), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, ClearTextOnFocus = true, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 8)
+	
 	local bar = Create("Frame", {Size = UDim2.new(1, -32, 0, 10), Position = UDim2.new(0, 16, 0, 38), BackgroundColor3 = TC(S.Theme.ToggleOff), BorderSizePixel = 0, Parent = container}); bar:SetAttribute("OrigBT", 0); Corner(bar, 5)
 	local fill = Create("Frame", {Size = UDim2.new(math.clamp((default - min) / (max - min), 0, 1), 0, 1, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = bar}); fill:SetAttribute("OrigBT", 0); Corner(fill, 5)
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1,1,1)), ColorSequenceKeypoint.new(1, Color3.fromRGB(200,200,255))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.1), NumberSequenceKeypoint.new(1, 0.4)}), Parent = fill})
 	local sliderDragging = false
+	local currentVal = default
+	
 	local function update(pct)
 		pct = math.clamp(pct, 0, 1)
-		local val = math.floor(min + (max - min) * pct)
+		currentVal = math.floor(min + (max - min) * pct)
 		fill.Size = UDim2.new(pct, 0, 1, 0)
-		badge.Text = tostring(val); callback(val)
+		badge.Text = tostring(currentVal); callback(currentVal)
 	end
+	
+	-- Click/drag on bar
 	bar.InputBegan:Connect(function(i)
 		if i.UserInputType == Enum.UserInputType.MouseButton1 then
 			sliderDragging = true
@@ -1668,6 +1726,19 @@ local function Slider(parent, text, min, max, default, callback)
 			update(pct)
 		end
 	end)
+	
+	-- Manual input in badge
+	badge.FocusLost:Connect(function(enterPressed)
+		local num = tonumber(badge.Text)
+		if num then
+			num = math.clamp(math.floor(num), min, max)
+			local pct = (num - min) / (max - min)
+			update(pct)
+		else
+			badge.Text = tostring(currentVal)
+		end
+	end)
+	
 	container.MouseEnter:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.15) end)
 	container.MouseLeave:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.Card)}, 0.15) end)
 end
@@ -1675,15 +1746,40 @@ end
 local function SliderCompact(parent, text, min, max, default, callback)
 	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 46), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	Create("TextLabel", {Size = UDim2.new(0.42, 0, 1, 0), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}):SetAttribute("OrigTT", 0)
-	local badge = Create("TextLabel", {Size = UDim2.new(0, 38, 0, 22), Position = UDim2.new(1, -48, 0.5, -11), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 8)
-	local bar = Create("Frame", {Size = UDim2.new(0.36, 0, 0, 8), Position = UDim2.new(0.44, 0, 0.5, -4), BackgroundColor3 = TC(S.Theme.ToggleOff), BorderSizePixel = 0, Parent = container}); bar:SetAttribute("OrigBT", 0); Corner(bar, 4)
+	
+	-- Editable value badge
+	local badge = Create("TextBox", {Size = UDim2.new(0, 44, 0, 22), Position = UDim2.new(1, -54, 0.5, -11), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, Text = tostring(default), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, ClearTextOnFocus = true, Parent = container}); badge:SetAttribute("OrigBT", 0.8); badge:SetAttribute("OrigTT", 0); Corner(badge, 8)
+	
+	local bar = Create("Frame", {Size = UDim2.new(0.32, 0, 0, 8), Position = UDim2.new(0.44, 0, 0.5, -4), BackgroundColor3 = TC(S.Theme.ToggleOff), BorderSizePixel = 0, Parent = container}); bar:SetAttribute("OrigBT", 0); Corner(bar, 4)
 	local fill = Create("Frame", {Size = UDim2.new(math.clamp((default - min) / (max - min), 0, 1), 0, 1, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = bar}); fill:SetAttribute("OrigBT", 0); Corner(fill, 4)
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1,1,1)), ColorSequenceKeypoint.new(1, Color3.fromRGB(200,200,255))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.1), NumberSequenceKeypoint.new(1, 0.4)}), Parent = fill})
 	local sliderDragging = false
-	local function update(pct) pct = math.clamp(pct, 0, 1); fill.Size = UDim2.new(pct, 0, 1, 0); local val = math.floor(min + (max - min) * pct); badge.Text = tostring(val); callback(val) end
+	local currentVal = default
+	
+	local function update(pct) 
+		pct = math.clamp(pct, 0, 1)
+		fill.Size = UDim2.new(pct, 0, 1, 0)
+		currentVal = math.floor(min + (max - min) * pct)
+		badge.Text = tostring(currentVal)
+		callback(currentVal) 
+	end
+	
 	bar.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then sliderDragging = true; update(math.clamp((i.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)) end end)
 	UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then sliderDragging = false end end)
 	UIS.InputChanged:Connect(function(i) if sliderDragging and i.UserInputType == Enum.UserInputType.MouseMovement then update(math.clamp((i.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)) end end)
+	
+	-- Manual input in badge
+	badge.FocusLost:Connect(function(enterPressed)
+		local num = tonumber(badge.Text)
+		if num then
+			num = math.clamp(math.floor(num), min, max)
+			local pct = (num - min) / (max - min)
+			update(pct)
+		else
+			badge.Text = tostring(currentVal)
+		end
+	end)
+	
 	container.MouseEnter:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.15) end)
 	container.MouseLeave:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.Card)}, 0.15) end)
 end
@@ -1715,10 +1811,10 @@ end
 local function Dropdown(parent, text, options, callback)
 	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 42), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, ClipsDescendants = true, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 12)
 	Create("TextLabel", {Size = UDim2.new(0.5, -10, 0, 42), Position = UDim2.new(0, 16, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}):SetAttribute("OrigTT", 0)
-	local selected = Create("TextButton", {Size = UDim2.new(0.45, 0, 0, 32), Position = UDim2.new(0.52, 0, 0, 5), BackgroundColor3 = TC(S.Theme.CardHover), Text = options[1] or "—", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, Parent = container}); selected:SetAttribute("OrigTT", 0); Corner(selected, 10)
+	local selected = Create("TextButton", {Size = UDim2.new(0.48, -8, 0, 32), Position = UDim2.new(0.52, 0, 0, 5), BackgroundColor3 = TC(S.Theme.CardHover), Text = options[1] or "—", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, Parent = container}); selected:SetAttribute("OrigTT", 0); Corner(selected, 10)
 	local arrow2 = Create("TextLabel", {Size = UDim2.new(0, 16, 1, 0), Position = UDim2.new(1, -20, 0, 0), BackgroundTransparency = 1, Text = "v", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 11, Parent = selected}); arrow2:SetAttribute("OrigTT", 0)
 	local open = false
-	local listFrame = Create("Frame", {Size = UDim2.new(0.45, 0, 0, 0), Position = UDim2.new(0.52, 0, 0, 40), BackgroundColor3 = TC(S.Theme.CardHover), BorderSizePixel = 0, ClipsDescendants = true, Parent = container}); Corner(listFrame, 10)
+	local listFrame = Create("Frame", {Size = UDim2.new(0.48, -8, 0, 0), Position = UDim2.new(0.52, 0, 0, 40), BackgroundColor3 = TC(S.Theme.CardHover), BorderSizePixel = 0, ClipsDescendants = true, Parent = container}); Corner(listFrame, 10)
 	Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2), Parent = listFrame}); Pad(listFrame, 4, 4, 4, 4)
 	local function buildOptions(opts)
 		for _, ch in pairs(listFrame:GetChildren()) do if ch:IsA("TextButton") then ch:Destroy() end end
@@ -1726,14 +1822,14 @@ local function Dropdown(parent, text, options, callback)
 			local ob = Create("TextButton", {Size = UDim2.new(1, 0, 0, 30), BackgroundColor3 = TC(S.Theme.Card), Text = opt, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 13, BorderSizePixel = 0, Parent = listFrame}); Corner(ob, 8)
 			ob.MouseEnter:Connect(function() tween(ob, {BackgroundColor3 = TC(S.Theme.Accent)}, 0.1) end)
 			ob.MouseLeave:Connect(function() tween(ob, {BackgroundColor3 = TC(S.Theme.Card)}, 0.1) end)
-			ob.MouseButton1Click:Connect(function() selected.Text = opt; open = false; tween(container, {Size = UDim2.new(1, 0, 0, 42)}, 0.25); tween(listFrame, {Size = UDim2.new(0.45, 0, 0, 0)}, 0.2); arrow2.Rotation = 0; callback(opt) end)
+			ob.MouseButton1Click:Connect(function() selected.Text = opt; open = false; tween(container, {Size = UDim2.new(1, 0, 0, 42)}, 0.25); tween(listFrame, {Size = UDim2.new(0.48, -8, 0, 0)}, 0.2); arrow2.Rotation = 0; callback(opt) end)
 		end
 	end
 	buildOptions(options)
 	selected.MouseButton1Click:Connect(function()
 		open = not open; local h = #options * 34 + 10
 		tween(container, {Size = UDim2.new(1, 0, 0, open and (42 + h) or 42)}, 0.3, Enum.EasingStyle.Back)
-		tween(listFrame, {Size = UDim2.new(0.45, 0, 0, open and h or 0)}, 0.25); tween(arrow2, {Rotation = open and 180 or 0}, 0.2)
+		tween(listFrame, {Size = UDim2.new(0.48, -8, 0, open and h or 0)}, 0.25); tween(arrow2, {Rotation = open and 180 or 0}, 0.2)
 	end)
 	return {Refresh = function(newOpts) options = newOpts; buildOptions(newOpts) end, SetSelected = function(val) selected.Text = val end}
 end
@@ -1746,7 +1842,7 @@ local function ShowColorPickerPopup(title, default, onApply)
 	local cpGui = Create("ScreenGui", {Name = "NHColorPicker", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 	pcall(ProtectGui, cpGui); cpGui.Parent = CoreGui
 
-	local popup = Create("Frame", {Size = UDim2.new(0, 340, 0, 420), Position = UDim2.new(0.5, -170, 0.5, -210), BackgroundColor3 = TC(S.Theme.Bg), BorderSizePixel = 0, ZIndex = 201, Parent = cpGui})
+	local popup = Create("Frame", {Size = UDim2.new(0, 320, 0, 400), Position = UDim2.new(0.5, -160, 0.5, -200), BackgroundColor3 = TC(S.Theme.Bg), BorderSizePixel = 0, ZIndex = 201, Parent = cpGui})
 	Corner(popup, 16); Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Parent = popup})
 
 	Create("TextLabel", {Size = UDim2.new(1, -40, 0, 30), Position = UDim2.new(0, 14, 0, 8), BackgroundTransparency = 1, Text = title, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 202, Parent = popup})
@@ -1756,11 +1852,11 @@ local function ShowColorPickerPopup(title, default, onApply)
 		currentH, currentS2, currentV = Color3.fromRGB(default[1], default[2], default[3]):ToHSV()
 	end
 
-	local preview = Create("Frame", {Size = UDim2.new(0, 60, 0, 60), Position = UDim2.new(1, -74, 0, 42), BackgroundColor3 = Color3.fromHSV(currentH, currentS2, currentV), BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(preview, 14)
+	local preview = Create("Frame", {Size = UDim2.new(0, 50, 0, 50), Position = UDim2.new(1, -64, 0, 38), BackgroundColor3 = Color3.fromHSV(currentH, currentS2, currentV), BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(preview, 12)
 	Create("UIStroke", {Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.5, Parent = preview})
 
-	local paletteSize = 200
-	local paletteFrame = Create("Frame", {Size = UDim2.new(0, paletteSize, 0, paletteSize), Position = UDim2.new(0, 14, 0, 42), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(paletteFrame, 10)
+	local paletteSize = 180
+	local paletteFrame = Create("Frame", {Size = UDim2.new(0, paletteSize, 0, paletteSize), Position = UDim2.new(0, 14, 0, 38), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(paletteFrame, 10)
 
 	local hueOverlay = Create("Frame", {Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = Color3.fromHSV(currentH, 1, 1), BorderSizePixel = 0, ZIndex = 203, Parent = paletteFrame})
 	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, Color3.new(1, 1, 1))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)}), Parent = hueOverlay})
@@ -1772,8 +1868,8 @@ local function ShowColorPickerPopup(title, default, onApply)
 	local svCursorInner = Create("Frame", {Size = UDim2.new(0, 12, 0, 12), Position = UDim2.new(0, 1, 0, 1), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 207, Parent = svCursor}); Corner(svCursorInner, 6)
 	Create("UIStroke", {Color = Color3.new(0, 0, 0), Thickness = 2, Parent = svCursorInner})
 
-	local hueBarW = 20
-	local hueBar = Create("Frame", {Size = UDim2.new(0, hueBarW, 0, paletteSize), Position = UDim2.new(0, 14 + paletteSize + 10, 0, 42), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(hueBar, 8)
+	local hueBarW = 18
+	local hueBar = Create("Frame", {Size = UDim2.new(0, hueBarW, 0, paletteSize), Position = UDim2.new(0, 14 + paletteSize + 8, 0, 38), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 202, ClipsDescendants = true, Parent = popup}); Corner(hueBar, 8)
 
 	local hueColors = {}
 	for i = 0, 6 do table.insert(hueColors, ColorSequenceKeypoint.new(i / 6, Color3.fromHSV(i / 6, 1, 1))) end
@@ -1782,19 +1878,19 @@ local function ShowColorPickerPopup(title, default, onApply)
 	local hueCursor = Create("Frame", {Size = UDim2.new(1, 4, 0, 6), Position = UDim2.new(0, -2, currentH, -3), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 206, Parent = hueBar}); Corner(hueCursor, 3)
 	Create("UIStroke", {Color = Color3.new(0, 0, 0), Thickness = 1.5, Parent = hueCursor})
 
-	local rgbY = 42 + paletteSize + 12
+	local rgbY = 38 + paletteSize + 10
 	local function makeRGBBox(label, xOff, defVal)
 		Create("TextLabel", {Size = UDim2.new(0, 14, 0, 20), Position = UDim2.new(0, xOff, 0, rgbY), BackgroundTransparency = 1, Text = label, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 12, ZIndex = 202, Parent = popup})
-		local box = Create("TextBox", {Size = UDim2.new(0, 50, 0, 26), Position = UDim2.new(0, xOff + 16, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = tostring(defVal), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(box, 8)
+		local box = Create("TextBox", {Size = UDim2.new(0, 44, 0, 26), Position = UDim2.new(0, xOff + 16, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = tostring(defVal), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(box, 8)
 		return box
 	end
 	local c = Color3.fromHSV(currentH, currentS2, currentV)
 	local rBox = makeRGBBox("R", 14, math.floor(c.R * 255))
-	local gBox = makeRGBBox("G", 90, math.floor(c.G * 255))
-	local bBox = makeRGBBox("B", 166, math.floor(c.B * 255))
+	local gBox = makeRGBBox("G", 84, math.floor(c.G * 255))
+	local bBox = makeRGBBox("B", 154, math.floor(c.B * 255))
 
-	Create("TextLabel", {Size = UDim2.new(0, 20, 0, 20), Position = UDim2.new(0, 240, 0, rgbY), BackgroundTransparency = 1, Text = "#", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, ZIndex = 202, Parent = popup})
-	local hexBox = Create("TextBox", {Size = UDim2.new(0, 70, 0, 26), Position = UDim2.new(0, 258, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255)), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(hexBox, 8)
+	Create("TextLabel", {Size = UDim2.new(0, 16, 0, 20), Position = UDim2.new(0, 218, 0, rgbY), BackgroundTransparency = 1, Text = "#", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, ZIndex = 202, Parent = popup})
+	local hexBox = Create("TextBox", {Size = UDim2.new(0, 70, 0, 26), Position = UDim2.new(0, 234, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255)), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(hexBox, 8)
 
 	local function updateFromHSV()
 		local col = Color3.fromHSV(currentH, currentS2, currentV)
@@ -1833,17 +1929,17 @@ local function ShowColorPickerPopup(title, default, onApply)
 		end
 	end)
 
-	local presetY = rgbY + 36
+	local presetY = rgbY + 34
 	local presetColors = {{255,0,0},{255,127,0},{255,255,0},{0,255,0},{0,255,255},{0,127,255},{0,0,255},{127,0,255},{255,0,255},{255,255,255},{128,128,128},{0,0,0}}
 	for i, pc in ipairs(presetColors) do
-		local psw = Create("TextButton", {Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(0, 14 + (i-1) * 26, 0, presetY), BackgroundColor3 = Color3.fromRGB(pc[1], pc[2], pc[3]), Text = "", BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(psw, 8)
+		local psw = Create("TextButton", {Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(0, 14 + (i-1) * 25, 0, presetY), BackgroundColor3 = Color3.fromRGB(pc[1], pc[2], pc[3]), Text = "", BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(psw, 8)
 		Create("UIStroke", {Color = Color3.new(1,1,1), Thickness = 1, Transparency = 0.7, Parent = psw})
 		psw.MouseButton1Click:Connect(function() currentH, currentS2, currentV = Color3.fromRGB(pc[1], pc[2], pc[3]):ToHSV(); updateFromHSV() end)
 	end
 
-	local btnY = presetY + 36
-	local applyBtn = Create("TextButton", {Size = UDim2.new(0, 140, 0, 36), Position = UDim2.new(0, 14, 0, btnY), BackgroundColor3 = TC(S.Theme.Accent), Text = "Apply", TextColor3 = Color3.new(1,1,1), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(applyBtn, 12)
-	local closeBtn = Create("TextButton", {Size = UDim2.new(0, 140, 0, 36), Position = UDim2.new(0, 168, 0, btnY), BackgroundColor3 = TC(S.Theme.Card), Text = L("close"), TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(closeBtn, 12)
+	local btnY = presetY + 32
+	local applyBtn = Create("TextButton", {Size = UDim2.new(0, 135, 0, 34), Position = UDim2.new(0, 14, 0, btnY), BackgroundColor3 = TC(S.Theme.Accent), Text = "Apply", TextColor3 = Color3.new(1,1,1), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(applyBtn, 12)
+	local closeBtn = Create("TextButton", {Size = UDim2.new(0, 135, 0, 34), Position = UDim2.new(0, 163, 0, btnY), BackgroundColor3 = TC(S.Theme.Card), Text = L("close"), TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 14, BorderSizePixel = 0, ZIndex = 202, Parent = popup}); Corner(closeBtn, 12)
 
 	applyBtn.MouseButton1Click:Connect(function()
 		local col = Color3.fromHSV(currentH, currentS2, currentV)
@@ -1873,11 +1969,11 @@ local function ColorPicker(parent, text, default, callback)
 	container.MouseEnter:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.12) end)
 	container.MouseLeave:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.Card)}, 0.12) end)
 end
+
 -- ═══ SCREEN INFO GUI (FPS, Coordinates) ═══
 local ScreenInfoGui = Create("ScreenGui", {Name = "NHScreenInfo", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 pcall(ProtectGui, ScreenInfoGui); ScreenInfoGui.Parent = CoreGui
 
--- FPS Counter
 local FPSFrame = Create("Frame", {
 	Size = UDim2.new(0, 100, 0, 30),
 	Position = UDim2.new(0, 10, 0, 10),
@@ -1899,7 +1995,6 @@ local FPSLabel = Create("TextLabel", {
 	Parent = FPSFrame
 })
 
--- Make FPS draggable
 do
 	local dr, ds, sp
 	FPSFrame.InputBegan:Connect(function(i)
@@ -1916,7 +2011,6 @@ do
 	end)
 end
 
--- FPS counter logic
 local fpsValues = {}
 task.spawn(function()
 	while ScreenInfoGui.Parent do
@@ -1934,7 +2028,6 @@ task.spawn(function()
 	end
 end)
 
--- Coordinates
 local CoordsFrame = Create("Frame", {
 	Size = UDim2.new(0, 200, 0, 30),
 	Position = UDim2.new(0, 10, 0, 50),
@@ -1956,7 +2049,6 @@ local CoordsLabel = Create("TextLabel", {
 	Parent = CoordsFrame
 })
 
--- Make Coords draggable
 do
 	local dr, ds, sp
 	CoordsFrame.InputBegan:Connect(function(i)
@@ -1973,7 +2065,6 @@ do
 	end)
 end
 
--- Coordinates update logic
 task.spawn(function()
 	while ScreenInfoGui.Parent do
 		if S.Coordinates then
@@ -2009,19 +2100,14 @@ local function UpdateCrosshair()
 	local color = TC(S.CrosshairColor or {255, 255, 255})
 	local gap = 4
 	
-	-- Top
 	local top = Create("Frame", {Size = UDim2.new(0, thickness, 0, size), Position = UDim2.new(0.5, -thickness/2, 0.5, -size - gap), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
 	Corner(top, 2)
-	-- Bottom
 	local bottom = Create("Frame", {Size = UDim2.new(0, thickness, 0, size), Position = UDim2.new(0.5, -thickness/2, 0.5, gap), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
 	Corner(bottom, 2)
-	-- Left
 	local left = Create("Frame", {Size = UDim2.new(0, size, 0, thickness), Position = UDim2.new(0.5, -size - gap, 0.5, -thickness/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
 	Corner(left, 2)
-	-- Right
 	local right = Create("Frame", {Size = UDim2.new(0, size, 0, thickness), Position = UDim2.new(0.5, gap, 0.5, -thickness/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
 	Corner(right, 2)
-	-- Center dot
 	local dot = Create("Frame", {Size = UDim2.new(0, thickness + 2, 0, thickness + 2), Position = UDim2.new(0.5, -(thickness + 2)/2, 0.5, -(thickness + 2)/2), BackgroundColor3 = color, BorderSizePixel = 0, Parent = CrosshairFrame})
 	Corner(dot, (thickness + 2)/2)
 end
@@ -2132,6 +2218,51 @@ local function StopOrbit()
 	if orbitConn then orbitConn:Disconnect(); orbitConn = nil end
 end
 
+-- ═══ FLING & SPIN SYSTEM ═══
+local flingConn = nil
+local spinConn = nil
+
+local function StartFling()
+	if flingConn then flingConn:Disconnect() end
+	flingConn = RunService.Heartbeat:Connect(function()
+		if not S.Fling then return end
+		pcall(function()
+			local root = getRoot()
+			local vel = root.AssemblyLinearVelocity
+			root.AssemblyLinearVelocity = Vector3.new(vel.X, vel.Y, vel.Z) + root.CFrame.LookVector * S.FlingPower
+			root.AssemblyAngularVelocity = Vector3.new(math.random(-50, 50), math.random(-50, 50), math.random(-50, 50))
+		end)
+	end)
+end
+
+local function StopFling()
+	if flingConn then flingConn:Disconnect(); flingConn = nil end
+end
+
+local function StartSpin()
+	if spinConn then spinConn:Disconnect() end
+	local root = getRoot()
+	local av = Instance.new("BodyAngularVelocity")
+	av.Name = "NHSpin"
+	av.MaxTorque = Vector3.new(0, math.huge, 0)
+	av.AngularVelocity = Vector3.new(0, S.SpinSpeed, 0)
+	av.Parent = root
+	
+	spinConn = RunService.Heartbeat:Connect(function()
+		if not S.Spin then return end
+		pcall(function()
+			local spin = root:FindFirstChild("NHSpin")
+			if spin then
+				spin.AngularVelocity = Vector3.new(0, S.SpinSpeed, 0)
+			end
+		end)
+	end)
+end
+
+local function StopSpin()
+	if spinConn then spinConn:Disconnect(); spinConn = nil end
+	pcall(function() getRoot():FindFirstChild("NHSpin"):Destroy() end)
+end
 -- ═══ PAGE: MOVEMENT ═══
 do
 	local p = tabPages["tab_movement"]
@@ -2169,6 +2300,96 @@ do
 	Toggle(p, L("noclip"), S.Noclip, function(on) S.Noclip = on end, "Noclip")
 	RunService.Stepped:Connect(function() if S.Noclip then pcall(function() for _, p2 in pairs(getChar():GetDescendants()) do if p2:IsA("BasePart") then p2.CanCollide = false end end end) end end)
 	
+	-- ═══ FLING & SPIN ═══
+	Section(p, L("sect_fling"))
+	
+	Toggle(p, L("fling"), S.Fling, function(on)
+		S.Fling = on
+		if on then
+			StartFling()
+		else
+			StopFling()
+		end
+	end, "Fling")
+	SliderCompact(p, L("fling_power"), 50, 2000, S.FlingPower or 500, function(v) S.FlingPower = v end)
+	
+	Toggle(p, L("walk_fling"), S.WalkFling, function(on)
+		S.WalkFling = on
+		if on then
+			pcall(function()
+				getHum().WalkSpeed = 200
+				local root = getRoot()
+				local conn
+				conn = RunService.Heartbeat:Connect(function()
+					if not S.WalkFling then conn:Disconnect(); return end
+					pcall(function()
+						root.AssemblyAngularVelocity = Vector3.new(math.random(-100, 100), math.random(-100, 100), math.random(-100, 100))
+					end)
+				end)
+			end)
+		else
+			pcall(function()
+				getHum().WalkSpeed = S.Speed and S.WalkSpeed or 16
+				getRoot().AssemblyAngularVelocity = Vector3.zero
+			end)
+		end
+	end, "WalkFling")
+	
+	Toggle(p, L("fly_fling"), S.FlyFling, function(on)
+		S.FlyFling = on
+		if on then
+			pcall(function()
+				local root = getRoot()
+				local bv = Instance.new("BodyVelocity")
+				bv.Name = "NHFlyFling"
+				bv.MaxForce = Vector3.one * 9e9
+				bv.Parent = root
+				
+				local conn
+				conn = RunService.Heartbeat:Connect(function()
+					if not S.FlyFling then 
+						pcall(function() root:FindFirstChild("NHFlyFling"):Destroy() end)
+						conn:Disconnect()
+						return 
+					end
+					pcall(function()
+						local cam = workspace.CurrentCamera
+						local dir = Vector3.zero
+						if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
+						if UIS:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
+						if UIS:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
+						if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
+						if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.yAxis end
+						if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir -= Vector3.yAxis end
+						bv.Velocity = dir * 150
+						root.AssemblyAngularVelocity = Vector3.new(math.random(-100, 100), math.random(-100, 100), math.random(-100, 100))
+					end)
+				end)
+			end)
+		else
+			pcall(function()
+				getRoot():FindFirstChild("NHFlyFling"):Destroy()
+				getRoot().AssemblyAngularVelocity = Vector3.zero
+			end)
+		end
+	end, "FlyFling")
+	
+	Toggle(p, L("spin"), S.Spin, function(on)
+		S.Spin = on
+		if on then
+			StartSpin()
+		else
+			StopSpin()
+		end
+	end, "Spin")
+	SliderCompact(p, L("spin_speed"), 1, 100, S.SpinSpeed or 20, function(v) 
+		S.SpinSpeed = v 
+		pcall(function()
+			local spin = getRoot():FindFirstChild("NHSpin")
+			if spin then spin.AngularVelocity = Vector3.new(0, v, 0) end
+		end)
+	end)
+	
 	-- Orbit Player
 	Section(p, L("sect_orbit"))
 	
@@ -2190,7 +2411,6 @@ do
 	SliderCompact(p, L("orbit_speed"), 1, 10, S.OrbitSpeed or 1, function(v) S.OrbitSpeed = v end)
 	SliderCompact(p, L("orbit_distance"), 5, 50, S.OrbitDistance or 15, function(v) S.OrbitDistance = v end)
 	
-	-- Refresh player list
 	Players.PlayerAdded:Connect(function(plr)
 		task.wait(1)
 		local names = {}
@@ -2243,7 +2463,7 @@ do
 
 	Section(p, L("sect_esp"))
 	
-	-- ═══ INLINE ESP PREVIEW ═══
+	-- ═══ FIXED ESP PREVIEW (Animated) ═══
 	local espPreviewContainer = Create("Frame", {Size = UDim2.new(1, 0, 0, 200), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); espPreviewContainer:SetAttribute("OrigBT", 0); Corner(espPreviewContainer, 12)
 	
 	Create("TextLabel", {Size = UDim2.new(1, 0, 0, 24), Position = UDim2.new(0, 0, 0, 6), BackgroundTransparency = 1, Text = "👁 " .. L("esp_preview"), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 13, Parent = espPreviewContainer}):SetAttribute("OrigTT", 0)
@@ -2276,9 +2496,9 @@ do
 	local tracerLine = Create("Frame", {Size = UDim2.new(0, 2, 0, 30), Position = UDim2.new(0.5, -1, 1, -32), BackgroundColor3 = espPreviewColor, BorderSizePixel = 0, Visible = S.ESPTracers, Parent = previewArea})
 	Corner(tracerLine, 1)
 
-	Create("TextLabel", {Size = UDim2.new(0, 80, 0, 12), Position = UDim2.new(0.5, -40, 1, -14), BackgroundTransparency = 1, Text = "42 studs", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 9, Parent = previewArea}):SetAttribute("OrigTT", 0)
+	local distLabel = Create("TextLabel", {Size = UDim2.new(0, 80, 0, 12), Position = UDim2.new(0.5, -40, 1, -14), BackgroundTransparency = 1, Text = "42 studs", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 9, Parent = previewArea}):SetAttribute("OrigTT", 0)
 
-	-- Update preview function
+	-- Live update preview function
 	local function updateESPPreview()
 		local col = TC(S.ESPColor)
 		espStroke.Color = col
@@ -2291,16 +2511,31 @@ do
 		healthTag.Visible = S.ESPShowHealth
 	end
 
-	-- Rainbow preview animation
+	-- Animated ESP preview (breathing effect + rainbow)
 	task.spawn(function()
+		local breatheDir = 1
+		local breatheVal = 0
 		while espPreviewContainer.Parent do
+			-- Rainbow effect
 			if S.ESPRainbow then
 				local col = Color3.fromHSV((tick() % 5) / 5, 1, 1)
 				espStroke.Color = col
 				fillOverlay.BackgroundColor3 = col
 				tracerLine.BackgroundColor3 = col
 			end
-			task.wait(0.05)
+			
+			-- Breathing/pulsing effect for box
+			breatheVal = breatheVal + 0.05 * breatheDir
+			if breatheVal >= 1 then breatheDir = -1 elseif breatheVal <= 0 then breatheDir = 1 end
+			local pulseScale = 1 + (breatheVal * 0.02)
+			boxFrame.Size = UDim2.new(0, 90 * pulseScale, 0, 130 * pulseScale)
+			boxFrame.Position = UDim2.new(0.5, -45 * pulseScale, 0.5, -65 * pulseScale)
+			
+			-- Animate distance text
+			local fakeDist = 40 + math.sin(tick() * 2) * 5
+			distLabel.Text = string.format("%.0f studs", fakeDist)
+			
+			task.wait(0.03)
 		end
 	end)
 
@@ -2339,6 +2574,13 @@ do
 	Slider(p, L("fov_changer"), 30, 120, S.FOV or 70, function(v)
 		S.FOV = v
 		pcall(function() workspace.CurrentCamera.FieldOfView = v end)
+	end)
+	
+	Slider(p, L("max_zoom"), 10, 1000, S.MaxZoom or 128, function(v)
+		S.MaxZoom = v
+		pcall(function()
+			Player.CameraMaxZoomDistance = v
+		end)
 	end)
 
 	Section(p, L("sect_lighting"))
@@ -2437,6 +2679,40 @@ do
 	Section(p, L("sect_reset"))
 	Button(p, L("reset_char"), function() pcall(function() getHum().Health = 0 end) end, true)
 
+	-- ═══ FPS UNLOCKER ═══
+	Section(p, "Performance")
+	Button(p, L("fps_unlocker"), function()
+		pcall(function()
+			if setfpscap then
+				setfpscap(9999)
+				Notify(L("hub_name"), "FPS Unlocked! (Cap set to 9999)", 3)
+			elseif unlockfps then
+				unlockfps()
+				Notify(L("hub_name"), "FPS Unlocked!", 3)
+			else
+				Notify(L("hub_name"), "FPS Unlocker not supported on this executor", 4)
+			end
+		end)
+	end)
+	
+	Button(p, "Set FPS Cap: 60", function()
+		pcall(function()
+			if setfpscap then setfpscap(60); Notify(L("hub_name"), "FPS Cap: 60", 2) end
+		end)
+	end)
+	
+	Button(p, "Set FPS Cap: 144", function()
+		pcall(function()
+			if setfpscap then setfpscap(144); Notify(L("hub_name"), "FPS Cap: 144", 2) end
+		end)
+	end)
+	
+	Button(p, "Set FPS Cap: 240", function()
+		pcall(function()
+			if setfpscap then setfpscap(240); Notify(L("hub_name"), "FPS Cap: 240", 2) end
+		end)
+	end)
+
 	Section(p, L("sect_tools"))
 	Button(p, L("btools_all"), function() pcall(function() local bp = Player.Backpack; Instance.new("HopperBin", bp).BinType = 4; Instance.new("HopperBin", bp).BinType = 3; Instance.new("HopperBin", bp).BinType = 2 end) end)
 	Button(p, L("btools_delete"), function() pcall(function() local h = Instance.new("HopperBin"); h.BinType = 4; h.Parent = Player.Backpack end) end)
@@ -2463,6 +2739,7 @@ do
 	Toggle(p, L("anti_afk"), S.AntiAFK, function(on) S.AntiAFK = on end, "AntiAFK")
 	Player.Idled:Connect(function() if S.AntiAFK then pcall(function() game:GetService("VirtualUser"):CaptureController(); game:GetService("VirtualUser"):ClickButton2(Vector2.zero) end) end end)
 end
+
 -- ═══ PAGE: SETTINGS ═══
 do
 	local p = tabPages["tab_settings"]
@@ -2511,7 +2788,6 @@ do
 
 	Section(p, L("configs"))
 	
-	-- Configs path info
 	local pathCard = Create("Frame", {Size = UDim2.new(1, 0, 0, 28), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); pathCard:SetAttribute("OrigBT", 0); Corner(pathCard, 10)
 	Create("TextLabel", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = "📁 " .. L("configs_path") .. " " .. ConfigDir .. "/Configs/", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = pathCard}):SetAttribute("OrigTT", 0)
 
@@ -2522,7 +2798,7 @@ do
 	Button(p, L("load_config"), function()
 		local n = cfgBox.Text; if n == "" then n = "default" end; LoadConfig(n)
 		task.defer(function()
-			local m = {Fly=S.Fly, SpeedOverride=S.Speed, JumpOverride=S.JumpBoost, InfJump=S.InfJump, Noclip=S.Noclip, ESP=S.ESP, Fullbright=S.Fullbright, NoFog=S.NoFog, AntiLag=S.AntiLag, ClickTP=S.ClickTP, AntiAFK=S.AntiAFK, Ragdoll=S.Ragdoll, FPSCounter=S.FPSCounter, Coordinates=S.Coordinates, Crosshair=S.Crosshair, Chams=S.Chams, OrbitPlayer=S.OrbitPlayer}
+			local m = {Fly=S.Fly, SpeedOverride=S.Speed, JumpOverride=S.JumpBoost, InfJump=S.InfJump, Noclip=S.Noclip, ESP=S.ESP, Fullbright=S.Fullbright, NoFog=S.NoFog, AntiLag=S.AntiLag, ClickTP=S.ClickTP, AntiAFK=S.AntiAFK, Ragdoll=S.Ragdoll, FPSCounter=S.FPSCounter, Coordinates=S.Coordinates, Crosshair=S.Crosshair, Chams=S.Chams, OrbitPlayer=S.OrbitPlayer, Fling=S.Fling, WalkFling=S.WalkFling, FlyFling=S.FlyFling, Spin=S.Spin}
 			for rn, val in pairs(m) do if ToggleRefs[rn] and val ~= nil then ToggleRefs[rn].Set(val) end end; UpdateKeybindPanel()
 			FPSFrame.Visible = S.FPSCounter
 			CoordsFrame.Visible = S.Coordinates
@@ -2534,7 +2810,6 @@ do
 	Button(p, L("delete_config"), function() local n = cfgBox.Text; if n == "" then return end; DeleteConfig(n); cfgBox.Text = ""; configDD.Refresh(GetConfigs()); Notify(L("hub_name"), "'" .. n .. "' " .. L("deleted"), 3) end, true)
 	Button(p, L("refresh_configs"), function() configDD.Refresh(GetConfigs()) end)
 
-	-- ═══ EXPERIMENTAL ═══
 	Section(p, L("experimental"))
 	InfoCard(p, L("blur_hint"))
 	Toggle(p, L("blur_background"), S.BlurBackground or false, function(on)
@@ -2547,7 +2822,6 @@ do
 		end
 	end, "BlurBackground")
 
-	-- Resize hint
 	Section(p, "UI")
 	InfoCard(p, "↘ " .. L("resize_hint"))
 
@@ -2614,14 +2888,19 @@ do
 	Button(p, L("panic"), function() PanicUnload() end, true)
 end
 
--- ═══ PAGE: THEMES (NEW TAB) ═══
+-- ═══ PAGE: THEMES (with Particles) ═══
 do
 	local p = tabPages["tab_themes"]
+
+	-- ═══ PARTICLES IN THEMES ═══
+	Section(p, L("particles"))
+	local pOpts = {L("particles_none"), L("particles_snow"), L("particles_stars"), L("particles_hearts"), L("particles_bubbles"), L("particles_rain")}
+	local pMap = {[L("particles_none")] = "None", [L("particles_snow")] = "Snow", [L("particles_stars")] = "Stars", [L("particles_hearts")] = "Hearts", [L("particles_bubbles")] = "Bubbles", [L("particles_rain")] = "Rain"}
+	Dropdown(p, L("particles"), pOpts, function(val) local style = pMap[val] or "None"; S.ParticleStyle = style; SpawnParticles(style) end)
 
 	-- ═══ CUSTOM THEMES ═══
 	Section(p, L("custom_themes"))
 	
-	-- Themes path info
 	local themePathCard = Create("Frame", {Size = UDim2.new(1, 0, 0, 28), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); themePathCard:SetAttribute("OrigBT", 0); Corner(themePathCard, 10)
 	Create("TextLabel", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = "📁 Themes path: " .. ConfigDir .. "/Themes/", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = themePathCard}):SetAttribute("OrigTT", 0)
 	
@@ -2642,7 +2921,6 @@ do
 		local n = themeBox.Text
 		if n == "" then return end
 		LoadTheme(n)
-		-- Apply theme to UI
 		Main.BackgroundColor3 = TC(S.Theme.Bg)
 		Sidebar.BackgroundColor3 = TC(S.Theme.Sidebar)
 		for _, child in pairs(Sidebar:GetChildren()) do 
@@ -2720,11 +2998,6 @@ do
 			Notify(L("hub_name"), "Theme applied: " .. name, 2)
 		end)
 	end
-
-	Section(p, L("particles"))
-	local pOpts = {L("particles_none"), L("particles_snow"), L("particles_stars"), L("particles_hearts"), L("particles_bubbles"), L("particles_rain")}
-	local pMap = {[L("particles_none")] = "None", [L("particles_snow")] = "Snow", [L("particles_stars")] = "Stars", [L("particles_hearts")] = "Hearts", [L("particles_bubbles")] = "Bubbles", [L("particles_rain")] = "Rain"}
-	Dropdown(p, L("particles"), pOpts, function(val) local style = pMap[val] or "None"; S.ParticleStyle = style; SpawnParticles(style) end)
 end
 
 -- ═══ PAGE: CREDITS ═══
@@ -2759,45 +3032,13 @@ do
 	Section(p, L("changelog"))
 	local changelogItems = {
 		{"v3.0", "🚀 Major Update", {
-			"Complete UI redesign with modern aesthetics",
-			"Custom theme save/load system",
-			"Full multi-language support (EN/RU/JP/ES)",
-			"Draggable FPS counter & coordinates display",
-			"Customizable crosshair system",
-			"Chams (Surface GUI highlighting)",
-			"Orbit player feature",
-			"FOV changer & day/night cycle control",
-			"Custom skybox support",
-			"Beautiful rounded notifications",
-			"Advanced color picker with RGB/HEX/presets",
-			"Improved keybind system with duplicate detection",
-			"Corner drag to resize window",
-			"Inline ESP preview in menu",
-			"Experimental blur background option",
-			"Separated Themes tab",
-		}},
-		{"v2.5", "✨ Polish Update", {
-			"Animated loading screen",
-			"Keybind panel with live status",
-			"10 theme presets",
-			"Performance optimizations",
-		}},
-		{"v2.0", "🔄 Complete Rewrite", {
-			"Full codebase rewrite",
-			"Tab-based navigation",
-			"Config save/load system",
-			"Theme system foundation",
-		}},
-		{"v1.5", "📦 Feature Expansion", {
-			"ESP system added",
-			"Stun feature",
-			"External script integration",
-			"Basic keybinds",
-		}},
-		{"v1.0", "🎉 Initial Release", {
-			"Basic movement features",
-			"Simple visual options",
-			"Core functionality",
+			"Complete UI redesign",
+			"Fling, Walk Fling, Fly Fling, Spin",
+			"FPS Unlocker & Max Zoom",
+			"Editable slider values",
+			"Fixed ESP Preview animation",
+			"Improved resize handle",
+			"Particles in Themes tab",
 		}},
 	}
 	
@@ -2815,7 +3056,6 @@ do
 			Create("TextLabel", {Size = UDim2.new(1, 0, 0, 18), BackgroundTransparency = 1, Text = "• " .. item, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y, Parent = contentFrame}):SetAttribute("OrigTT", 0)
 		end
 		
-		-- Add bottom padding
 		Create("Frame", {Size = UDim2.new(1, 0, 0, 10), BackgroundTransparency = 1, Parent = contentFrame})
 	end
 	
@@ -2828,12 +3068,13 @@ end
 task.defer(function()
 	local al = GetAutoLoad()
 	if al ~= "" then
-		local m = {Fly=S.Fly, SpeedOverride=S.Speed, JumpOverride=S.JumpBoost, InfJump=S.InfJump, Noclip=S.Noclip, ESP=S.ESP, Fullbright=S.Fullbright, NoFog=S.NoFog, AntiLag=S.AntiLag, ClickTP=S.ClickTP, AntiAFK=S.AntiAFK, Ragdoll=S.Ragdoll, FPSCounter=S.FPSCounter, Coordinates=S.Coordinates, Crosshair=S.Crosshair, Chams=S.Chams, OrbitPlayer=S.OrbitPlayer}
+		local m = {Fly=S.Fly, SpeedOverride=S.Speed, JumpOverride=S.JumpBoost, InfJump=S.InfJump, Noclip=S.Noclip, ESP=S.ESP, Fullbright=S.Fullbright, NoFog=S.NoFog, AntiLag=S.AntiLag, ClickTP=S.ClickTP, AntiAFK=S.AntiAFK, Ragdoll=S.Ragdoll, FPSCounter=S.FPSCounter, Coordinates=S.Coordinates, Crosshair=S.Crosshair, Chams=S.Chams, OrbitPlayer=S.OrbitPlayer, Fling=S.Fling, WalkFling=S.WalkFling, FlyFling=S.FlyFling, Spin=S.Spin}
 		for rn, val in pairs(m) do if ToggleRefs[rn] and val then ToggleRefs[rn].Set(val) end end; UpdateKeybindPanel()
 		FPSFrame.Visible = S.FPSCounter
 		CoordsFrame.Visible = S.Coordinates
 		UpdateCrosshair()
 		if S.OrbitPlayer then StartOrbit() end
+		if S.Spin then StartSpin() end
 	end
 end)
 
@@ -2862,10 +3103,11 @@ UIS.InputBegan:Connect(function(input, gpe)
 	for _, kb in ipairs(KeybindRegistry) do if kb.key and kb.key ~= "None" and keyName == kb.key then pcall(kb.callback); return end end
 end)
 
--- Apply FOV on load
+-- Apply FOV and Max Zoom on load
 task.defer(function()
 	pcall(function()
 		workspace.CurrentCamera.FieldOfView = S.FOV or 70
+		Player.CameraMaxZoomDistance = S.MaxZoom or 128
 	end)
 end)
 
