@@ -3032,15 +3032,48 @@ do
 	Section(p, L("changelog"))
 	local changelogItems = {
 		{"v3.0", "🚀 Major Update", {
-			"Complete UI redesign",
-			"Fling, Walk Fling, Fly Fling, Spin",
-			"FPS Unlocker & Max Zoom",
-			"Editable slider values",
-			"Fixed ESP Preview animation",
-			"Improved resize handle",
-			"Particles in Themes tab",
+			"Complete UI redesign with modern aesthetics",
+			"Custom theme save/load system",
+			"Full multi-language support (EN/RU/JP/ES)",
+			"Draggable FPS counter & coordinates display",
+			"Customizable crosshair system",
+			"Chams (Surface GUI highlighting)",
+			"Orbit player feature",
+			"FOV changer & day/night cycle control",
+			"Custom skybox support",
+			"Beautiful rounded notifications",
+			"Advanced color picker with RGB/HEX/presets",
+			"Improved keybind system with duplicate detection",
+			"Corner drag to resize window",
+			"Inline ESP preview in menu",
+			"Experimental blur background option",
+			"Separated Themes tab",
+		}},
+		{"v2.5", "✨ Polish Update", {
+			"Animated loading screen",
+			"Keybind panel with live status",
+			"10 theme presets",
+			"Performance optimizations",
+		}},
+		{"v2.0", "🔄 Complete Rewrite", {
+			"Full codebase rewrite",
+			"Tab-based navigation",
+			"Config save/load system",
+			"Theme system foundation",
+		}},
+		{"v1.5", "📦 Feature Expansion", {
+			"ESP system added",
+			"Stun feature",
+			"External script integration",
+			"Basic keybinds",
+		}},
+		{"v1.0", "🎉 Initial Release", {
+			"Basic movement features",
+			"Simple visual options",
+			"Core functionality",
 		}},
 	}
+
 	
 	for _, ver in ipairs(changelogItems) do
 		local verFrame = Create("Frame", {Size = UDim2.new(1, 0, 0, 0), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, AutomaticSize = Enum.AutomaticSize.Y, Parent = p}); verFrame:SetAttribute("OrigBT", 0); Corner(verFrame, 12)
