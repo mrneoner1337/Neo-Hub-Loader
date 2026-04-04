@@ -1,6 +1,6 @@
 <div align="center">
 
-![Neo's Hub Banner](https://allwebs.ru/images/2026/04/05/c510f1cd75d0c59fc9e2ce5046af6123.jpg)
+<a href="https://rscripts.net/user/mrneoner" target="_blank"><img alt="mrneoner on Rscripts" loading="lazy" width="360" height="132" src="https://rscripts.net/api/embed/user/mrneoner?theme=light" /></a>
 
 # 🎮 Neo's Hub v3.0
 
