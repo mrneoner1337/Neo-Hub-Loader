@@ -69,6 +69,7 @@ local Langs = {
 		fly_mode_swim = "Swim Fly",
 		fly_mode_noclip = "Noclip Fly",
 		fly_mode_platform = "Platform Fly",
+		fly_mode_smooth = "Smooth Fly",
 		speed_override = "Speed Override",
 		walkspeed = "WalkSpeed",
 		speed_loop = "Speed Loop (Keep after death)",
@@ -114,6 +115,7 @@ local Langs = {
 		save_config = "Save Config",
 		load_config = "Load Config",
 		delete_config = "Delete Config",
+		create_config = "Create Config",
 		list_configs = "List Configs",
 		refresh_configs = "Refresh List",
 		autoload = "Auto-Load Config",
@@ -153,6 +155,7 @@ local Langs = {
 		saved = "saved!",
 		loaded = "loaded!",
 		deleted = "deleted!",
+		created = "created!",
 		unlocked_tools = "Gave %d tools!",
 		toggle_hint = "Press %s to toggle menu.",
 		close = "Close",
@@ -246,6 +249,9 @@ local Langs = {
 		notif_style_minimal = "Minimal",
 		notif_style_classic = "Classic",
 		notif_style_gradient = "Gradient",
+		notif_style_neon = "Neon",
+		notif_style_glass = "Glass",
+		notif_style_cyber = "Cyber",
 		apply = "Apply",
 		cancel = "Cancel",
 		welcome_title = "Welcome to Neo's Hub!",
@@ -259,8 +265,24 @@ local Langs = {
 		account_age = "Account Age",
 		place_name = "Current Place",
 		player_id = "Player ID",
-		created = "Created",
 		days = "days",
+		test_notification = "Test Notification",
+		teleported_to = "Teleported to",
+		theme_applied = "Theme applied",
+		all_btools_given = "All BTools given!",
+		delete_tool_given = "Delete tool given!",
+		clone_tool_given = "Clone tool given!",
+		move_tool_given = "Move tool given!",
+		tp_tool_given = "TP Tool given!",
+		enter_config_name = "Enter config name!",
+		select_or_enter_config = "Select or enter config name!",
+		autoload_set_to = "Auto-load set to",
+		language_changed = "Language changed to",
+		reload_to_apply = "Reload to fully apply",
+		style_changed = "Style changed to",
+		keybinds_cleared = "All keybinds cleared!",
+		fps_unlocked = "FPS Unlimited!",
+		fps_unlocker_not_supported = "FPS Unlocker not supported",
 	},
 	RU = {
 		hub_name = "Neo's Hub",
@@ -284,6 +306,7 @@ local Langs = {
 		fly_mode_swim = "Плавающий",
 		fly_mode_noclip = "Ноклип полёт",
 		fly_mode_platform = "Платформа",
+		fly_mode_smooth = "Плавный полёт",
 		speed_override = "Изменить скорость",
 		walkspeed = "Скорость ходьбы",
 		speed_loop = "Луп скорости (После смерти)",
@@ -329,6 +352,7 @@ local Langs = {
 		save_config = "Сохранить конфиг",
 		load_config = "Загрузить конфиг",
 		delete_config = "Удалить конфиг",
+		create_config = "Создать конфиг",
 		list_configs = "Список конфигов",
 		refresh_configs = "Обновить список",
 		autoload = "Авто-загрузка конфига",
@@ -368,6 +392,7 @@ local Langs = {
 		saved = "сохранён!",
 		loaded = "загружен!",
 		deleted = "удалён!",
+		created = "создан!",
 		unlocked_tools = "Выдано %d инструментов!",
 		toggle_hint = "Нажмите %s для открытия меню.",
 		close = "Закрыть",
@@ -461,6 +486,9 @@ local Langs = {
 		notif_style_minimal = "Минимальный",
 		notif_style_classic = "Классический",
 		notif_style_gradient = "Градиент",
+		notif_style_neon = "Неон",
+		notif_style_glass = "Стекло",
+		notif_style_cyber = "Кибер",
 		apply = "Применить",
 		cancel = "Отмена",
 		welcome_title = "Добро пожаловать в Neo's Hub!",
@@ -474,8 +502,24 @@ local Langs = {
 		account_age = "Возраст аккаунта",
 		place_name = "Текущий плейс",
 		player_id = "ID игрока",
-		created = "Создан",
 		days = "дней",
+		test_notification = "Тестовое уведомление",
+		teleported_to = "Телепортирован к",
+		theme_applied = "Тема применена",
+		all_btools_given = "Все BTools выданы!",
+		delete_tool_given = "Инструмент удаления выдан!",
+		clone_tool_given = "Инструмент клонирования выдан!",
+		move_tool_given = "Инструмент перемещения выдан!",
+		tp_tool_given = "TP Tool выдан!",
+		enter_config_name = "Введите имя конфига!",
+		select_or_enter_config = "Выберите или введите имя конфига!",
+		autoload_set_to = "Авто-загрузка установлена на",
+		language_changed = "Язык изменён на",
+		reload_to_apply = "Перезагрузите для полного применения",
+		style_changed = "Стиль изменён на",
+		keybinds_cleared = "Все клавиши сброшены!",
+		fps_unlocked = "FPS разблокирован!",
+		fps_unlocker_not_supported = "FPS Unlocker не поддерживается",
 	},
 	JP = {
 		hub_name = "Neo's Hub",
@@ -499,6 +543,7 @@ local Langs = {
 		fly_mode_swim = "スイムフライ",
 		fly_mode_noclip = "ノークリップフライ",
 		fly_mode_platform = "プラットフォーム",
+		fly_mode_smooth = "スムーズフライ",
 		speed_override = "速度変更",
 		walkspeed = "歩行速度",
 		speed_loop = "速度ループ (死後維持)",
@@ -544,6 +589,7 @@ local Langs = {
 		save_config = "設定を保存",
 		load_config = "設定を読込",
 		delete_config = "設定を削除",
+		create_config = "設定を作成",
 		list_configs = "設定一覧",
 		refresh_configs = "リスト更新",
 		autoload = "自動読込設定",
@@ -583,6 +629,7 @@ local Langs = {
 		saved = "保存しました！",
 		loaded = "読み込みました！",
 		deleted = "削除しました！",
+		created = "作成しました！",
 		unlocked_tools = "%d個のツールを付与！",
 		toggle_hint = "%sでメニュー切替。",
 		close = "閉じる",
@@ -676,6 +723,9 @@ local Langs = {
 		notif_style_minimal = "ミニマル",
 		notif_style_classic = "クラシック",
 		notif_style_gradient = "グラデーション",
+		notif_style_neon = "ネオン",
+		notif_style_glass = "ガラス",
+		notif_style_cyber = "サイバー",
 		apply = "適用",
 		cancel = "キャンセル",
 		welcome_title = "Neo's Hubへようこそ！",
@@ -689,8 +739,24 @@ local Langs = {
 		account_age = "アカウント年齢",
 		place_name = "現在のプレイス",
 		player_id = "プレイヤーID",
-		created = "作成日",
 		days = "日",
+		test_notification = "テスト通知",
+		teleported_to = "テレポート先",
+		theme_applied = "テーマ適用",
+		all_btools_given = "全BTools付与！",
+		delete_tool_given = "削除ツール付与！",
+		clone_tool_given = "クローンツール付与！",
+		move_tool_given = "移動ツール付与！",
+		tp_tool_given = "TPツール付与！",
+		enter_config_name = "設定名を入力！",
+		select_or_enter_config = "設定名を選択または入力！",
+		autoload_set_to = "自動読込設定",
+		language_changed = "言語変更",
+		reload_to_apply = "完全適用には再読込",
+		style_changed = "スタイル変更",
+		keybinds_cleared = "全キーバインド消去！",
+		fps_unlocked = "FPS無制限！",
+		fps_unlocker_not_supported = "FPSアンロッカー非対応",
 	},
 	ES = {
 		hub_name = "Neo's Hub",
@@ -714,6 +780,7 @@ local Langs = {
 		fly_mode_swim = "Nadar volando",
 		fly_mode_noclip = "Noclip vuelo",
 		fly_mode_platform = "Plataforma",
+		fly_mode_smooth = "Vuelo suave",
 		speed_override = "Cambiar velocidad",
 		walkspeed = "Vel. de caminar",
 		speed_loop = "Loop velocidad (Mantener tras muerte)",
@@ -759,6 +826,7 @@ local Langs = {
 		save_config = "Guardar config",
 		load_config = "Cargar config",
 		delete_config = "Eliminar config",
+		create_config = "Crear config",
 		list_configs = "Listar configs",
 		refresh_configs = "Actualizar lista",
 		autoload = "Config auto-carga",
@@ -798,6 +866,7 @@ local Langs = {
 		saved = "guardado!",
 		loaded = "cargado!",
 		deleted = "eliminado!",
+		created = "creado!",
 		unlocked_tools = "%d herramientas dadas!",
 		toggle_hint = "%s para alternar menú.",
 		close = "Cerrar",
@@ -891,6 +960,9 @@ local Langs = {
 		notif_style_minimal = "Mínimo",
 		notif_style_classic = "Clásico",
 		notif_style_gradient = "Gradiente",
+		notif_style_neon = "Neón",
+		notif_style_glass = "Vidrio",
+		notif_style_cyber = "Ciber",
 		apply = "Aplicar",
 		cancel = "Cancelar",
 		welcome_title = "¡Bienvenido a Neo's Hub!",
@@ -904,8 +976,24 @@ local Langs = {
 		account_age = "Edad de cuenta",
 		place_name = "Lugar actual",
 		player_id = "ID de jugador",
-		created = "Creado",
 		days = "días",
+		test_notification = "Notificación de prueba",
+		teleported_to = "Teleportado a",
+		theme_applied = "Tema aplicado",
+		all_btools_given = "¡Todos los BTools dados!",
+		delete_tool_given = "¡Herramienta eliminar dada!",
+		clone_tool_given = "¡Herramienta clonar dada!",
+		move_tool_given = "¡Herramienta mover dada!",
+		tp_tool_given = "¡TP Tool dado!",
+		enter_config_name = "¡Ingrese nombre de config!",
+		select_or_enter_config = "¡Seleccione o ingrese nombre de config!",
+		autoload_set_to = "Auto-carga establecida a",
+		language_changed = "Idioma cambiado a",
+		reload_to_apply = "Recargue para aplicar completamente",
+		style_changed = "Estilo cambiado a",
+		keybinds_cleared = "¡Todos los atajos borrados!",
+		fps_unlocked = "¡FPS Ilimitado!",
+		fps_unlocker_not_supported = "FPS Unlocker no soportado",
 	},
 }
 
@@ -1262,7 +1350,6 @@ local function CopyToClipboard(text)
 		if setclipboard then setclipboard(text) elseif toclipboard then toclipboard(text) end
 	end)
 end
-
 -- ═══ BLUR BACKGROUND SYSTEM ═══
 local BlurEffect = nil
 
@@ -1448,6 +1535,118 @@ local function NotifyGradient(title, text, duration)
 	end)
 end
 
+local function NotifyNeon(title, text, duration)
+	local notif = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		BackgroundColor3 = Color3.fromRGB(5, 5, 10),
+		BorderSizePixel = 0,
+		ClipsDescendants = true,
+		Parent = NotificationContainer
+	})
+	Corner(notif, 12)
+	
+	local glowStroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Transparency = 0, Parent = notif})
+	
+	local innerGlow = Create("Frame", {Size = UDim2.new(1, -4, 1, -4), Position = UDim2.new(0, 2, 0, 2), BackgroundTransparency = 0.95, BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
+	Corner(innerGlow, 10)
+	
+	Create("TextLabel", {Size = UDim2.new(1, -20, 0, 22), Position = UDim2.new(0, 14, 0, 10), BackgroundTransparency = 1, Text = "⚡ " .. title, TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBlack, TextSize = 15, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
+	Create("TextLabel", {Size = UDim2.new(1, -20, 0, 32), Position = UDim2.new(0, 14, 0, 32), BackgroundTransparency = 1, Text = text, TextColor3 = Color3.fromRGB(200, 200, 220), Font = Enum.Font.GothamSemibold, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
+	
+	tween(notif, {Size = UDim2.new(1, 0, 0, 75)}, 0.4, Enum.EasingStyle.Back)
+	
+	task.spawn(function()
+		while notif.Parent do
+			tween(glowStroke, {Transparency = 0.5}, 0.4)
+			tween(innerGlow, {BackgroundTransparency = 0.85}, 0.4)
+			task.wait(0.4)
+			tween(glowStroke, {Transparency = 0}, 0.4)
+			tween(innerGlow, {BackgroundTransparency = 0.95}, 0.4)
+			task.wait(0.4)
+		end
+	end)
+	
+	task.delay(duration or 4, function()
+		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+		task.delay(0.45, function() pcall(function() notif:Destroy() end) end)
+	end)
+end
+
+local function NotifyGlass(title, text, duration)
+	local notif = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		BackgroundTransparency = 0.85,
+		BorderSizePixel = 0,
+		ClipsDescendants = true,
+		Parent = NotificationContainer
+	})
+	Corner(notif, 16)
+	
+	Create("UIStroke", {Color = Color3.fromRGB(255, 255, 255), Thickness = 1, Transparency = 0.7, Parent = notif})
+	
+	local shimmer = Create("Frame", {Size = UDim2.new(0.3, 0, 1, 0), Position = UDim2.new(-0.3, 0, 0, 0), BackgroundTransparency = 0.7, BorderSizePixel = 0, Parent = notif})
+	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1,1,1)), ColorSequenceKeypoint.new(0.5, Color3.new(1,1,1)), ColorSequenceKeypoint.new(1, Color3.new(1,1,1))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.5), NumberSequenceKeypoint.new(1, 1)}), Parent = shimmer})
+	
+	local iconFrame = Create("Frame", {Size = UDim2.new(0, 40, 0, 40), Position = UDim2.new(0, 10, 0, 10), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.3, BorderSizePixel = 0, Parent = notif})
+	Corner(iconFrame, 12)
+	Create("TextLabel", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "💎", TextSize = 18, Font = Enum.Font.GothamBold, Parent = iconFrame})
+	
+	Create("TextLabel", {Size = UDim2.new(1, -70, 0, 20), Position = UDim2.new(0, 58, 0, 10), BackgroundTransparency = 1, Text = title, TextColor3 = Color3.fromRGB(40, 40, 50), Font = Enum.Font.GothamBlack, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
+	Create("TextLabel", {Size = UDim2.new(1, -70, 0, 28), Position = UDim2.new(0, 58, 0, 30), BackgroundTransparency = 1, Text = text, TextColor3 = Color3.fromRGB(80, 80, 100), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
+	
+	tween(notif, {Size = UDim2.new(1, 0, 0, 70)}, 0.4, Enum.EasingStyle.Back)
+	
+	task.spawn(function()
+		while notif.Parent do
+			tween(shimmer, {Position = UDim2.new(1.3, 0, 0, 0)}, 2, Enum.EasingStyle.Linear)
+			task.wait(2)
+			shimmer.Position = UDim2.new(-0.3, 0, 0, 0)
+		end
+	end)
+	
+	task.delay(duration or 4, function()
+		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+		task.delay(0.45, function() pcall(function() notif:Destroy() end) end)
+	end)
+end
+
+local function NotifyCyber(title, text, duration)
+	local notif = Create("Frame", {
+		Size = UDim2.new(1, 0, 0, 0),
+		BackgroundColor3 = Color3.fromRGB(10, 15, 25),
+		BorderSizePixel = 0,
+		ClipsDescendants = true,
+		Parent = NotificationContainer
+	})
+	Corner(notif, 4)
+	
+	local topLine = Create("Frame", {Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 0, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
+	local bottomLine = Create("Frame", {Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
+	
+	local scanLine = Create("Frame", {Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 0, 3), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.7, BorderSizePixel = 0, Parent = notif})
+	
+	Create("TextLabel", {Size = UDim2.new(1, -16, 0, 18), Position = UDim2.new(0, 8, 0, 8), BackgroundTransparency = 1, Text = ">> " .. title:upper(), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.Code, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
+	Create("TextLabel", {Size = UDim2.new(1, -16, 0, 30), Position = UDim2.new(0, 8, 0, 28), BackgroundTransparency = 1, Text = "   " .. text, TextColor3 = Color3.fromRGB(0, 255, 150), Font = Enum.Font.Code, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
+	
+	local timestamp = Create("TextLabel", {Size = UDim2.new(0, 60, 0, 12), Position = UDim2.new(1, -68, 0, 6), BackgroundTransparency = 1, Text = os.date("%H:%M:%S"), TextColor3 = Color3.fromRGB(100, 100, 120), Font = Enum.Font.Code, TextSize = 9, TextXAlignment = Enum.TextXAlignment.Right, Parent = notif})
+	
+	tween(notif, {Size = UDim2.new(1, 0, 0, 68)}, 0.3, Enum.EasingStyle.Quint)
+	
+	task.spawn(function()
+		while notif.Parent do
+			tween(scanLine, {Position = UDim2.new(0, 0, 1, -3)}, 1.5, Enum.EasingStyle.Linear)
+			task.wait(1.5)
+			scanLine.Position = UDim2.new(0, 0, 0, 3)
+		end
+	end)
+	
+	task.delay(duration or 4, function()
+		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+		task.delay(0.35, function() pcall(function() notif:Destroy() end) end)
+	end)
+end
+
 local function Notify(title, text, duration)
 	if not NotificationContainer then SetupNotificationSystem() end
 	
@@ -1460,6 +1659,12 @@ local function Notify(title, text, duration)
 		NotifyClassic(title, text, duration)
 	elseif style == "Gradient" then
 		NotifyGradient(title, text, duration)
+	elseif style == "Neon" then
+		NotifyNeon(title, text, duration)
+	elseif style == "Glass" then
+		NotifyGlass(title, text, duration)
+	elseif style == "Cyber" then
+		NotifyCyber(title, text, duration)
 	else
 		NotifyModern(title, text, duration)
 	end
@@ -2076,7 +2281,6 @@ MinBtn.MouseButton1Click:Connect(ToggleMinimize)
 MinBtn.MouseEnter:Connect(function() tween(MinBtn, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.15) end)
 MinBtn.MouseLeave:Connect(function() tween(MinBtn, {BackgroundColor3 = TC(S.Theme.Card)}, 0.15) end)
 MinBarExpand.MouseButton1Click:Connect(ToggleMinimize)
-
 -- ═══ PAGE BUILDER ═══
 local function MakePage(key)
 	local page = Create("ScrollingFrame", {
@@ -2135,6 +2339,7 @@ for _, td in ipairs(tabData) do
 	btn.MouseButton1Click:Connect(function() SwitchTab(td.key) end)
 	tabButtons[td.key] = btn; MakePage(td.key)
 end
+
 -- ═══ UI COMPONENTS ═══
 
 local function ShowKeybindPopup(name, callback)
@@ -2451,7 +2656,10 @@ local function InfoCard(parent, text, copyable)
 	return f, l
 end
 
-local function Dropdown(parent, text, options, callback)
+-- Store dropdown references for updating on config load
+local DropdownRefs = {}
+
+local function Dropdown(parent, text, options, callback, refName)
 	local container = Create("Frame", {Size = UDim2.new(1, 0, 0, 44), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, ClipsDescendants = true, Parent = parent}); container:SetAttribute("OrigBT", 0); Corner(container, 10)
 	Create("TextLabel", {Size = UDim2.new(0.48, 0, 0, 44), Position = UDim2.new(0, 14, 0, 0), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = container}):SetAttribute("OrigTT", 0)
 	local selected = Create("TextButton", {Size = UDim2.new(0.48, -14, 0, 30), Position = UDim2.new(0.52, 0, 0, 7), BackgroundColor3 = TC(S.Theme.CardHover), Text = options[1] or "-", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, AutoButtonColor = false, Parent = container}); selected:SetAttribute("OrigTT", 0); Corner(selected, 8)
@@ -2515,7 +2723,9 @@ local function Dropdown(parent, text, options, callback)
 	selected.MouseEnter:Connect(function() tween(selected, {BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.7}, 0.1) end)
 	selected.MouseLeave:Connect(function() tween(selected, {BackgroundColor3 = TC(S.Theme.CardHover), BackgroundTransparency = 0}, 0.1) end)
 	
-	return {Refresh = function(newOpts) options = newOpts; buildOptions(newOpts) end, SetSelected = function(val) selected.Text = val end}
+	local ref = {Refresh = function(newOpts) options = newOpts; buildOptions(newOpts) end, SetSelected = function(val) selected.Text = val end, GetSelected = function() return selected.Text end}
+	if refName then DropdownRefs[refName] = ref end
+	return ref
 end
 
 local function ShowColorPickerPopup(title, default, onApply)
@@ -2672,7 +2882,7 @@ local function ColorPicker(parent, text, default, callback)
 	container.MouseLeave:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.Card)}, 0.1) end)
 end
 
--- ═══ SCREEN INFO GUI ═══
+-- ═══ SCREEN INFO GUI (SYNCED WITH THEME) ═══
 local ScreenInfoGui = Create("ScreenGui", {Name = "NHScreenInfo", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 pcall(ProtectGui, ScreenInfoGui); ScreenInfoGui.Parent = CoreGui
 
@@ -2686,7 +2896,7 @@ local FPSFrame = Create("Frame", {
 	Parent = ScreenInfoGui
 })
 Corner(FPSFrame, 8)
-Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.5, Parent = FPSFrame})
+local FPSStroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.5, Parent = FPSFrame})
 local FPSLabel = Create("TextLabel", {
 	Size = UDim2.new(1, 0, 1, 0),
 	BackgroundTransparency = 1,
@@ -2743,7 +2953,7 @@ local CoordsFrame = Create("Frame", {
 	Parent = ScreenInfoGui
 })
 Corner(CoordsFrame, 8)
-Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.5, Parent = CoordsFrame})
+local CoordsStroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 1, Transparency = 0.5, Parent = CoordsFrame})
 local CoordsLabel = Create("TextLabel", {
 	Size = UDim2.new(1, 0, 1, 0),
 	BackgroundTransparency = 1,
@@ -2785,6 +2995,14 @@ task.spawn(function()
 		task.wait(0.1)
 	end
 end)
+
+-- Function to update screen info theme
+local function UpdateScreenInfoTheme()
+	FPSFrame.BackgroundColor3 = TC(S.Theme.Bg)
+	FPSStroke.Color = TC(S.Theme.Accent)
+	CoordsFrame.BackgroundColor3 = TC(S.Theme.Bg)
+	CoordsStroke.Color = TC(S.Theme.Accent)
+end
 
 -- ═══ CROSSHAIR GUI ═══
 local CrosshairGui = Create("ScreenGui", {Name = "NHCrosshair", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
@@ -2959,7 +3177,6 @@ local function StartFling(mode)
 	local cam = workspace.CurrentCamera
 	
 	if mode == "Walk" then
-		-- Walk Fling - simple velocity based
 		flingConn = RunService.Heartbeat:Connect(function()
 			if not S.Fling then StopFling(); return end
 			pcall(function()
@@ -2974,7 +3191,6 @@ local function StartFling(mode)
 		end)
 		
 	elseif mode == "Fly" then
-		-- Fly Fling - controllable with WASD
 		flingBV = Instance.new("BodyVelocity")
 		flingBV.Name = "NHFlingBV"
 		flingBV.MaxForce = Vector3.one * 9e9
@@ -3012,7 +3228,6 @@ local function StartFling(mode)
 		end)
 		
 	elseif mode == "Spin" then
-		-- Spin Fling - spinning rapidly
 		flingConn = RunService.Heartbeat:Connect(function()
 			if not S.Fling then StopFling(); return end
 			pcall(function()
@@ -3059,7 +3274,7 @@ local function StopSpin()
 	pcall(function() getRoot():FindFirstChild("NHSpin"):Destroy() end)
 end
 
--- ═══ FLY SYSTEM ═══
+-- ═══ FLY SYSTEM (IMPROVED DEFAULT FLY) ═══
 local flyConn = nil
 local flyBV, flyBG, flyPlatform = nil, nil, nil
 
@@ -3083,6 +3298,7 @@ local function StartFly(mode)
 	local cam = workspace.CurrentCamera
 	
 	if mode == "Default" then
+		-- Improved Default Fly - character stands upright
 		flyBV = Instance.new("BodyVelocity")
 		flyBV.Name = "NHFly"
 		flyBV.MaxForce = Vector3.one * 9e9
@@ -3092,20 +3308,34 @@ local function StartFly(mode)
 		flyBG = Instance.new("BodyGyro")
 		flyBG.Name = "NHGyro"
 		flyBG.MaxTorque = Vector3.one * 9e9
-		flyBG.D = 0
+		flyBG.D = 100
+		flyBG.P = 10000
 		flyBG.Parent = root
 		
 		flyConn = RunService.Heartbeat:Connect(function()
 			if not S.Fly then StopAllFly(); return end
+			
+			-- Keep character upright - only rotate on Y axis based on camera
+			local camCF = cam.CFrame
+			local _, yRot, _ = camCF:ToEulerAnglesYXZ()
+			flyBG.CFrame = CFrame.new(root.Position) * CFrame.Angles(0, yRot, 0)
+			
+			-- Prevent falling animation
+			hum:ChangeState(Enum.HumanoidStateType.Running)
+			
 			local d = Vector3.zero
-			if UIS:IsKeyDown(Enum.KeyCode.W) then d += cam.CFrame.LookVector end
-			if UIS:IsKeyDown(Enum.KeyCode.S) then d -= cam.CFrame.LookVector end
-			if UIS:IsKeyDown(Enum.KeyCode.A) then d -= cam.CFrame.RightVector end
-			if UIS:IsKeyDown(Enum.KeyCode.D) then d += cam.CFrame.RightVector end
+			if UIS:IsKeyDown(Enum.KeyCode.W) then d += (camCF.LookVector * Vector3.new(1, 0, 1)).Unit end
+			if UIS:IsKeyDown(Enum.KeyCode.S) then d -= (camCF.LookVector * Vector3.new(1, 0, 1)).Unit end
+			if UIS:IsKeyDown(Enum.KeyCode.A) then d -= (camCF.RightVector * Vector3.new(1, 0, 1)).Unit end
+			if UIS:IsKeyDown(Enum.KeyCode.D) then d += (camCF.RightVector * Vector3.new(1, 0, 1)).Unit end
 			if UIS:IsKeyDown(Enum.KeyCode.Space) then d += Vector3.yAxis end
 			if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d -= Vector3.yAxis end
+			
+			if d.Magnitude > 0 then
+				d = d.Unit
+			end
+			
 			flyBV.Velocity = d * S.FlySpeed
-			flyBG.CFrame = cam.CFrame
 		end)
 		
 	elseif mode == "Swim" then
@@ -3230,6 +3460,9 @@ local function ApplyTheme()
 	-- Update keybind panel
 	UpdateKeybindPanel()
 	
+	-- Update screen info theme
+	UpdateScreenInfoTheme()
+	
 	SaveCurrentTheme()
 end
 -- ═══ PAGE: MOVEMENT ═══
@@ -3245,13 +3478,15 @@ do
 		[L("fly_mode_noclip")] = "Noclip",
 		[L("fly_mode_platform")] = "Platform"
 	}
+	local flyModeMapReverse = {}
+	for k, v in pairs(flyModeMap) do flyModeMapReverse[v] = k end
 	
-	Dropdown(p, L("fly_mode"), flyModes, function(val)
+	local flyModeDD = Dropdown(p, L("fly_mode"), flyModes, function(val)
 		S.FlyMode = flyModeMap[val] or "Default"
 		if S.Fly then
 			StartFly(S.FlyMode)
 		end
-	end)
+	end, "FlyMode")
 	
 	Toggle(p, L("fly"), S.Fly, function(on)
 		S.Fly = on
@@ -3301,13 +3536,15 @@ do
 		[L("fling_mode_fly")] = "Fly",
 		[L("fling_mode_spin")] = "Spin"
 	}
+	local flingModeMapReverse = {}
+	for k, v in pairs(flingModeMap) do flingModeMapReverse[v] = k end
 	
-	Dropdown(p, L("fling_mode"), flingModes, function(val)
+	local flingModeDD = Dropdown(p, L("fling_mode"), flingModes, function(val)
 		S.FlingMode = flingModeMap[val] or "Walk"
 		if S.Fling then
 			StartFling(S.FlingMode)
 		end
-	end)
+	end, "FlingMode")
 	
 	Toggle(p, L("fling"), S.Fling, function(on)
 		S.Fling = on
@@ -3337,7 +3574,7 @@ do
 	
 	local orbitDD = Dropdown(p, L("select_player"), playerNames, function(val)
 		S.OrbitTarget = val
-	end)
+	end, "OrbitTarget")
 	
 	Toggle(p, L("orbit_player"), S.OrbitPlayer, function(on)
 		S.OrbitPlayer = on
@@ -3359,7 +3596,7 @@ do
 	
 	local tpDD = Dropdown(p, L("select_player"), tpPlayerNames, function(val)
 		selectedTPPlayer = val
-	end)
+	end, "TPPlayer")
 	
 	Button(p, L("teleport"), function()
 		if selectedTPPlayer == "-" then return end
@@ -3370,7 +3607,7 @@ do
 				pcall(function()
 					getRoot().CFrame = targetRoot.CFrame + Vector3.new(0, 3, 0)
 				end)
-				Notify(L("hub_name"), "Teleported to " .. selectedTPPlayer, 2)
+				Notify(L("hub_name"), L("teleported_to") .. " " .. selectedTPPlayer, 2)
 			end
 		end
 	end)
@@ -3691,9 +3928,9 @@ do
 	Section(p, L("performance"))
 	Button(p, L("fps_unlimited"), function()
 		pcall(function()
-			if setfpscap then setfpscap(9999); Notify(L("hub_name"), "FPS Unlimited!", 3)
-			elseif unlockfps then unlockfps(); Notify(L("hub_name"), "FPS Unlimited!", 3)
-			else Notify(L("hub_name"), "FPS Unlocker not supported", 4) end
+			if setfpscap then setfpscap(9999); Notify(L("hub_name"), L("fps_unlocked"), 3)
+			elseif unlockfps then unlockfps(); Notify(L("hub_name"), L("fps_unlocked"), 3)
+			else Notify(L("hub_name"), L("fps_unlocker_not_supported"), 4) end
 		end)
 	end)
 	
@@ -3712,15 +3949,15 @@ do
 			Instance.new("HopperBin", bp).BinType = Enum.BinType.Clone
 			Instance.new("HopperBin", bp).BinType = Enum.BinType.Grab
 		end)
-		Notify(L("hub_name"), "All BTools given!", 2)
+		Notify(L("hub_name"), L("all_btools_given"), 2)
 	end)
-	Button(p, L("btools_delete"), function() pcall(function() local h = Instance.new("HopperBin"); h.BinType = Enum.BinType.Hammer; h.Parent = Player.Backpack end); Notify(L("hub_name"), "Delete tool given!", 2) end)
-	Button(p, L("btools_copy"), function() pcall(function() local h = Instance.new("HopperBin"); h.BinType = Enum.BinType.Clone; h.Parent = Player.Backpack end); Notify(L("hub_name"), "Clone tool given!", 2) end)
-	Button(p, L("btools_move"), function() pcall(function() local h = Instance.new("HopperBin"); h.BinType = Enum.BinType.Grab; h.Parent = Player.Backpack end); Notify(L("hub_name"), "Move tool given!", 2) end)
+	Button(p, L("btools_delete"), function() pcall(function() local h = Instance.new("HopperBin"); h.BinType = Enum.BinType.Hammer; h.Parent = Player.Backpack end); Notify(L("hub_name"), L("delete_tool_given"), 2) end)
+	Button(p, L("btools_copy"), function() pcall(function() local h = Instance.new("HopperBin"); h.BinType = Enum.BinType.Clone; h.Parent = Player.Backpack end); Notify(L("hub_name"), L("clone_tool_given"), 2) end)
+	Button(p, L("btools_move"), function() pcall(function() local h = Instance.new("HopperBin"); h.BinType = Enum.BinType.Grab; h.Parent = Player.Backpack end); Notify(L("hub_name"), L("move_tool_given"), 2) end)
 	Button(p, L("tp_tool"), function()
 		local t = Instance.new("Tool"); t.Name = "TP Tool"; t.RequiresHandle = false; t.CanBeDropped = false; t.Parent = Player.Backpack
 		t.Activated:Connect(function() pcall(function() getRoot().CFrame = CFrame.new(Mouse.Hit.Position + Vector3.new(0, 4, 0)) end) end)
-		Notify(L("hub_name"), "TP Tool given!", 2)
+		Notify(L("hub_name"), L("tp_tool_given"), 2)
 	end)
 
 	Section(p, L("sect_inventory"))
@@ -3771,18 +4008,18 @@ do
 	local langDD = Dropdown(p, L("select_lang"), langOpts, function(val)
 		local code = val:sub(1, 2)
 		CurrentLang = code; S.Language = code; SaveLanguage(code)
-		Notify(L("hub_name"), "Language -> " .. val .. "\nReload to fully apply.", 4)
-	end)
+		Notify(L("hub_name"), L("language_changed") .. " " .. val .. "\n" .. L("reload_to_apply"), 4)
+	end, "Language")
 	langDD.SetSelected(curLD)
 
 	Section(p, L("notification_style"))
-	local notifStyles = {L("notif_style_modern"), L("notif_style_minimal"), L("notif_style_classic"), L("notif_style_gradient")}
-	local notifStyleMap = {[L("notif_style_modern")] = "Modern", [L("notif_style_minimal")] = "Minimal", [L("notif_style_classic")] = "Classic", [L("notif_style_gradient")] = "Gradient"}
+	local notifStyles = {L("notif_style_modern"), L("notif_style_minimal"), L("notif_style_classic"), L("notif_style_gradient"), L("notif_style_neon"), L("notif_style_glass"), L("notif_style_cyber")}
+	local notifStyleMap = {[L("notif_style_modern")] = "Modern", [L("notif_style_minimal")] = "Minimal", [L("notif_style_classic")] = "Classic", [L("notif_style_gradient")] = "Gradient", [L("notif_style_neon")] = "Neon", [L("notif_style_glass")] = "Glass", [L("notif_style_cyber")] = "Cyber"}
 	local notifStyleMapReverse = {}; for k, v in pairs(notifStyleMap) do notifStyleMapReverse[v] = k end
 	
-	local notifDD = Dropdown(p, L("notification_style"), notifStyles, function(val) S.NotificationStyle = notifStyleMap[val] or "Modern"; SaveCurrentTheme(); Notify(L("hub_name"), "Style: " .. S.NotificationStyle, 2) end)
+	local notifDD = Dropdown(p, L("notification_style"), notifStyles, function(val) S.NotificationStyle = notifStyleMap[val] or "Modern"; SaveCurrentTheme(); Notify(L("hub_name"), L("style_changed") .. " " .. S.NotificationStyle, 2) end, "NotifStyle")
 	if notifStyleMapReverse[S.NotificationStyle] then notifDD.SetSelected(notifStyleMapReverse[S.NotificationStyle]) end
-	Button(p, "Test Notification", function() Notify(L("hub_name"), "This is a test notification!", 3) end)
+	Button(p, L("test_notification"), function() Notify(L("hub_name"), L("test_notification") .. "!", 3) end)
 
 	Section(p, L("keybinds"))
 	InfoCard(p, L("right_click_hint"))
@@ -3805,7 +4042,7 @@ do
 	Button(p, L("clear_all_keybinds"), function()
 		for _, kb in ipairs(KeybindRegistry) do kb.key = "None" end
 		for k, _ in pairs(S.Keybinds) do if k ~= "ToggleMenu" then S.Keybinds[k] = "None" end end
-		UpdateKeybindPanel(); Notify(L("hub_name"), L("clear_all_keybinds") .. " done!", 3)
+		UpdateKeybindPanel(); Notify(L("hub_name"), L("keybinds_cleared"), 3)
 	end, true)
 
 	Section(p, L("configs"))
@@ -3815,7 +4052,6 @@ do
 	local configList = GetConfigs()
 	local autoLoadName = GetAutoLoad()
 	
-	-- Set autoload config as selected
 	local defaultConfigSelected = L("no_configs")
 	if #configList > 0 then
 		if autoLoadName ~= "" and table.find(configList, autoLoadName) then
@@ -3828,19 +4064,29 @@ do
 	
 	local configDD = Dropdown(p, L("select_config"), #configList > 0 and configList or {L("no_configs")}, function(val) 
 		if val ~= L("no_configs") then cfgBox.Text = val end 
-	end)
+	end, "ConfigSelect")
 	if defaultConfigSelected ~= L("no_configs") then
 		configDD.SetSelected(defaultConfigSelected)
 	end
 	
-	Button(p, L("save_config"), function()
+	-- Create Config button - checks for duplicates
+	Button(p, L("create_config"), function()
 		local n = cfgBox.Text
-		if n == "" then Notify(L("hub_name"), "Enter config name!", 2); return end
-		-- Check if config already exists
+		if n == "" then Notify(L("hub_name"), L("enter_config_name"), 2); return end
 		if ConfigExists(n) then
 			Notify(L("hub_name"), L("config_exists"), 3)
 			return
 		end
+		SaveConfig(n)
+		local newList = GetConfigs()
+		configDD.Refresh(#newList > 0 and newList or {L("no_configs")})
+		Notify(L("hub_name"), "'" .. n .. "' " .. L("created"), 3)
+	end)
+	
+	-- Save Config button - overwrites without checking
+	Button(p, L("save_config"), function()
+		local n = cfgBox.Text
+		if n == "" then Notify(L("hub_name"), L("enter_config_name"), 2); return end
 		SaveConfig(n)
 		local newList = GetConfigs()
 		configDD.Refresh(#newList > 0 and newList or {L("no_configs")})
@@ -3849,17 +4095,38 @@ do
 	
 	Button(p, L("load_config"), function()
 		local n = cfgBox.Text
-		if n == "" then Notify(L("hub_name"), "Select or enter config name!", 2); return end
+		if n == "" then Notify(L("hub_name"), L("select_or_enter_config"), 2); return end
 		LoadConfig(n)
 		ApplyTheme()
+		
+		-- Update dropdowns after config load
+		if DropdownRefs["FlyMode"] and S.FlyMode then
+			local flyModeMapReverse = {["Default"] = L("fly_mode_default"), ["Swim"] = L("fly_mode_swim"), ["Noclip"] = L("fly_mode_noclip"), ["Platform"] = L("fly_mode_platform")}
+			if flyModeMapReverse[S.FlyMode] then
+				DropdownRefs["FlyMode"].SetSelected(flyModeMapReverse[S.FlyMode])
+			end
+		end
+		if DropdownRefs["FlingMode"] and S.FlingMode then
+			local flingModeMapReverse = {["Walk"] = L("fling_mode_walk"), ["Fly"] = L("fling_mode_fly"), ["Spin"] = L("fling_mode_spin")}
+			if flingModeMapReverse[S.FlingMode] then
+				DropdownRefs["FlingMode"].SetSelected(flingModeMapReverse[S.FlingMode])
+			end
+		end
+		if DropdownRefs["NotifStyle"] and S.NotificationStyle then
+			local notifStyleMapReverse = {["Modern"] = L("notif_style_modern"), ["Minimal"] = L("notif_style_minimal"), ["Classic"] = L("notif_style_classic"), ["Gradient"] = L("notif_style_gradient"), ["Neon"] = L("notif_style_neon"), ["Glass"] = L("notif_style_glass"), ["Cyber"] = L("notif_style_cyber")}
+			if notifStyleMapReverse[S.NotificationStyle] then
+				DropdownRefs["NotifStyle"].SetSelected(notifStyleMapReverse[S.NotificationStyle])
+			end
+		end
+		
 		Notify(L("hub_name"), "'" .. n .. "' " .. L("loaded"), 3)
 	end)
 	
 	Button(p, L("autoload_set"), function()
 		local n = cfgBox.Text
-		if n == "" then Notify(L("hub_name"), "Enter config name!", 2); return end
+		if n == "" then Notify(L("hub_name"), L("enter_config_name"), 2); return end
 		SetAutoLoad(n)
-		Notify(L("hub_name"), "Auto-load -> '" .. n .. "'", 3)
+		Notify(L("hub_name"), L("autoload_set_to") .. " '" .. n .. "'", 3)
 	end)
 	
 	Button(p, L("delete_config"), function()
@@ -3908,7 +4175,7 @@ do
 	local themeIF = Create("Frame", {Size = UDim2.new(1, 0, 0, 40), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = p}); themeIF:SetAttribute("OrigBT", 0); Corner(themeIF, 10)
 	local themeBox = Create("TextBox", {Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, PlaceholderText = L("theme_name"), PlaceholderColor3 = TC(S.Theme.SubText), Text = "", TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamSemibold, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Parent = themeIF}); themeBox:SetAttribute("OrigTT", 0)
 	
-	local themeDD = Dropdown(p, L("select_theme"), GetThemes(), function(val) themeBox.Text = val end)
+	local themeDD = Dropdown(p, L("select_theme"), GetThemes(), function(val) themeBox.Text = val end, "ThemeSelect")
 	Button(p, L("save_theme"), function() local n = themeBox.Text; if n == "" then n = "MyTheme" end; SaveTheme(n); themeDD.Refresh(GetThemes()); Notify(L("hub_name"), "Theme '" .. n .. "' " .. L("saved"), 3) end)
 	Button(p, L("load_theme"), function() local n = themeBox.Text; if n == "" then return end; LoadTheme(n); ApplyTheme(); Notify(L("hub_name"), "Theme '" .. n .. "' " .. L("loaded"), 3) end)
 	Button(p, L("delete_theme"), function() local n = themeBox.Text; if n == "" then return end; DeleteTheme(n); themeBox.Text = ""; themeDD.Refresh(GetThemes()); Notify(L("hub_name"), "Theme '" .. n .. "' " .. L("deleted"), 3) end, true)
@@ -3947,8 +4214,10 @@ do
 			S.Theme.ToggleOn = accent
 			S.Theme.Bg = bg
 			S.Theme.Sidebar = sb
+			S.Theme.Card = {bg[1] + 10, bg[2] + 10, bg[3] + 14}
+			S.Theme.CardHover = {bg[1] + 20, bg[2] + 20, bg[3] + 28}
 			ApplyTheme()
-			Notify(L("hub_name"), "Theme: " .. name, 2) 
+			Notify(L("hub_name"), L("theme_applied") .. ": " .. name, 2) 
 		end)
 	end
 end
@@ -4007,8 +4276,25 @@ task.defer(function()
 		for rn, val in pairs(m) do if ToggleRefs[rn] and val then ToggleRefs[rn].Set(val) end end
 		UpdateKeybindPanel(); FPSFrame.Visible = S.FPSCounter; CoordsFrame.Visible = S.Coordinates; KBPanel.Visible = S.ShowKeybindPanel; UpdateCrosshair()
 		if S.OrbitPlayer then StartOrbit() end; if S.Spin then StartSpin() end
+		
+		-- Update dropdowns after autoload
+		if DropdownRefs["FlyMode"] and S.FlyMode then
+			local flyModeMapReverse = {["Default"] = L("fly_mode_default"), ["Swim"] = L("fly_mode_swim"), ["Noclip"] = L("fly_mode_noclip"), ["Platform"] = L("fly_mode_platform")}
+			if flyModeMapReverse[S.FlyMode] then
+				DropdownRefs["FlyMode"].SetSelected(flyModeMapReverse[S.FlyMode])
+			end
+		end
+		if DropdownRefs["FlingMode"] and S.FlingMode then
+			local flingModeMapReverse = {["Walk"] = L("fling_mode_walk"), ["Fly"] = L("fling_mode_fly"), ["Spin"] = L("fling_mode_spin")}
+			if flingModeMapReverse[S.FlingMode] then
+				DropdownRefs["FlingMode"].SetSelected(flingModeMapReverse[S.FlingMode])
+			end
+		end
 	end
 	if S.ParticlesEnabled then SpawnParticles() end
+	
+	-- Apply theme from config
+	ApplyTheme()
 end)
 
 -- ═══ TOGGLE VISIBILITY + KEYBINDS ═══
@@ -4050,7 +4336,7 @@ game:BindToClose(function() SaveCurrentTheme() end)
 
 task.wait(0.5)
 
--- Start directly with Movement tab instead of Welcome screen
+-- Start directly with Movement tab
 SwitchTab("tab_movement")
 
 if S.BlurBackground then ShowBlurImmediate() end
