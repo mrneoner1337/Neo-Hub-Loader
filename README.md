@@ -1,6 +1,6 @@
 <div align="center">
 
-![Neo's Hub Banner]([https://i.imgur.com/placeholder.png](https://allwebs.ru/images/2026/04/05/c510f1cd75d0c59fc9e2ce5046af6123.jpg))
+![Neo's Hub Banner](https://allwebs.ru/images/2026/04/05/c510f1cd75d0c59fc9e2ce5046af6123.jpg)
 
 # 🎮 Neo's Hub v3.0
 
