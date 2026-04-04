@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://rscripts.net/user/mrneoner" target="_blank"><img alt="mrneoner on Rscripts" loading="lazy" width="360" height="132" src="https://rscripts.net/api/embed/user/mrneoner?theme=light" /></a>
+<a href="https://rscripts.net/user/mrneoner" target="_blank"><img alt="mrneoner on Rscripts" loading="lazy" width="360" height="132" src="https://rscripts.net/api/embed/user/mrneoner?theme=dark" /></a>
 
 # 🎮 Neo's Hub v3.0
 
