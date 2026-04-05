@@ -43,6 +43,16 @@ local function getChar() return Player.Character or Player.CharacterAdded:Wait()
 local function getHum() return getChar():WaitForChild("Humanoid") end
 local function getRoot() return getChar():WaitForChild("HumanoidRootPart") end
 
+-- ═══ FLY/FLING GLOBAL VARIABLES ═══
+local FLYING = false
+local QEfly = true
+local iyflyspeed = 1
+local flinging = false
+local walkflinging = false
+local flingDied = nil
+local flyKeyDown = nil
+local flyKeyUp = nil
+
 -- ═══════════════════════════════════════════
 -- LOCALIZATION
 -- ═══════════════════════════════════════════
@@ -283,6 +293,26 @@ local Langs = {
 		keybinds_cleared = "All keybinds cleared!",
 		fps_unlocked = "FPS Unlimited!",
 		fps_unlocker_not_supported = "FPS Unlocker not supported",
+		noclip_enabled_auto = "Noclip enabled automatically",
+		fling_enabled = "Fling enabled",
+		fly_enabled = "Fly enabled",
+		sect_fun = "Fun",
+		fun_animation = "Jerk Off",
+		fun_animation_desc = "xd",
+		rig_r6 = "R6 Rig detected",
+		rig_r15 = "R15 Rig detected",
+		sit = "Sit",
+		jump_scare = "Jump Scare",
+		stare_at = "Stare At Player",
+		creepy_follow = "Creepy Follow",
+		dizzy = "Dizzy Spin",
+		bunny_hop = "Bunny Hop",
+		crab_walk = "Crab Walk",
+		moonwalk = "Moonwalk",
+		earthquake = "Earthquake Screen",
+		flip = "Flip Character",
+		random_tp = "Random Teleport",
+		drunk = "Drunk Walk"
 	},
 	RU = {
 		hub_name = "Neo's Hub",
@@ -292,7 +322,7 @@ local Langs = {
 		loading_gui = "Построение интерфейса...",
 		loading_hooks = "Настройка хуков...",
 		loading_done = "Готово!",
-		loading_welcome = "Добро пожаловать, %s",
+		loading_welcome = "Добро пожаловать, пользователь!",
 		tab_movement = "🏃 Движение",
 		tab_visual = "👁️ Визуал",
 		tab_misc = "⚙️ Разное",
@@ -303,16 +333,16 @@ local Langs = {
 		fly_speed = "Скорость полёта",
 		fly_mode = "Режим полёта",
 		fly_mode_default = "Обычный",
-		fly_mode_swim = "Плавающий",
-		fly_mode_noclip = "Ноклип полёт",
-		fly_mode_platform = "Платформа",
+		fly_mode_swim = "Плавание",
+		fly_mode_noclip = "С ноклипом",
+		fly_mode_platform = "Платформенный",
 		fly_mode_smooth = "Плавный полёт",
 		speed_override = "Изменить скорость",
 		walkspeed = "Скорость ходьбы",
-		speed_loop = "Луп скорости (После смерти)",
+		speed_loop = "Сохранение скорости (После смерти)",
 		jump_override = "Изменить прыжок",
 		jumppower = "Сила прыжка",
-		jump_loop = "Луп прыжка (После смерти)",
+		jump_loop = "Сохранение силы прыжка (После смерти)",
 		inf_jump = "Бесконечный прыжок",
 		noclip = "Ноклип",
 		esp = "Включить ESP",
@@ -326,8 +356,8 @@ local Langs = {
 		esp_boxes = "Коробочный ESP",
 		esp_preview = "Предпросмотр ESP",
 		fullbright = "Полная яркость",
-		no_fog = "Без тумана",
-		anti_lag = "Анти-Лаг",
+		no_fog = "Убрать туман",
+		anti_lag = "Оптимизация",
 		stun = "Стан (Заморозка)",
 		ragdoll = "Рэгдолл",
 		give_all_tools = "Выдать все инструменты",
@@ -340,8 +370,8 @@ local Langs = {
 		open_spy = "Открыть Remote Spy",
 		open_owl = "Открыть Owl Hub",
 		btools = "BTools",
-		btools_delete = "BTools — Молоток (Удаление)",
-		btools_copy = "BTools — Клонировать",
+		btools_delete = "BTools — Удаление",
+		btools_copy = "BTools — Клонирование",
 		btools_move = "BTools — Перемещение",
 		btools_all = "BTools — Выдать все",
 		tp_tool = "TP Tool",
@@ -479,8 +509,8 @@ local Langs = {
 		fling_mode_walk = "Walk Fling",
 		fling_mode_fly = "Fly Fling",
 		fling_mode_spin = "Spin Fling",
-		spin = "Spin",
-		spin_speed = "Скорость Spin",
+		spin = "Кручение",
+		spin_speed = "Скорость кручения",
 		notification_style = "Стиль уведомлений",
 		notif_style_modern = "Современный",
 		notif_style_minimal = "Минимальный",
@@ -496,7 +526,7 @@ local Langs = {
 		welcome_game = "Информация об игре",
 		welcome_continue = "Продолжить",
 		performance = "Производительность",
-		unlock_3rd_person = "Разблокировать 3rd Person",
+		unlock_3rd_person = "Разблокировать вид от 3го лица",
 		config_exists = "Конфиг с таким именем уже существует!",
 		profile_info = "Информация профиля",
 		account_age = "Возраст аккаунта",
@@ -520,6 +550,26 @@ local Langs = {
 		keybinds_cleared = "Все клавиши сброшены!",
 		fps_unlocked = "FPS разблокирован!",
 		fps_unlocker_not_supported = "FPS Unlocker не поддерживается",
+		noclip_enabled_auto = "Ноклип включён автоматически",
+		fling_enabled = "Fling включён",
+		fly_enabled = "Полёт включён",
+		sect_fun = "Развлечения",
+		fun_animation = "Дрочка",
+		fun_animation_desc = "хд",
+		rig_r6 = "Обнаружен R6",
+		rig_r15 = "Обнаружен R15",
+		drunk = "Пьяная походка",
+		sit = "Сесть",
+		jump_scare = "Напугать",
+		stare_at = "Смотреть на игрока",
+		creepy_follow = "Преследование",
+		dizzy = "Головокружение",
+		bunny_hop = "Авто-прыжок",
+		crab_walk = "Крутилка",
+		moonwalk = "Лунная походка",
+		earthquake = "Тряска экрана ",
+		flip = "Перевернуться",
+		random_tp = "Рандом телепорт"
 	},
 	JP = {
 		hub_name = "Neo's Hub",
@@ -757,6 +807,26 @@ local Langs = {
 		keybinds_cleared = "全キーバインド消去！",
 		fps_unlocked = "FPS無制限！",
 		fps_unlocker_not_supported = "FPSアンロッカー非対応",
+		noclip_enabled_auto = "ノークリップ自動有効化",
+		fling_enabled = "Fling有効化",
+		fly_enabled = "フライ有効化",
+		sect_fun = "楽しい",
+		fun_animation = "楽しいアニメーション",
+		fun_animation_desc = "ダンス、エモート、アニメーション",
+		rig_r6 = "R6リグ検出",
+		rig_r15 = "R15リグ検出",
+		drunk = "酔っぱらい歩き",
+		sit = "座る",
+		jump_scare = "ジャンプスケア",
+		stare_at = "プレイヤーを見つめる",
+		creepy_follow = "不気味な追跡",
+		dizzy = "めまいスピン",
+		bunny_hop = "バニーホップ",
+		crab_walk = "カニ歩き",
+		moonwalk = "ムーンウォーク",
+		earthquake = "画面揺れ",
+		flip = "キャラ反転",
+		random_tp = "ランダムテレポート"
 	},
 	ES = {
 		hub_name = "Neo's Hub",
@@ -994,6 +1064,26 @@ local Langs = {
 		keybinds_cleared = "¡Todos los atajos borrados!",
 		fps_unlocked = "¡FPS Ilimitado!",
 		fps_unlocker_not_supported = "FPS Unlocker no soportado",
+		noclip_enabled_auto = "Noclip activado automáticamente",
+		fling_enabled = "Fling activado",
+		fly_enabled = "Vuelo activado",
+		sect_fun = "Diversión",
+		fun_animation = "Animación Divertida",
+		fun_animation_desc = "Bailes, emotes y animaciones",
+		rig_r6 = "R6 detectado",
+		rig_r15 = "R15 detectado",
+		drunk = "Caminar Borracho",
+		sit = "Sentarse",
+		jump_scare = "Susto",
+		stare_at = "Mirar a Jugador",
+		creepy_follow = "Seguimiento Espeluznante",
+		dizzy = "Giro Mareado",
+		bunny_hop = "Salto de Conejo",
+		crab_walk = "Caminar de Cangrejo",
+		moonwalk = "Moonwalk",
+		earthquake = "Terremoto de Pantalla",
+		flip = "Voltear Personaje",
+		random_tp = "Teleporte Aleatorio"
 	},
 }
 
@@ -1001,6 +1091,20 @@ local CurrentLang = "EN"
 local function L(key)
 	return Langs[CurrentLang][key] or Langs.EN[key] or key
 end
+
+-- ═══ DEFAULT THEME VALUES (for reset) ═══
+local DEFAULT_THEME = {
+	Accent = {111, 90, 255},
+	Bg = {16, 16, 22},
+	Sidebar = {12, 12, 17},
+	Card = {26, 26, 36},
+	CardHover = {36, 36, 50},
+	Text = {240, 240, 240},
+	SubText = {130, 130, 155},
+	ToggleOn = {111, 90, 255},
+	ToggleOff = {50, 50, 65},
+	Danger = {255, 65, 65},
+}
 
 -- ═══ SETTINGS (EXPANDED) ═══
 local S = {
@@ -1319,13 +1423,20 @@ local function PanicUnload()
 		S.AntiLag = false; S.Ragdoll = false; S.OrbitPlayer = false
 		S.Chams = false; S.Crosshair = false; S.FPSCounter = false; S.Coordinates = false
 		S.Fling = false; S.Spin = false
+		FLYING = false
+		flinging = false
+		walkflinging = false
 		local root = getRoot()
 		pcall(function() root:FindFirstChild("NHFly"):Destroy() end)
 		pcall(function() root:FindFirstChild("NHGyro"):Destroy() end)
 		pcall(function() root:FindFirstChild("NHSpin"):Destroy() end)
 		pcall(function() root:FindFirstChild("NHPlatform"):Destroy() end)
 		pcall(function() root:FindFirstChild("NHFling"):Destroy() end)
+		pcall(function() root:FindFirstChild("BodyGyro"):Destroy() end)
+		pcall(function() root:FindFirstChild("BodyVelocity"):Destroy() end)
+		pcall(function() root:FindFirstChild("BodyAngularVelocity"):Destroy() end)
 		getHum().WalkSpeed = 16; getHum().JumpPower = 50
+		getHum().PlatformStand = false
 		Lighting.Brightness = 1; Lighting.GlobalShadows = true
 		Lighting.Ambient = Color3.fromRGB(127, 127, 127)
 		Lighting.OutdoorAmbient = Color3.fromRGB(127, 127, 127)
@@ -1534,116 +1645,202 @@ local function NotifyGradient(title, text, duration)
 		task.delay(0.45, function() pcall(function() notif:Destroy() end) end)
 	end)
 end
-
 local function NotifyNeon(title, text, duration)
 	local notif = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
-		BackgroundColor3 = Color3.fromRGB(5, 5, 10),
+		BackgroundColor3 = Color3.fromRGB(2, 2, 8),
+		BackgroundTransparency = 0,
 		BorderSizePixel = 0,
 		ClipsDescendants = true,
 		Parent = NotificationContainer
 	})
-	Corner(notif, 12)
+	Corner(notif, 10)
 	
-	local glowStroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Transparency = 0, Parent = notif})
+	-- Основная неоновая обводка
+	local mainStroke = Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Transparency = 0, Parent = notif})
 	
-	local innerGlow = Create("Frame", {Size = UDim2.new(1, -4, 1, -4), Position = UDim2.new(0, 2, 0, 2), BackgroundTransparency = 0.95, BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
-	Corner(innerGlow, 10)
+	-- Внутренний градиент свечения снизу
+	local glowBottom = Create("Frame", {Size = UDim2.new(1, 0, 0, 40), Position = UDim2.new(0, 0, 1, -40), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
+	local glowGradient = Create("UIGradient", {
+		Color = ColorSequence.new(TC(S.Theme.Accent)),
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 1),
+			NumberSequenceKeypoint.new(1, 0.85)
+		}),
+		Rotation = 180,
+		Parent = glowBottom
+	})
 	
-	Create("TextLabel", {Size = UDim2.new(1, -20, 0, 22), Position = UDim2.new(0, 14, 0, 10), BackgroundTransparency = 1, Text = "⚡ " .. title, TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBlack, TextSize = 15, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
-	Create("TextLabel", {Size = UDim2.new(1, -20, 0, 32), Position = UDim2.new(0, 14, 0, 32), BackgroundTransparency = 1, Text = text, TextColor3 = Color3.fromRGB(200, 200, 220), Font = Enum.Font.GothamSemibold, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
+	-- Горизонтальная светящаяся линия
+	local horizLine = Create("Frame", {Size = UDim2.new(0, 0, 0, 1), Position = UDim2.new(0, 14, 0, 38), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
 	
-	tween(notif, {Size = UDim2.new(1, 0, 0, 75)}, 0.4, Enum.EasingStyle.Back)
+	-- Точка пульсации слева
+	local pulseDot = Create("Frame", {Size = UDim2.new(0, 6, 0, 6), Position = UDim2.new(0, 14, 0, 16), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
+	Corner(pulseDot, 3)
 	
+	Create("TextLabel", {Size = UDim2.new(1, -40, 0, 20), Position = UDim2.new(0, 28, 0, 12), BackgroundTransparency = 1, Text = title, TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBlack, TextSize = 15, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
+	Create("TextLabel", {Size = UDim2.new(1, -28, 0, 34), Position = UDim2.new(0, 14, 0, 44), BackgroundTransparency = 1, Text = text, TextColor3 = Color3.fromRGB(220, 220, 230), Font = Enum.Font.GothamSemibold, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
+	
+	tween(notif, {Size = UDim2.new(1, 0, 0, 88)}, 0.35, Enum.EasingStyle.Back)
+	
+	-- Анимация расширения линии
+	task.delay(0.2, function()
+		if notif.Parent then
+			tween(horizLine, {Size = UDim2.new(0.7, 0, 0, 1)}, 0.5, Enum.EasingStyle.Quint)
+		end
+	end)
+	
+	-- Пульсация точки и обводки
 	task.spawn(function()
 		while notif.Parent do
-			tween(glowStroke, {Transparency = 0.5}, 0.4)
-			tween(innerGlow, {BackgroundTransparency = 0.85}, 0.4)
-			task.wait(0.4)
-			tween(glowStroke, {Transparency = 0}, 0.4)
-			tween(innerGlow, {BackgroundTransparency = 0.95}, 0.4)
-			task.wait(0.4)
+			tween(pulseDot, {BackgroundTransparency = 0.7, Size = UDim2.new(0, 4, 0, 4), Position = UDim2.new(0, 15, 0, 17)}, 0.5)
+			tween(mainStroke, {Transparency = 0.4}, 0.5)
+			task.wait(0.5)
+			tween(pulseDot, {BackgroundTransparency = 0, Size = UDim2.new(0, 6, 0, 6), Position = UDim2.new(0, 14, 0, 16)}, 0.5)
+			tween(mainStroke, {Transparency = 0}, 0.5)
+			task.wait(0.5)
 		end
 	end)
 	
 	task.delay(duration or 4, function()
-		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-		task.delay(0.45, function() pcall(function() notif:Destroy() end) end)
+		tween(horizLine, {Size = UDim2.new(0, 0, 0, 1)}, 0.2)
+		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.35, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+		task.delay(0.4, function() pcall(function() notif:Destroy() end) end)
 	end)
 end
 
 local function NotifyGlass(title, text, duration)
 	local notif = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
-		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		BackgroundColor3 = Color3.new(1, 1, 1),
 		BackgroundTransparency = 0.85,
 		BorderSizePixel = 0,
 		ClipsDescendants = true,
 		Parent = NotificationContainer
 	})
-	Corner(notif, 16)
+	Corner(notif, 14)
 	
-	Create("UIStroke", {Color = Color3.fromRGB(255, 255, 255), Thickness = 1, Transparency = 0.7, Parent = notif})
+	Create("UIStroke", {Color = Color3.new(1, 1, 1), Thickness = 1, Transparency = 0.5, Parent = notif})
 	
-	local shimmer = Create("Frame", {Size = UDim2.new(0.3, 0, 1, 0), Position = UDim2.new(-0.3, 0, 0, 0), BackgroundTransparency = 0.7, BorderSizePixel = 0, Parent = notif})
-	Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1,1,1)), ColorSequenceKeypoint.new(0.5, Color3.new(1,1,1)), ColorSequenceKeypoint.new(1, Color3.new(1,1,1))}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.5), NumberSequenceKeypoint.new(1, 1)}), Parent = shimmer})
+	local gradient = Create("UIGradient", {
+		Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
+			ColorSequenceKeypoint.new(1, TC(S.Theme.Accent))
+		}),
+		Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0.9),
+			NumberSequenceKeypoint.new(1, 0.95)
+		}),
+		Rotation = 45,
+		Parent = notif
+	})
 	
-	local iconFrame = Create("Frame", {Size = UDim2.new(0, 40, 0, 40), Position = UDim2.new(0, 10, 0, 10), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.3, BorderSizePixel = 0, Parent = notif})
-	Corner(iconFrame, 12)
-	Create("TextLabel", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "💎", TextSize = 18, Font = Enum.Font.GothamBold, Parent = iconFrame})
+	Create("TextLabel", {Size = UDim2.new(1, -20, 0, 22), Position = UDim2.new(0, 14, 0, 12), BackgroundTransparency = 1, Text = title, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBlack, TextSize = 15, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif}):SetAttribute("OrigTT", 0)
+	Create("TextLabel", {Size = UDim2.new(1, -20, 0, 32), Position = UDim2.new(0, 14, 0, 34), BackgroundTransparency = 1, Text = text, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamSemibold, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif}):SetAttribute("OrigTT", 0)
 	
-	Create("TextLabel", {Size = UDim2.new(1, -70, 0, 20), Position = UDim2.new(0, 58, 0, 10), BackgroundTransparency = 1, Text = title, TextColor3 = Color3.fromRGB(40, 40, 50), Font = Enum.Font.GothamBlack, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
-	Create("TextLabel", {Size = UDim2.new(1, -70, 0, 28), Position = UDim2.new(0, 58, 0, 30), BackgroundTransparency = 1, Text = text, TextColor3 = Color3.fromRGB(80, 80, 100), Font = Enum.Font.GothamSemibold, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
-	
-	tween(notif, {Size = UDim2.new(1, 0, 0, 70)}, 0.4, Enum.EasingStyle.Back)
-	
-	task.spawn(function()
-		while notif.Parent do
-			tween(shimmer, {Position = UDim2.new(1.3, 0, 0, 0)}, 2, Enum.EasingStyle.Linear)
-			task.wait(2)
-			shimmer.Position = UDim2.new(-0.3, 0, 0, 0)
-		end
-	end)
+	tween(notif, {Size = UDim2.new(1, 0, 0, 78)}, 0.35, Enum.EasingStyle.Quint)
 	
 	task.delay(duration or 4, function()
-		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-		task.delay(0.45, function() pcall(function() notif:Destroy() end) end)
+		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+		task.delay(0.4, function() pcall(function() notif:Destroy() end) end)
 	end)
 end
 
 local function NotifyCyber(title, text, duration)
 	local notif = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 0),
-		BackgroundColor3 = Color3.fromRGB(10, 15, 25),
+		BackgroundColor3 = Color3.fromRGB(8, 12, 18),
+		BackgroundTransparency = 0,
 		BorderSizePixel = 0,
 		ClipsDescendants = true,
 		Parent = NotificationContainer
 	})
-	Corner(notif, 4)
+	Corner(notif, 2)
 	
-	local topLine = Create("Frame", {Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 0, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
-	local bottomLine = Create("Frame", {Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
+	-- Сетка на фоне
+	for i = 1, 8 do
+		Create("Frame", {Size = UDim2.new(0, 1, 1, 0), Position = UDim2.new(0, 40 * i, 0, 0), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.92, BorderSizePixel = 0, Parent = notif})
+	end
+	for i = 1, 3 do
+		Create("Frame", {Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 0, 25 * i), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.92, BorderSizePixel = 0, Parent = notif})
+	end
 	
-	local scanLine = Create("Frame", {Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 0, 3), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.7, BorderSizePixel = 0, Parent = notif})
+	-- Верхняя линия
+	local topLine = Create("Frame", {Size = UDim2.new(0.6, 0, 0, 2), Position = UDim2.new(0, 0, 0, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = notif})
 	
-	Create("TextLabel", {Size = UDim2.new(1, -16, 0, 18), Position = UDim2.new(0, 8, 0, 8), BackgroundTransparency = 1, Text = ">> " .. title:upper(), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.Code, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
-	Create("TextLabel", {Size = UDim2.new(1, -16, 0, 30), Position = UDim2.new(0, 8, 0, 28), BackgroundTransparency = 1, Text = "   " .. text, TextColor3 = Color3.fromRGB(0, 255, 150), Font = Enum.Font.Code, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
+	-- Глитч-блок справа сверху
+	local glitchBlock = Create("Frame", {Size = UDim2.new(0, 40, 0, 8), Position = UDim2.new(1, -50, 0, 4), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.5, BorderSizePixel = 0, Parent = notif})
+	Corner(glitchBlock, 1)
 	
-	local timestamp = Create("TextLabel", {Size = UDim2.new(0, 60, 0, 12), Position = UDim2.new(1, -68, 0, 6), BackgroundTransparency = 1, Text = os.date("%H:%M:%S"), TextColor3 = Color3.fromRGB(100, 100, 120), Font = Enum.Font.Code, TextSize = 9, TextXAlignment = Enum.TextXAlignment.Right, Parent = notif})
+	-- HEX код
+	local hexCode = Create("TextLabel", {Size = UDim2.new(0, 70, 0, 10), Position = UDim2.new(1, -80, 0, 14), BackgroundTransparency = 1, Text = "0x" .. string.format("%X", math.random(100000, 999999)), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.Code, TextSize = 9, TextTransparency = 0.4, TextXAlignment = Enum.TextXAlignment.Right, Parent = notif})
 	
-	tween(notif, {Size = UDim2.new(1, 0, 0, 68)}, 0.3, Enum.EasingStyle.Quint)
+	-- Индикатор статуса
+	local statusDot = Create("Frame", {Size = UDim2.new(0, 6, 0, 6), Position = UDim2.new(0, 12, 0, 20), BackgroundColor3 = Color3.fromRGB(0, 255, 100), BorderSizePixel = 0, Parent = notif})
+	Corner(statusDot, 3)
 	
+	-- Статус текст
+	local statusText = Create("TextLabel", {Size = UDim2.new(0, 50, 0, 10), Position = UDim2.new(0, 22, 0, 18), BackgroundTransparency = 1, Text = "ACTIVE", TextColor3 = Color3.fromRGB(0, 255, 100), Font = Enum.Font.Code, TextSize = 8, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
+	
+	-- Заголовок
+	Create("TextLabel", {Size = UDim2.new(1, -30, 0, 16), Position = UDim2.new(0, 12, 0, 32), BackgroundTransparency = 1, Text = "// " .. string.upper(title), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.Code, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left, Parent = notif})
+	
+	-- Текст с эффектом печатания
+	local msgText = Create("TextLabel", {Size = UDim2.new(1, -24, 0, 34), Position = UDim2.new(0, 12, 0, 50), BackgroundTransparency = 1, Text = "", TextColor3 = Color3.fromRGB(180, 180, 190), Font = Enum.Font.Code, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, TextWrapped = true, Parent = notif})
+	
+	-- Прогресс-бар снизу
+	local progressBg = Create("Frame", {Size = UDim2.new(1, -24, 0, 2), Position = UDim2.new(0, 12, 1, -10), BackgroundColor3 = TC(S.Theme.Accent), BackgroundTransparency = 0.8, BorderSizePixel = 0, Parent = notif})
+	local progressFill = Create("Frame", {Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = TC(S.Theme.Accent), BorderSizePixel = 0, Parent = progressBg})
+	Corner(progressFill, 1)
+	
+	tween(notif, {Size = UDim2.new(1, 0, 0, 95)}, 0.25, Enum.EasingStyle.Quint)
+	
+	-- Анимация прогресс-бара
+	tween(progressFill, {Size = UDim2.new(0, 0, 1, 0)}, duration or 4, Enum.EasingStyle.Linear)
+	
+	-- Эффект печатания
+	task.spawn(function()
+		task.wait(0.3)
+		for i = 1, #text do
+			if not notif.Parent then break end
+			msgText.Text = string.sub(text, 1, i) .. "_"
+			task.wait(0.025)
+		end
+		if notif.Parent then
+			msgText.Text = text
+		end
+	end)
+	
+	-- Глитч и мигание
 	task.spawn(function()
 		while notif.Parent do
-			tween(scanLine, {Position = UDim2.new(0, 0, 1, -3)}, 1.5, Enum.EasingStyle.Linear)
-			task.wait(1.5)
-			scanLine.Position = UDim2.new(0, 0, 0, 3)
+			-- Мигание статуса
+			tween(statusDot, {BackgroundTransparency = 0.6}, 0.15)
+			task.wait(0.15)
+			tween(statusDot, {BackgroundTransparency = 0}, 0.15)
+			
+			-- Глитч блока
+			glitchBlock.Size = UDim2.new(0, math.random(20, 60), 0, math.random(4, 10))
+			glitchBlock.Position = UDim2.new(1, -math.random(40, 80), 0, math.random(2, 8))
+			glitchBlock.BackgroundTransparency = math.random(40, 70) / 100
+			
+			-- Обновление HEX
+			hexCode.Text = "0x" .. string.format("%X", math.random(100000, 999999))
+			
+			task.wait(0.35)
 		end
 	end)
 	
 	task.delay(duration or 4, function()
-		tween(notif, {Size = UDim2.new(1, 0, 0, 0), BackgroundTransparency = 1}, 0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
-		task.delay(0.35, function() pcall(function() notif:Destroy() end) end)
+		-- Глитч при закрытии
+		for i = 1, 4 do
+			notif.Position = UDim2.new(0, math.random(-3, 3), 0, 0)
+			notif.BackgroundTransparency = math.random(0, 30) / 100
+			task.wait(0.025)
+		end
+		notif.Position = UDim2.new(0, 0, 0, 0)
+		tween(notif, {Size = UDim2.new(1, 0, 0, 0)}, 0.15, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+		task.delay(0.2, function() pcall(function() notif:Destroy() end) end)
 	end)
 end
 
@@ -1688,6 +1885,407 @@ local function ShowToast(text, duration)
 	task.delay(duration or 4, function()
 		tween(toast, {Position = UDim2.new(1, 10, 0.5, -28)}, 0.4)
 		task.delay(0.5, function() pcall(function() ToastGui:Destroy() end) end)
+	end)
+end
+
+-- ═══════════════════════════════════════════
+-- IMPROVED FLY SYSTEM (IY-STYLE)
+-- ═══════════════════════════════════════════
+-- ═══════════════════════════════════════════
+-- FLY SYSTEM (ALL MODES)
+-- ═══════════════════════════════════════════
+flyConn = nil
+flyBV = nil
+flyBG = nil
+flyPlatform = nil
+
+StopAllFly = function()
+	FLYING = false
+	if flyConn then flyConn:Disconnect(); flyConn = nil end
+	if flyKeyDown then flyKeyDown:Disconnect(); flyKeyDown = nil end
+	if flyKeyUp then flyKeyUp:Disconnect(); flyKeyUp = nil end
+	pcall(function()
+		local root = getRoot()
+		if root:FindFirstChild("NHFly") then root:FindFirstChild("NHFly"):Destroy() end
+		if root:FindFirstChild("NHGyro") then root:FindFirstChild("NHGyro"):Destroy() end
+		for _, v in pairs(root:GetChildren()) do
+			if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
+		end
+	end)
+	pcall(function()
+		if flyPlatform then flyPlatform:Destroy(); flyPlatform = nil end
+	end)
+	pcall(function()
+		getHum().PlatformStand = false
+		getHum():ChangeState(Enum.HumanoidStateType.GettingUp)
+	end)
+	flyBV, flyBG = nil, nil
+end
+
+StartFly = function(mode)
+	StopAllFly()
+	FLYING = true
+	
+	local root = getRoot()
+	local hum = getHum()
+	local cam = workspace.CurrentCamera
+	
+	if mode == "Default" then
+		-- IY-style fly
+		local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+		local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+		local SPEED = 0
+		
+		local BG = Instance.new('BodyGyro')
+		local BV = Instance.new('BodyVelocity')
+		BG.P = 9e4
+		BG.Parent = root
+		BV.Parent = root
+		BG.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+		BG.CFrame = root.CFrame
+		BV.Velocity = Vector3.new(0, 0, 0)
+		BV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+		
+		flyKeyDown = UIS.InputBegan:Connect(function(input, processed)
+			if processed then return end
+			if input.KeyCode == Enum.KeyCode.W then CONTROL.F = iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.S then CONTROL.B = -iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.A then CONTROL.L = -iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.D then CONTROL.R = iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.E and QEfly then CONTROL.Q = iyflyspeed * 2
+			elseif input.KeyCode == Enum.KeyCode.Q and QEfly then CONTROL.E = -iyflyspeed * 2
+			end
+		end)
+
+		flyKeyUp = UIS.InputEnded:Connect(function(input, processed)
+			if processed then return end
+			if input.KeyCode == Enum.KeyCode.W then CONTROL.F = 0
+			elseif input.KeyCode == Enum.KeyCode.S then CONTROL.B = 0
+			elseif input.KeyCode == Enum.KeyCode.A then CONTROL.L = 0
+			elseif input.KeyCode == Enum.KeyCode.D then CONTROL.R = 0
+			elseif input.KeyCode == Enum.KeyCode.E then CONTROL.Q = 0
+			elseif input.KeyCode == Enum.KeyCode.Q then CONTROL.E = 0
+			end
+		end)
+		
+		flyConn = RunService.Heartbeat:Connect(function()
+			if not FLYING then
+				BG:Destroy()
+				BV:Destroy()
+				if hum then hum.PlatformStand = false end
+				return
+			end
+			
+			local camera = workspace.CurrentCamera
+			if hum then hum.PlatformStand = true end
+
+			if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+				SPEED = 50
+			else
+				SPEED = 0
+			end
+			
+			if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
+				BV.Velocity = ((camera.CFrame.LookVector * (CONTROL.F + CONTROL.B)) + ((camera.CFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
+				lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
+			elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
+				BV.Velocity = ((camera.CFrame.LookVector * (lCONTROL.F + lCONTROL.B)) + ((camera.CFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
+			else
+				BV.Velocity = Vector3.new(0, 0, 0)
+			end
+			BG.CFrame = camera.CFrame
+		end)
+		
+	elseif mode == "Swim" then
+		flyConn = RunService.Heartbeat:Connect(function()
+			if not FLYING then StopAllFly(); return end
+			pcall(function()
+				hum:ChangeState(Enum.HumanoidStateType.Swimming)
+				local d = Vector3.zero
+				if UIS:IsKeyDown(Enum.KeyCode.W) then d = d + cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.S) then d = d - cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.A) then d = d - cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.D) then d = d + cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.Space) then d = d + Vector3.yAxis end
+				if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d = d - Vector3.yAxis end
+				root.Velocity = d * S.FlySpeed
+			end)
+		end)
+		
+	elseif mode == "Noclip" then
+		flyBV = Instance.new("BodyVelocity")
+		flyBV.Name = "NHFly"
+		flyBV.MaxForce = Vector3.one * 9e9
+		flyBV.Velocity = Vector3.zero
+		flyBV.Parent = root
+		
+		flyBG = Instance.new("BodyGyro")
+		flyBG.Name = "NHGyro"
+		flyBG.MaxTorque = Vector3.one * 9e9
+		flyBG.D = 0
+		flyBG.Parent = root
+		
+		flyConn = RunService.Stepped:Connect(function()
+			if not FLYING then StopAllFly(); return end
+			for _, part in pairs(getChar():GetDescendants()) do
+				if part:IsA("BasePart") then part.CanCollide = false end
+			end
+			local d = Vector3.zero
+			if UIS:IsKeyDown(Enum.KeyCode.W) then d = d + cam.CFrame.LookVector end
+			if UIS:IsKeyDown(Enum.KeyCode.S) then d = d - cam.CFrame.LookVector end
+			if UIS:IsKeyDown(Enum.KeyCode.A) then d = d - cam.CFrame.RightVector end
+			if UIS:IsKeyDown(Enum.KeyCode.D) then d = d + cam.CFrame.RightVector end
+			if UIS:IsKeyDown(Enum.KeyCode.Space) then d = d + Vector3.yAxis end
+			if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d = d - Vector3.yAxis end
+			flyBV.Velocity = d * S.FlySpeed
+			flyBG.CFrame = cam.CFrame
+		end)
+		
+	elseif mode == "Platform" then
+		flyPlatform = Instance.new("Part")
+		flyPlatform.Name = "NHPlatform"
+		flyPlatform.Size = Vector3.new(5, 1, 5)
+		flyPlatform.Transparency = 1
+		flyPlatform.Anchored = true
+		flyPlatform.CanCollide = true
+		flyPlatform.Parent = workspace
+		
+		flyConn = RunService.Heartbeat:Connect(function()
+			if not FLYING then StopAllFly(); return end
+			pcall(function()
+				local pos = root.Position
+				local d = Vector3.zero
+				if UIS:IsKeyDown(Enum.KeyCode.W) then d = d + cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.S) then d = d - cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.A) then d = d - cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.D) then d = d + cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.Space) then d = d + Vector3.yAxis end
+				if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d = d - Vector3.yAxis end
+				
+				local newPos = pos + d * S.FlySpeed * 0.016
+				root.CFrame = CFrame.new(newPos)
+				flyPlatform.CFrame = CFrame.new(newPos - Vector3.new(0, 3.5, 0))
+			end)
+		end)
+	end
+end
+
+-- ═══════════════════════════════════════════
+-- IMPROVED FLING SYSTEM (IY-STYLE)
+-- ═══════════════════════════════════════════
+local function randomString()
+	local length = math.random(10, 20)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
+	end
+	return table.concat(array)
+end
+
+local function StartFlingIY()
+	flinging = false
+	local speaker = Player
+	
+	for _, child in pairs(speaker.Character:GetDescendants()) do
+		if child:IsA("BasePart") then
+			child.CustomPhysicalProperties = PhysicalProperties.new(100, 0.3, 0.5)
+		end
+	end
+	
+	-- Enable noclip
+	S.Noclip = true
+	if ToggleRefs["Noclip"] then
+		ToggleRefs["Noclip"].Set(true)
+	end
+	Notify(L("hub_name"), L("noclip_enabled_auto"), 2)
+	
+	task.wait(0.1)
+	local bambam = Instance.new("BodyAngularVelocity")
+	bambam.Name = randomString()
+	bambam.Parent = getRoot()
+	bambam.AngularVelocity = Vector3.new(0, 99999, 0)
+	bambam.MaxTorque = Vector3.new(0, math.huge, 0)
+	bambam.P = math.huge
+	
+	local Char = speaker.Character:GetChildren()
+	for i, v in next, Char do
+		if v:IsA("BasePart") then
+			v.CanCollide = false
+			v.Massless = true
+			v.Velocity = Vector3.new(0, 0, 0)
+		end
+	end
+	
+	flinging = true
+	
+	local function flingDiedF()
+		StopFlingIY()
+	end
+	
+	flingDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(flingDiedF)
+	
+	task.spawn(function()
+		repeat
+			bambam.AngularVelocity = Vector3.new(0, 99999, 0)
+			task.wait(0.2)
+			bambam.AngularVelocity = Vector3.new(0, 0, 0)
+			task.wait(0.1)
+		until flinging == false
+	end)
+end
+
+local function StopFlingIY()
+	-- Disable noclip
+	S.Noclip = false
+	if ToggleRefs["Noclip"] then
+		ToggleRefs["Noclip"].Set(false)
+	end
+	
+	if flingDied then
+		flingDied:Disconnect()
+	end
+	flinging = false
+	task.wait(0.1)
+	
+	local speakerChar = Player.Character
+	if not speakerChar or not getRoot() then return end
+	
+	for i, v in pairs(getRoot():GetChildren()) do
+		if v.ClassName == 'BodyAngularVelocity' then
+			v:Destroy()
+		end
+	end
+	
+	for _, child in pairs(speakerChar:GetDescendants()) do
+		if child.ClassName == "Part" or child.ClassName == "MeshPart" then
+			child.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5)
+		end
+	end
+end
+
+-- ═══════════════════════════════════════════
+-- WALK FLING SYSTEM (IY-STYLE)
+-- ═══════════════════════════════════════════
+local function StartWalkFling()
+	StopWalkFling()
+	local speaker = Player
+	local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
+	
+	if humanoid then
+		humanoid.Died:Connect(function()
+			StopWalkFling()
+		end)
+	end
+
+	-- Enable noclip
+	S.Noclip = true
+	if ToggleRefs["Noclip"] then
+		ToggleRefs["Noclip"].Set(true)
+	end
+	Notify(L("hub_name"), L("noclip_enabled_auto"), 2)
+	
+	walkflinging = true
+	
+	task.spawn(function()
+		repeat 
+			RunService.Heartbeat:Wait()
+			local character = speaker.Character
+			local root = getRoot()
+			local vel, movel = nil, 0.1
+
+			while not (character and character.Parent and root and root.Parent) do
+				RunService.Heartbeat:Wait()
+				character = speaker.Character
+				root = character and character:FindFirstChild("HumanoidRootPart")
+			end
+
+			vel = root.Velocity
+			root.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+
+			RunService.RenderStepped:Wait()
+			if character and character.Parent and root and root.Parent then
+				root.Velocity = vel
+			end
+
+			RunService.Stepped:Wait()
+			if character and character.Parent and root and root.Parent then
+				root.Velocity = vel + Vector3.new(0, movel, 0)
+				movel = movel * -1
+			end
+		until walkflinging == false
+	end)
+end
+
+local function StopWalkFling()
+	walkflinging = false
+	S.Noclip = false
+	if ToggleRefs["Noclip"] then
+		ToggleRefs["Noclip"].Set(false)
+	end
+end
+
+-- ═══════════════════════════════════════════
+-- FLY FLING SYSTEM (IY-STYLE)  
+-- ═══════════════════════════════════════════
+local function StartFlyFling()
+	-- Enable noclip
+	S.Noclip = true
+	if ToggleRefs["Noclip"] then
+		ToggleRefs["Noclip"].Set(true)
+	end
+	Notify(L("hub_name"), L("noclip_enabled_auto"), 2)
+	
+	-- Start fly
+	iyflyspeed = S.FlySpeed / 50
+	sFLY()
+	
+	-- Start walk fling
+	walkflinging = true
+	local speaker = Player
+	
+	task.spawn(function()
+		repeat 
+			RunService.Heartbeat:Wait()
+			local character = speaker.Character
+			local root = getRoot()
+			local vel, movel = nil, 0.1
+
+			while not (character and character.Parent and root and root.Parent) do
+				RunService.Heartbeat:Wait()
+				character = speaker.Character
+				root = character and character:FindFirstChild("HumanoidRootPart")
+			end
+
+			vel = root.Velocity
+			root.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+
+			RunService.RenderStepped:Wait()
+			if character and character.Parent and root and root.Parent then
+				root.Velocity = vel
+			end
+
+			RunService.Stepped:Wait()
+			if character and character.Parent and root and root.Parent then
+				root.Velocity = vel + Vector3.new(0, movel, 0)
+				movel = movel * -1
+			end
+		until walkflinging == false
+	end)
+end
+
+local function StopFlyFling()
+	NOFLY()
+	walkflinging = false
+	S.Noclip = false
+	if ToggleRefs["Noclip"] then
+		ToggleRefs["Noclip"].Set(false)
+	end
+	
+	-- Break velocity
+	pcall(function()
+		local root = getRoot()
+		root.Velocity = Vector3.zero
+		root.AssemblyLinearVelocity = Vector3.zero
 	end)
 end
 
@@ -2078,7 +2676,6 @@ end
 if S.ParticlesEnabled then
 	task.delay(1, function() SpawnParticles() end)
 end
-
 -- ═══ SIDEBAR ═══
 local Sidebar = Create("Frame", {Size = UDim2.new(0, 180, 1, 0), BackgroundColor3 = TC(S.Theme.Sidebar), BorderSizePixel = 0, Parent = Main})
 Corner(Sidebar, 16)
@@ -2281,6 +2878,7 @@ MinBtn.MouseButton1Click:Connect(ToggleMinimize)
 MinBtn.MouseEnter:Connect(function() tween(MinBtn, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.15) end)
 MinBtn.MouseLeave:Connect(function() tween(MinBtn, {BackgroundColor3 = TC(S.Theme.Card)}, 0.15) end)
 MinBarExpand.MouseButton1Click:Connect(ToggleMinimize)
+
 -- ═══ PAGE BUILDER ═══
 local function MakePage(key)
 	local page = Create("ScrollingFrame", {
@@ -2881,7 +3479,6 @@ local function ColorPicker(parent, text, default, callback)
 	container.MouseEnter:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.1) end)
 	container.MouseLeave:Connect(function() tween(container, {BackgroundColor3 = TC(S.Theme.Card)}, 0.1) end)
 end
-
 -- ═══ SCREEN INFO GUI (SYNCED WITH THEME) ═══
 local ScreenInfoGui = Create("ScreenGui", {Name = "NHScreenInfo", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
 pcall(ProtectGui, ScreenInfoGui); ScreenInfoGui.Parent = CoreGui
@@ -3149,100 +3746,6 @@ local function StopOrbit()
 	if orbitConn then orbitConn:Disconnect(); orbitConn = nil end
 end
 
--- ═══ FLING SYSTEM (MULTIPLE MODES) ═══
-local flingConn = nil
-local flingBV, flingBG = nil, nil
-
-local function StopFling()
-	if flingConn then flingConn:Disconnect(); flingConn = nil end
-	pcall(function()
-		local root = getRoot()
-		if root:FindFirstChild("NHFlingBV") then root:FindFirstChild("NHFlingBV"):Destroy() end
-		if root:FindFirstChild("NHFlingBG") then root:FindFirstChild("NHFlingBG"):Destroy() end
-		for _, part in pairs(getChar():GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.Velocity = Vector3.zero
-				part.RotVelocity = Vector3.zero
-			end
-		end
-	end)
-	flingBV, flingBG = nil, nil
-end
-
-local function StartFling(mode)
-	StopFling()
-	
-	local root = getRoot()
-	local hum = getHum()
-	local cam = workspace.CurrentCamera
-	
-	if mode == "Walk" then
-		flingConn = RunService.Heartbeat:Connect(function()
-			if not S.Fling then StopFling(); return end
-			pcall(function()
-				for _, part in pairs(getChar():GetDescendants()) do
-					if part:IsA("BasePart") then
-						part.CanCollide = false
-						part.Velocity = root.CFrame.LookVector * S.FlingPower + Vector3.new(0, 50, 0)
-						part.RotVelocity = Vector3.new(math.random(-50,50), math.random(-50,50), math.random(-50,50))
-					end
-				end
-			end)
-		end)
-		
-	elseif mode == "Fly" then
-		flingBV = Instance.new("BodyVelocity")
-		flingBV.Name = "NHFlingBV"
-		flingBV.MaxForce = Vector3.one * 9e9
-		flingBV.Velocity = Vector3.zero
-		flingBV.Parent = root
-		
-		flingBG = Instance.new("BodyGyro")
-		flingBG.Name = "NHFlingBG"
-		flingBG.MaxTorque = Vector3.one * 9e9
-		flingBG.D = 0
-		flingBG.Parent = root
-		
-		flingConn = RunService.Heartbeat:Connect(function()
-			if not S.Fling then StopFling(); return end
-			pcall(function()
-				for _, part in pairs(getChar():GetDescendants()) do
-					if part:IsA("BasePart") then
-						part.CanCollide = false
-					end
-				end
-				
-				local d = Vector3.zero
-				if UIS:IsKeyDown(Enum.KeyCode.W) then d += cam.CFrame.LookVector end
-				if UIS:IsKeyDown(Enum.KeyCode.S) then d -= cam.CFrame.LookVector end
-				if UIS:IsKeyDown(Enum.KeyCode.A) then d -= cam.CFrame.RightVector end
-				if UIS:IsKeyDown(Enum.KeyCode.D) then d += cam.CFrame.RightVector end
-				if UIS:IsKeyDown(Enum.KeyCode.Space) then d += Vector3.yAxis end
-				if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d -= Vector3.yAxis end
-				
-				flingBV.Velocity = d * S.FlingPower
-				flingBG.CFrame = cam.CFrame
-				
-				root.RotVelocity = Vector3.new(math.random(-30,30), math.random(-30,30), math.random(-30,30))
-			end)
-		end)
-		
-	elseif mode == "Spin" then
-		flingConn = RunService.Heartbeat:Connect(function()
-			if not S.Fling then StopFling(); return end
-			pcall(function()
-				for _, part in pairs(getChar():GetDescendants()) do
-					if part:IsA("BasePart") then
-						part.CanCollide = false
-						part.RotVelocity = Vector3.new(0, S.FlingPower / 5, 0)
-						part.Velocity = Vector3.new(math.random(-1,1), 0, math.random(-1,1)) * (S.FlingPower / 10)
-					end
-				end
-			end)
-		end)
-	end
-end
-
 -- ═══ SPIN SYSTEM ═══
 local spinConn = nil
 
@@ -3272,144 +3775,6 @@ end
 local function StopSpin()
 	if spinConn then spinConn:Disconnect(); spinConn = nil end
 	pcall(function() getRoot():FindFirstChild("NHSpin"):Destroy() end)
-end
-
--- ═══ FLY SYSTEM (IMPROVED DEFAULT FLY) ═══
-local flyConn = nil
-local flyBV, flyBG, flyPlatform = nil, nil, nil
-
-local function StopAllFly()
-	if flyConn then flyConn:Disconnect(); flyConn = nil end
-	pcall(function()
-		local root = getRoot()
-		if root:FindFirstChild("NHFly") then root:FindFirstChild("NHFly"):Destroy() end
-		if root:FindFirstChild("NHGyro") then root:FindFirstChild("NHGyro"):Destroy() end
-		if root:FindFirstChild("NHPlatform") then root:FindFirstChild("NHPlatform"):Destroy() end
-	end)
-	pcall(function() getHum():ChangeState(Enum.HumanoidStateType.GettingUp) end)
-	flyBV, flyBG, flyPlatform = nil, nil, nil
-end
-
-local function StartFly(mode)
-	StopAllFly()
-	
-	local root = getRoot()
-	local hum = getHum()
-	local cam = workspace.CurrentCamera
-	
-	if mode == "Default" then
-		-- Improved Default Fly - character stands upright
-		flyBV = Instance.new("BodyVelocity")
-		flyBV.Name = "NHFly"
-		flyBV.MaxForce = Vector3.one * 9e9
-		flyBV.Velocity = Vector3.zero
-		flyBV.Parent = root
-		
-		flyBG = Instance.new("BodyGyro")
-		flyBG.Name = "NHGyro"
-		flyBG.MaxTorque = Vector3.one * 9e9
-		flyBG.D = 100
-		flyBG.P = 10000
-		flyBG.Parent = root
-		
-		flyConn = RunService.Heartbeat:Connect(function()
-			if not S.Fly then StopAllFly(); return end
-			
-			-- Keep character upright - only rotate on Y axis based on camera
-			local camCF = cam.CFrame
-			local _, yRot, _ = camCF:ToEulerAnglesYXZ()
-			flyBG.CFrame = CFrame.new(root.Position) * CFrame.Angles(0, yRot, 0)
-			
-			-- Prevent falling animation
-			hum:ChangeState(Enum.HumanoidStateType.Running)
-			
-			local d = Vector3.zero
-			if UIS:IsKeyDown(Enum.KeyCode.W) then d += (camCF.LookVector * Vector3.new(1, 0, 1)).Unit end
-			if UIS:IsKeyDown(Enum.KeyCode.S) then d -= (camCF.LookVector * Vector3.new(1, 0, 1)).Unit end
-			if UIS:IsKeyDown(Enum.KeyCode.A) then d -= (camCF.RightVector * Vector3.new(1, 0, 1)).Unit end
-			if UIS:IsKeyDown(Enum.KeyCode.D) then d += (camCF.RightVector * Vector3.new(1, 0, 1)).Unit end
-			if UIS:IsKeyDown(Enum.KeyCode.Space) then d += Vector3.yAxis end
-			if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d -= Vector3.yAxis end
-			
-			if d.Magnitude > 0 then
-				d = d.Unit
-			end
-			
-			flyBV.Velocity = d * S.FlySpeed
-		end)
-		
-	elseif mode == "Swim" then
-		flyConn = RunService.Heartbeat:Connect(function()
-			if not S.Fly then StopAllFly(); return end
-			pcall(function()
-				hum:ChangeState(Enum.HumanoidStateType.Swimming)
-				local d = Vector3.zero
-				if UIS:IsKeyDown(Enum.KeyCode.W) then d += cam.CFrame.LookVector end
-				if UIS:IsKeyDown(Enum.KeyCode.S) then d -= cam.CFrame.LookVector end
-				if UIS:IsKeyDown(Enum.KeyCode.A) then d -= cam.CFrame.RightVector end
-				if UIS:IsKeyDown(Enum.KeyCode.D) then d += cam.CFrame.RightVector end
-				if UIS:IsKeyDown(Enum.KeyCode.Space) then d += Vector3.yAxis end
-				if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d -= Vector3.yAxis end
-				root.Velocity = d * S.FlySpeed
-			end)
-		end)
-		
-	elseif mode == "Noclip" then
-		flyBV = Instance.new("BodyVelocity")
-		flyBV.Name = "NHFly"
-		flyBV.MaxForce = Vector3.one * 9e9
-		flyBV.Velocity = Vector3.zero
-		flyBV.Parent = root
-		
-		flyBG = Instance.new("BodyGyro")
-		flyBG.Name = "NHGyro"
-		flyBG.MaxTorque = Vector3.one * 9e9
-		flyBG.D = 0
-		flyBG.Parent = root
-		
-		flyConn = RunService.Stepped:Connect(function()
-			if not S.Fly then StopAllFly(); return end
-			for _, part in pairs(getChar():GetDescendants()) do
-				if part:IsA("BasePart") then part.CanCollide = false end
-			end
-			local d = Vector3.zero
-			if UIS:IsKeyDown(Enum.KeyCode.W) then d += cam.CFrame.LookVector end
-			if UIS:IsKeyDown(Enum.KeyCode.S) then d -= cam.CFrame.LookVector end
-			if UIS:IsKeyDown(Enum.KeyCode.A) then d -= cam.CFrame.RightVector end
-			if UIS:IsKeyDown(Enum.KeyCode.D) then d += cam.CFrame.RightVector end
-			if UIS:IsKeyDown(Enum.KeyCode.Space) then d += Vector3.yAxis end
-			if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d -= Vector3.yAxis end
-			flyBV.Velocity = d * S.FlySpeed
-			flyBG.CFrame = cam.CFrame
-		end)
-		
-	elseif mode == "Platform" then
-		flyPlatform = Instance.new("Part")
-		flyPlatform.Name = "NHPlatform"
-		flyPlatform.Size = Vector3.new(5, 1, 5)
-		flyPlatform.Transparency = 1
-		flyPlatform.Anchored = true
-		flyPlatform.CanCollide = true
-		flyPlatform.Parent = workspace
-		
-		flyConn = RunService.Heartbeat:Connect(function()
-			if not S.Fly then StopAllFly(); return end
-			pcall(function()
-				local pos = root.Position
-				local d = Vector3.zero
-				if UIS:IsKeyDown(Enum.KeyCode.W) then d += cam.CFrame.LookVector end
-				if UIS:IsKeyDown(Enum.KeyCode.S) then d -= cam.CFrame.LookVector end
-				if UIS:IsKeyDown(Enum.KeyCode.A) then d -= cam.CFrame.RightVector end
-				if UIS:IsKeyDown(Enum.KeyCode.D) then d += cam.CFrame.RightVector end
-				if UIS:IsKeyDown(Enum.KeyCode.Space) then d += Vector3.yAxis end
-				if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d -= Vector3.yAxis end
-				
-				local newPos = pos + d * S.FlySpeed * 0.016
-				root.CFrame = CFrame.new(newPos)
-				flyPlatform.CFrame = CFrame.new(newPos - Vector3.new(0, 3.5, 0))
-			end)
-		end)
-	end
 end
 
 -- ═══ THEME APPLY FUNCTION ═══
@@ -3465,6 +3830,7 @@ local function ApplyTheme()
 	
 	SaveCurrentTheme()
 end
+
 -- ═══ PAGE: MOVEMENT ═══
 do
 	local p = tabPages["tab_movement"]
@@ -3484,6 +3850,7 @@ do
 	local flyModeDD = Dropdown(p, L("fly_mode"), flyModes, function(val)
 		S.FlyMode = flyModeMap[val] or "Default"
 		if S.Fly then
+			iyflyspeed = S.FlySpeed / 50
 			StartFly(S.FlyMode)
 		end
 	end, "FlyMode")
@@ -3491,13 +3858,18 @@ do
 	Toggle(p, L("fly"), S.Fly, function(on)
 		S.Fly = on
 		if on then
+			iyflyspeed = S.FlySpeed / 50
 			StartFly(S.FlyMode or "Default")
+			Notify(L("hub_name"), L("fly_enabled"), 2)
 		else
 			StopAllFly()
 		end
 	end, "Fly")
 	
-	SliderCompact(p, L("fly_speed"), 10, 300, S.FlySpeed, function(v) S.FlySpeed = v end)
+	SliderCompact(p, L("fly_speed"), 10, 300, S.FlySpeed, function(v) 
+		S.FlySpeed = v 
+		iyflyspeed = v / 50
+	end)
 	
 	Section(p, L("sect_walk"))
 	Toggle(p, L("speed_override"), S.Speed, function(on) S.Speed = on; getHum().WalkSpeed = on and S.WalkSpeed or 16 end, "SpeedOverride")
@@ -3542,13 +3914,38 @@ do
 	local flingModeDD = Dropdown(p, L("fling_mode"), flingModes, function(val)
 		S.FlingMode = flingModeMap[val] or "Walk"
 		if S.Fling then
-			StartFling(S.FlingMode)
+			-- Restart fling with new mode
+			if S.FlingMode == "Walk" then
+				StopFlyFling()
+				StopFlingIY()
+				task.wait(0.1)
+				StartFlingIY()
+			elseif S.FlingMode == "Fly" then
+				StopFlingIY()
+				task.wait(0.1)
+				StartFlyFling()
+			elseif S.FlingMode == "Spin" then
+				StopFlyFling()
+				StopFlingIY()
+				task.wait(0.1)
+				StartFlingIY()
+			end
 		end
 	end, "FlingMode")
 	
 	Toggle(p, L("fling"), S.Fling, function(on)
 		S.Fling = on
-		if on then StartFling(S.FlingMode or "Walk") else StopFling() end
+		if on then
+			Notify(L("hub_name"), L("fling_enabled"), 2)
+			if S.FlingMode == "Walk" or S.FlingMode == "Spin" or not S.FlingMode then
+				StartFlingIY()
+			elseif S.FlingMode == "Fly" then
+				StartFlyFling()
+			end
+		else
+			StopFlingIY()
+			StopFlyFling()
+		end
 	end, "Fling")
 	SliderCompact(p, L("fling_power"), 100, 3000, S.FlingPower or 500, function(v) S.FlingPower = v end)
 	
@@ -3630,7 +4027,7 @@ do
 	local espObjs, tracerObjs, boxObjs = {}, {}, {}
 	local rainbowConn = nil
 	
-	local function clearESP()
+	clearESP = function()
 		for _, v in pairs(espObjs) do pcall(function() v:Destroy() end) end
 		espObjs = {}
 		for _, v in pairs(tracerObjs) do pcall(function() v:Remove() end) end
@@ -3639,7 +4036,7 @@ do
 		boxObjs = {}
 	end
 	
-	local function makeESP(plr)
+	makeESP = function(plr)
 		if plr == Player or not plr.Character then return end
 		local hl = Instance.new("Highlight")
 		hl.FillColor = TC(S.ESPColor)
@@ -3685,7 +4082,7 @@ do
 		end
 	end
 	
-	local function refreshESP()
+	refreshESP = function()
 		clearESP()
 		if not S.ESP then return end
 		for _, plr in pairs(Players:GetPlayers()) do
@@ -3700,7 +4097,7 @@ do
 		end
 	end
 	
-	local function startRainbow()
+	startRainbow = function()
 		if rainbowConn then return end
 		rainbowConn = RunService.Heartbeat:Connect(function()
 			if not S.ESPRainbow or not S.ESP then
@@ -3745,7 +4142,7 @@ do
 	local healthTag = Create("TextLabel", {Size = UDim2.new(0, 60, 0, 10), Position = UDim2.new(0.5, -30, 0, 16), BackgroundTransparency = 1, Text = "100 / 100", TextColor3 = Color3.fromRGB(100, 255, 100), Font = Enum.Font.GothamSemibold, TextSize = 8, TextStrokeTransparency = 0.3, Parent = previewArea}); healthTag:SetAttribute("OrigTT", 0)
 	local tracerLine = Create("Frame", {Size = UDim2.new(0, 2, 0, 20), Position = UDim2.new(0.5, -1, 1, -22), BackgroundColor3 = TC(S.ESPColor), BorderSizePixel = 0, Parent = previewArea}); tracerLine:SetAttribute("OrigBT", 0); Corner(tracerLine, 1)
 	
-	local function updateESPPreview()
+	updateESPPreview = function()
 		local col = TC(S.ESPColor)
 		espBoxStroke.Color = col
 		espBoxStroke.Transparency = S.ESPBoxes and 0 or 0.7
@@ -3995,6 +4392,256 @@ do
 			end)
 		end
 	end)
+
+
+	Section(p, L("sect_fun"))
+	
+	-- Fun Animation
+	Button(p, L("fun_animation"), function()
+		local char = getChar()
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then
+			local rigType = hum.RigType
+			if rigType == Enum.HumanoidRigType.R6 then
+				Notify(L("hub_name"), L("rig_r6") .. " — " .. L("fun_animation_desc"), 3)
+				pcall(function()
+					loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
+				end)
+			else
+				Notify(L("hub_name"), L("rig_r15") .. " — " .. L("fun_animation_desc"), 3)
+				pcall(function()
+					loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
+				end)
+			end
+		end
+	end)
+	
+	-- Drunk Walk
+	drunkConn = nil
+	Toggle(p, L("drunk"), false, function(on)
+		if on then
+			drunkConn = RunService.Heartbeat:Connect(function()
+				pcall(function()
+					local hum = getHum()
+					local root = getRoot()
+					if hum.MoveDirection.Magnitude > 0 then
+						root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(math.random(-8, 8)), math.rad(math.random(-3, 3)))
+					end
+				end)
+			end)
+		else
+			if drunkConn then drunkConn:Disconnect(); drunkConn = nil end
+		end
+	end, "Drunk")
+	
+	-- Sit
+	Button(p, L("sit"), function()
+		pcall(function() getHum().Sit = true end)
+		Notify(L("hub_name"), L("sit") .. " ✓", 2)
+	end)
+	
+	-- Jump Scare
+	jumpScareNames = {}
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= Player then table.insert(jumpScareNames, plr.Name) end
+	end
+	if #jumpScareNames == 0 then table.insert(jumpScareNames, "-") end
+	
+	selectedJumpScare = jumpScareNames[1] or "-"
+	jumpScarePlayerDD = Dropdown(p, L("select_player"), jumpScareNames, function(val)
+		selectedJumpScare = val
+	end, "JumpScarePlayer")
+	
+	Button(p, L("jump_scare"), function()
+		if selectedJumpScare == "-" then return end
+		local target = Players:FindFirstChild(selectedJumpScare)
+		if target and target.Character then
+			local targetHead = target.Character:FindFirstChild("Head")
+			if targetHead then
+				pcall(function() getRoot().CFrame = targetHead.CFrame * CFrame.new(0, 0, -2) end)
+				Notify(L("hub_name"), L("jump_scare") .. " " .. selectedJumpScare .. "!", 2)
+			end
+		end
+	end)
+	
+	-- Stare At Player
+	stareConn = nil
+	stareTarget = ""
+	stareDD = Dropdown(p, L("stare_at"), jumpScareNames, function(val)
+		stareTarget = val
+	end, "StarePlayer")
+	
+	Toggle(p, L("stare_at"), false, function(on)
+		if on then
+			stareConn = RunService.RenderStepped:Connect(function()
+				pcall(function()
+					if stareTarget == "" or stareTarget == "-" then return end
+					local target = Players:FindFirstChild(stareTarget)
+					if target and target.Character then
+						local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+						if targetRoot then
+							local myRoot = getRoot()
+							local lookAt = CFrame.lookAt(myRoot.Position, Vector3.new(targetRoot.Position.X, myRoot.Position.Y, targetRoot.Position.Z))
+							myRoot.CFrame = lookAt
+						end
+					end
+				end)
+			end)
+		else
+			if stareConn then stareConn:Disconnect(); stareConn = nil end
+		end
+	end, "StareAt")
+	
+	-- Creepy Follow
+	creepyFollowConn = nil
+	creepyTarget = ""
+	creepyDD = Dropdown(p, L("creepy_follow"), jumpScareNames, function(val)
+		creepyTarget = val
+	end, "CreepyPlayer")
+	
+	Toggle(p, L("creepy_follow"), false, function(on)
+		if on then
+			creepyFollowConn = RunService.Heartbeat:Connect(function()
+				pcall(function()
+					if creepyTarget == "" or creepyTarget == "-" then return end
+					local target = Players:FindFirstChild(creepyTarget)
+					if target and target.Character then
+						local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+						if targetRoot then
+							local myRoot = getRoot()
+							local direction = (targetRoot.Position - myRoot.Position).Unit
+							local distance = (targetRoot.Position - myRoot.Position).Magnitude
+							if distance > 5 then
+								myRoot.CFrame = myRoot.CFrame + direction * 0.15
+							end
+							local lookAt = CFrame.lookAt(myRoot.Position, Vector3.new(targetRoot.Position.X, myRoot.Position.Y, targetRoot.Position.Z))
+							myRoot.CFrame = CFrame.new(myRoot.Position) * lookAt.Rotation
+						end
+					end
+				end)
+			end)
+		else
+			if creepyFollowConn then creepyFollowConn:Disconnect(); creepyFollowConn = nil end
+		end
+	end, "CreepyFollow")
+	
+	-- Dizzy
+	dizzyConn = nil
+	Toggle(p, L("dizzy"), false, function(on)
+		if on then
+			dizzyAngle = 0
+			dizzyConn = RunService.RenderStepped:Connect(function(dt)
+				pcall(function()
+					dizzyAngle = dizzyAngle + dt * 5
+					local root = getRoot()
+					root.CFrame = CFrame.new(root.Position) * CFrame.Angles(0, dizzyAngle, 0)
+				end)
+			end)
+		else
+			if dizzyConn then dizzyConn:Disconnect(); dizzyConn = nil end
+		end
+	end, "Dizzy")
+	
+	-- Bunny Hop
+	bunnyConn = nil
+	Toggle(p, L("bunny_hop"), false, function(on)
+		if on then
+			bunnyConn = RunService.Heartbeat:Connect(function()
+				pcall(function()
+					local hum = getHum()
+					if hum.FloorMaterial ~= Enum.Material.Air then
+						hum:ChangeState(Enum.HumanoidStateType.Jumping)
+					end
+				end)
+			end)
+		else
+			if bunnyConn then bunnyConn:Disconnect(); bunnyConn = nil end
+		end
+	end, "BunnyHop")
+	
+	-- Crab Walk
+	crabConn = nil
+	Toggle(p, L("crab_walk"), false, function(on)
+		if on then
+			crabConn = RunService.RenderStepped:Connect(function()
+				pcall(function()
+					local hum = getHum()
+					local root = getRoot()
+					if hum.MoveDirection.Magnitude > 0 then
+						local sideDir = root.CFrame.RightVector
+						root.CFrame = CFrame.lookAt(root.Position, root.Position + sideDir)
+					end
+				end)
+			end)
+		else
+			if crabConn then crabConn:Disconnect(); crabConn = nil end
+		end
+	end, "CrabWalk")
+	
+	-- Moonwalk
+	moonwalkConn = nil
+	Toggle(p, L("moonwalk"), false, function(on)
+		if on then
+			moonwalkConn = RunService.RenderStepped:Connect(function()
+				pcall(function()
+					local hum = getHum()
+					local root = getRoot()
+					if hum.MoveDirection.Magnitude > 0 then
+						local moveDir = hum.MoveDirection
+						root.CFrame = CFrame.lookAt(root.Position, root.Position - moveDir)
+					end
+				end)
+			end)
+		else
+			if moonwalkConn then moonwalkConn:Disconnect(); moonwalkConn = nil end
+		end
+	end, "Moonwalk")
+	
+	-- Earthquake
+	earthquakeConn = nil
+	Toggle(p, L("earthquake"), false, function(on)
+		if on then
+			earthquakeConn = RunService.RenderStepped:Connect(function()
+				pcall(function()
+					local cam = workspace.CurrentCamera
+					local shake = Vector3.new(math.random(-100, 100) / 500, math.random(-100, 100) / 500, math.random(-100, 100) / 500)
+					cam.CFrame = cam.CFrame * CFrame.new(shake)
+				end)
+			end)
+		else
+			if earthquakeConn then earthquakeConn:Disconnect(); earthquakeConn = nil end
+		end
+	end, "Earthquake")
+	
+	-- Flip
+	Button(p, L("flip"), function()
+		pcall(function()
+			local root = getRoot()
+			root.CFrame = root.CFrame * CFrame.Angles(math.rad(180), 0, 0)
+		end)
+		Notify(L("hub_name"), L("flip") .. " ✓", 2)
+	end)
+	
+	-- Random TP
+	Button(p, L("random_tp"), function()
+		pcall(function()
+			getRoot().CFrame = CFrame.new(math.random(-500, 500), 100, math.random(-500, 500))
+		end)
+		Notify(L("hub_name"), L("random_tp") .. " ✓", 2)
+	end)
+	
+	-- Refresh player lists
+	refreshFunPlayerLists = function()
+		local names = {}
+		for _, p2 in pairs(Players:GetPlayers()) do if p2 ~= Player then table.insert(names, p2.Name) end end
+		if #names == 0 then table.insert(names, "-") end
+		if jumpScarePlayerDD then jumpScarePlayerDD.Refresh(names) end
+		if stareDD then stareDD.Refresh(names) end
+		if creepyDD then creepyDD.Refresh(names) end
+	end
+	
+	Players.PlayerAdded:Connect(function() task.wait(1); refreshFunPlayerLists() end)
+	Players.PlayerRemoving:Connect(function() task.wait(0.5); refreshFunPlayerLists() end)
 end
 
 -- ═══ PAGE: SETTINGS ═══
@@ -4177,7 +4824,7 @@ do
 	
 	local themeDD = Dropdown(p, L("select_theme"), GetThemes(), function(val) themeBox.Text = val end, "ThemeSelect")
 	Button(p, L("save_theme"), function() local n = themeBox.Text; if n == "" then n = "MyTheme" end; SaveTheme(n); themeDD.Refresh(GetThemes()); Notify(L("hub_name"), "Theme '" .. n .. "' " .. L("saved"), 3) end)
-	Button(p, L("load_theme"), function() local n = themeBox.Text; if n == "" then return end; LoadTheme(n); ApplyTheme(); Notify(L("hub_name"), "Theme '" .. n .. "' " .. L("loaded"), 3) end)
+	Button(p, L("load_theme"), function() local n = themeBox.Text; if n == "" then return end; LoadTheme(n); ApplyTheme(); Notify(L("hub_name"), "Theme '" .. n .. "' " .. L("loaded") .. "\n" .. L("reload_to_apply"), 3) end)
 	Button(p, L("delete_theme"), function() local n = themeBox.Text; if n == "" then return end; DeleteTheme(n); themeBox.Text = ""; themeDD.Refresh(GetThemes()); Notify(L("hub_name"), "Theme '" .. n .. "' " .. L("deleted"), 3) end, true)
 
 	Section(p, L("theme_editor"))
@@ -4190,6 +4837,7 @@ do
 
 	Section(p, L("theme_presets"))
 	local themes = {
+		{"⚪ Default", {111, 90, 255}, {16, 16, 22}, {12, 12, 17}},
 		{"💜 Purple", {111, 90, 255}, {16, 16, 22}, {12, 12, 17}}, 
 		{"🌊 Ocean", {50, 150, 255}, {12, 18, 28}, {8, 14, 22}}, 
 		{"❤️ Crimson", {220, 50, 50}, {24, 14, 14}, {18, 10, 10}}, 
@@ -4210,14 +4858,21 @@ do
 		tbtn.MouseEnter:Connect(function() tween(tbtn, {BackgroundColor3 = TC(S.Theme.CardHover)}, 0.1) end)
 		tbtn.MouseLeave:Connect(function() tween(tbtn, {BackgroundColor3 = TC(S.Theme.Card)}, 0.1) end)
 		tbtn.MouseButton1Click:Connect(function() 
-			S.Theme.Accent = accent
-			S.Theme.ToggleOn = accent
-			S.Theme.Bg = bg
-			S.Theme.Sidebar = sb
-			S.Theme.Card = {bg[1] + 10, bg[2] + 10, bg[3] + 14}
-			S.Theme.CardHover = {bg[1] + 20, bg[2] + 20, bg[3] + 28}
+			if name == "⚪ Default" then
+				-- Reset to default theme
+				for k, v in pairs(DEFAULT_THEME) do
+					S.Theme[k] = DeepCopy(v)
+				end
+			else
+				S.Theme.Accent = accent
+				S.Theme.ToggleOn = accent
+				S.Theme.Bg = bg
+				S.Theme.Sidebar = sb
+				S.Theme.Card = {bg[1] + 10, bg[2] + 10, bg[3] + 14}
+				S.Theme.CardHover = {bg[1] + 20, bg[2] + 20, bg[3] + 28}
+			end
 			ApplyTheme()
-			Notify(L("hub_name"), L("theme_applied") .. ": " .. name, 2) 
+			Notify(L("hub_name"), L("theme_applied") .. ": " .. name .. "\n" .. L("reload_to_apply"), 3) 
 		end)
 	end
 end
@@ -4268,14 +4923,89 @@ do
 	InfoCard(p, L("disc_text2"))
 end
 
--- ═══ APPLY AUTOLOAD ═══
+-- ═══ APPLY AUTOLOAD (FIXED - ACTUALLY START FEATURES) ═══
 task.defer(function()
 	local al = GetAutoLoad()
 	if al ~= "" and al ~= "_reload_temp" then
-		local m = {Fly=S.Fly, SpeedOverride=S.Speed, JumpOverride=S.JumpBoost, InfJump=S.InfJump, Noclip=S.Noclip, ESP=S.ESP, Fullbright=S.Fullbright, NoFog=S.NoFog, AntiLag=S.AntiLag, ClickTP=S.ClickTP, AntiAFK=S.AntiAFK, Ragdoll=S.Ragdoll, FPSCounter=S.FPSCounter, Coordinates=S.Coordinates, Crosshair=S.Crosshair, Chams=S.Chams, OrbitPlayer=S.OrbitPlayer, Fling=S.Fling, Spin=S.Spin, BlurBackground=S.BlurBackground, ShowKeybindPanel=S.ShowKeybindPanel, Particles=S.ParticlesEnabled}
-		for rn, val in pairs(m) do if ToggleRefs[rn] and val then ToggleRefs[rn].Set(val) end end
-		UpdateKeybindPanel(); FPSFrame.Visible = S.FPSCounter; CoordsFrame.Visible = S.Coordinates; KBPanel.Visible = S.ShowKeybindPanel; UpdateCrosshair()
-		if S.OrbitPlayer then StartOrbit() end; if S.Spin then StartSpin() end
+		task.wait(0.5) -- Wait for UI to be ready
+		
+		-- Set toggle states AND actually start the features
+		if S.Fly then
+			if ToggleRefs["Fly"] then ToggleRefs["Fly"].Set(true) end
+			iyflyspeed = S.FlySpeed / 50
+			sFLY()
+			S.Noclip = true
+			if ToggleRefs["Noclip"] then ToggleRefs["Noclip"].Set(true) end
+		end
+		
+		if S.Fling then
+			if ToggleRefs["Fling"] then ToggleRefs["Fling"].Set(true) end
+			if S.FlingMode == "Walk" or S.FlingMode == "Spin" or not S.FlingMode then
+				StartFlingIY()
+			elseif S.FlingMode == "Fly" then
+				StartFlyFling()
+			end
+		end
+		
+		if S.Spin then
+			if ToggleRefs["Spin"] then ToggleRefs["Spin"].Set(true) end
+			StartSpin()
+		end
+		
+		if S.OrbitPlayer and S.OrbitTarget ~= "" then
+			if ToggleRefs["OrbitPlayer"] then ToggleRefs["OrbitPlayer"].Set(true) end
+			StartOrbit()
+		end
+		
+		if S.Speed then
+			if ToggleRefs["SpeedOverride"] then ToggleRefs["SpeedOverride"].Set(true) end
+			pcall(function() getHum().WalkSpeed = S.WalkSpeed end)
+		end
+		
+		if S.JumpBoost then
+			if ToggleRefs["JumpOverride"] then ToggleRefs["JumpOverride"].Set(true) end
+			pcall(function() getHum().UseJumpPower = true; getHum().JumpPower = S.JumpPower end)
+		end
+		
+		if S.InfJump then
+			if ToggleRefs["InfJump"] then ToggleRefs["InfJump"].Set(true) end
+		end
+		
+		if S.Noclip then
+			if ToggleRefs["Noclip"] then ToggleRefs["Noclip"].Set(true) end
+		end
+		
+		if S.ESP then
+			if ToggleRefs["ESP"] then ToggleRefs["ESP"].Set(true) end
+		end
+		
+		if S.Fullbright then
+			if ToggleRefs["Fullbright"] then ToggleRefs["Fullbright"].Set(true) end
+			Lighting.Brightness = 2; Lighting.ClockTime = 14; Lighting.FogEnd = 100000
+			Lighting.GlobalShadows = false; Lighting.Ambient = Color3.new(1, 1, 1)
+			Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+		end
+		
+		if S.NoFog then
+			if ToggleRefs["NoFog"] then ToggleRefs["NoFog"].Set(true) end
+			Lighting.FogStart = 0; Lighting.FogEnd = 9999999
+		end
+		
+		if S.Chams then
+			if ToggleRefs["Chams"] then ToggleRefs["Chams"].Set(true) end
+			RefreshChams()
+		end
+		
+		if S.Crosshair then
+			if ToggleRefs["Crosshair"] then ToggleRefs["Crosshair"].Set(true) end
+			UpdateCrosshair()
+		end
+		
+		-- Update visual elements
+		UpdateKeybindPanel()
+		FPSFrame.Visible = S.FPSCounter
+		CoordsFrame.Visible = S.Coordinates
+		KBPanel.Visible = S.ShowKeybindPanel
 		
 		-- Update dropdowns after autoload
 		if DropdownRefs["FlyMode"] and S.FlyMode then
@@ -4291,6 +5021,7 @@ task.defer(function()
 			end
 		end
 	end
+	
 	if S.ParticlesEnabled then SpawnParticles() end
 	
 	-- Apply theme from config
