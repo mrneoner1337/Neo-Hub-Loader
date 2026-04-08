@@ -322,7 +322,7 @@ local Langs = {
 		loading_gui = "Построение интерфейса...",
 		loading_hooks = "Настройка хуков...",
 		loading_done = "Готово!",
-		loading_welcome = "Добро пожаловать, %s",
+		loading_welcome = "Добро пожаловать, пользователь!",
 		tab_movement = "🏃 Движение",
 		tab_visual = "👁️ Визуал",
 		tab_misc = "⚙️ Разное",
@@ -333,16 +333,16 @@ local Langs = {
 		fly_speed = "Скорость полёта",
 		fly_mode = "Режим полёта",
 		fly_mode_default = "Обычный",
-		fly_mode_swim = "Плавающий",
-		fly_mode_noclip = "Ноклип полёт",
-		fly_mode_platform = "Платформа",
+		fly_mode_swim = "Плавание",
+		fly_mode_noclip = "С ноклипом",
+		fly_mode_platform = "Платформенный",
 		fly_mode_smooth = "Плавный полёт",
 		speed_override = "Изменить скорость",
 		walkspeed = "Скорость ходьбы",
-		speed_loop = "Луп скорости (После смерти)",
+		speed_loop = "Сохранение скорости (После смерти)",
 		jump_override = "Изменить прыжок",
 		jumppower = "Сила прыжка",
-		jump_loop = "Луп прыжка (После смерти)",
+		jump_loop = "Сохранение силы прыжка (После смерти)",
 		inf_jump = "Бесконечный прыжок",
 		noclip = "Ноклип",
 		esp = "Включить ESP",
@@ -356,8 +356,8 @@ local Langs = {
 		esp_boxes = "Коробочный ESP",
 		esp_preview = "Предпросмотр ESP",
 		fullbright = "Полная яркость",
-		no_fog = "Без тумана",
-		anti_lag = "Анти-Лаг",
+		no_fog = "Убрать туман",
+		anti_lag = "Оптимизация",
 		stun = "Стан (Заморозка)",
 		ragdoll = "Рэгдолл",
 		give_all_tools = "Выдать все инструменты",
@@ -370,8 +370,8 @@ local Langs = {
 		open_spy = "Открыть Remote Spy",
 		open_owl = "Открыть Owl Hub",
 		btools = "BTools",
-		btools_delete = "BTools — Молоток (Удаление)",
-		btools_copy = "BTools — Клонировать",
+		btools_delete = "BTools — Удаление",
+		btools_copy = "BTools — Клонирование",
 		btools_move = "BTools — Перемещение",
 		btools_all = "BTools — Выдать все",
 		tp_tool = "TP Tool",
@@ -509,8 +509,8 @@ local Langs = {
 		fling_mode_walk = "Walk Fling",
 		fling_mode_fly = "Fly Fling",
 		fling_mode_spin = "Spin Fling",
-		spin = "Spin",
-		spin_speed = "Скорость Spin",
+		spin = "Кручение",
+		spin_speed = "Скорость кручения",
 		notification_style = "Стиль уведомлений",
 		notif_style_modern = "Современный",
 		notif_style_minimal = "Минимальный",
@@ -526,7 +526,7 @@ local Langs = {
 		welcome_game = "Информация об игре",
 		welcome_continue = "Продолжить",
 		performance = "Производительность",
-		unlock_3rd_person = "Разблокировать 3rd Person",
+		unlock_3rd_person = "Разблокировать вид от 3го лица",
 		config_exists = "Конфиг с таким именем уже существует!",
 		profile_info = "Информация профиля",
 		account_age = "Возраст аккаунта",
@@ -554,7 +554,7 @@ local Langs = {
 		fling_enabled = "Fling включён",
 		fly_enabled = "Полёт включён",
 		sect_fun = "Развлечения",
-		fun_animation = "Дрочить",
+		fun_animation = "Дрочка",
 		fun_animation_desc = "хд",
 		rig_r6 = "Обнаружен R6",
 		rig_r15 = "Обнаружен R15",
@@ -562,14 +562,14 @@ local Langs = {
 		sit = "Сесть",
 		jump_scare = "Напугать",
 		stare_at = "Смотреть на игрока",
-		creepy_follow = "Жуткое преследование",
+		creepy_follow = "Преследование",
 		dizzy = "Головокружение",
-		bunny_hop = "Прыгать как кролик",
-		crab_walk = "Ходить крабом",
+		bunny_hop = "Авто-прыжок",
+		crab_walk = "Крутилка",
 		moonwalk = "Лунная походка",
-		earthquake = "Землетрясение экрана",
+		earthquake = "Тряска экрана ",
 		flip = "Перевернуться",
-		random_tp = "Случайный телепорт"
+		random_tp = "Рандом телепорт"
 	},
 	JP = {
 		hub_name = "Neo's Hub",
@@ -1891,118 +1891,183 @@ end
 -- ═══════════════════════════════════════════
 -- IMPROVED FLY SYSTEM (IY-STYLE)
 -- ═══════════════════════════════════════════
-local function sFLY()
-	local plr = Players.LocalPlayer
-	local char = plr.Character or plr.CharacterAdded:Wait()
-	local humanoid = char:FindFirstChildOfClass("Humanoid")
-	if not humanoid then
-		repeat task.wait() until char:FindFirstChildOfClass("Humanoid")
-		humanoid = char:FindFirstChildOfClass("Humanoid")
-	end
+-- ═══════════════════════════════════════════
+-- FLY SYSTEM (ALL MODES)
+-- ═══════════════════════════════════════════
+flyConn = nil
+flyBV = nil
+flyBG = nil
+flyPlatform = nil
 
-	if flyKeyDown or flyKeyUp then
-		flyKeyDown:Disconnect()
-		flyKeyUp:Disconnect()
-	end
+StopAllFly = function()
+	FLYING = false
+	if flyConn then flyConn:Disconnect(); flyConn = nil end
+	if flyKeyDown then flyKeyDown:Disconnect(); flyKeyDown = nil end
+	if flyKeyUp then flyKeyUp:Disconnect(); flyKeyUp = nil end
+	pcall(function()
+		local root = getRoot()
+		if root:FindFirstChild("NHFly") then root:FindFirstChild("NHFly"):Destroy() end
+		if root:FindFirstChild("NHGyro") then root:FindFirstChild("NHGyro"):Destroy() end
+		for _, v in pairs(root:GetChildren()) do
+			if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
+		end
+	end)
+	pcall(function()
+		if flyPlatform then flyPlatform:Destroy(); flyPlatform = nil end
+	end)
+	pcall(function()
+		getHum().PlatformStand = false
+		getHum():ChangeState(Enum.HumanoidStateType.GettingUp)
+	end)
+	flyBV, flyBG = nil, nil
+end
 
-	local T = getRoot()
-	local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-	local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-	local SPEED = 0
-
-	local function FLY()
-		FLYING = true
+StartFly = function(mode)
+	StopAllFly()
+	FLYING = true
+	
+	local root = getRoot()
+	local hum = getHum()
+	local cam = workspace.CurrentCamera
+	
+	if mode == "Default" then
+		-- IY-style fly
+		local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+		local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+		local SPEED = 0
+		
 		local BG = Instance.new('BodyGyro')
 		local BV = Instance.new('BodyVelocity')
 		BG.P = 9e4
-		BG.Parent = T
-		BV.Parent = T
+		BG.Parent = root
+		BV.Parent = root
 		BG.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-		BG.CFrame = T.CFrame
+		BG.CFrame = root.CFrame
 		BV.Velocity = Vector3.new(0, 0, 0)
 		BV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-		task.spawn(function()
-			repeat task.wait()
-				local camera = workspace.CurrentCamera
-				if humanoid then
-					humanoid.PlatformStand = true
-				end
+		
+		flyKeyDown = UIS.InputBegan:Connect(function(input, processed)
+			if processed then return end
+			if input.KeyCode == Enum.KeyCode.W then CONTROL.F = iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.S then CONTROL.B = -iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.A then CONTROL.L = -iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.D then CONTROL.R = iyflyspeed
+			elseif input.KeyCode == Enum.KeyCode.E and QEfly then CONTROL.Q = iyflyspeed * 2
+			elseif input.KeyCode == Enum.KeyCode.Q and QEfly then CONTROL.E = -iyflyspeed * 2
+			end
+		end)
 
-				if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
-					SPEED = 50
-				elseif not (CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0) and SPEED ~= 0 then
-					SPEED = 0
-				end
-				if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
-					BV.Velocity = ((camera.CFrame.LookVector * (CONTROL.F + CONTROL.B)) + ((camera.CFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
-					lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
-				elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
-					BV.Velocity = ((camera.CFrame.LookVector * (lCONTROL.F + lCONTROL.B)) + ((camera.CFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
-				else
-					BV.Velocity = Vector3.new(0, 0, 0)
-				end
-				BG.CFrame = camera.CFrame
-			until not FLYING
-			CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-			lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-			SPEED = 0
-			BG:Destroy()
-			BV:Destroy()
+		flyKeyUp = UIS.InputEnded:Connect(function(input, processed)
+			if processed then return end
+			if input.KeyCode == Enum.KeyCode.W then CONTROL.F = 0
+			elseif input.KeyCode == Enum.KeyCode.S then CONTROL.B = 0
+			elseif input.KeyCode == Enum.KeyCode.A then CONTROL.L = 0
+			elseif input.KeyCode == Enum.KeyCode.D then CONTROL.R = 0
+			elseif input.KeyCode == Enum.KeyCode.E then CONTROL.Q = 0
+			elseif input.KeyCode == Enum.KeyCode.Q then CONTROL.E = 0
+			end
+		end)
+		
+		flyConn = RunService.Heartbeat:Connect(function()
+			if not FLYING then
+				BG:Destroy()
+				BV:Destroy()
+				if hum then hum.PlatformStand = false end
+				return
+			end
+			
+			local camera = workspace.CurrentCamera
+			if hum then hum.PlatformStand = true end
 
-			if humanoid then humanoid.PlatformStand = false end
+			if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+				SPEED = 50
+			else
+				SPEED = 0
+			end
+			
+			if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
+				BV.Velocity = ((camera.CFrame.LookVector * (CONTROL.F + CONTROL.B)) + ((camera.CFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
+				lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
+			elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
+				BV.Velocity = ((camera.CFrame.LookVector * (lCONTROL.F + lCONTROL.B)) + ((camera.CFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
+			else
+				BV.Velocity = Vector3.new(0, 0, 0)
+			end
+			BG.CFrame = camera.CFrame
+		end)
+		
+	elseif mode == "Swim" then
+		flyConn = RunService.Heartbeat:Connect(function()
+			if not FLYING then StopAllFly(); return end
+			pcall(function()
+				hum:ChangeState(Enum.HumanoidStateType.Swimming)
+				local d = Vector3.zero
+				if UIS:IsKeyDown(Enum.KeyCode.W) then d = d + cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.S) then d = d - cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.A) then d = d - cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.D) then d = d + cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.Space) then d = d + Vector3.yAxis end
+				if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d = d - Vector3.yAxis end
+				root.Velocity = d * S.FlySpeed
+			end)
+		end)
+		
+	elseif mode == "Noclip" then
+		flyBV = Instance.new("BodyVelocity")
+		flyBV.Name = "NHFly"
+		flyBV.MaxForce = Vector3.one * 9e9
+		flyBV.Velocity = Vector3.zero
+		flyBV.Parent = root
+		
+		flyBG = Instance.new("BodyGyro")
+		flyBG.Name = "NHGyro"
+		flyBG.MaxTorque = Vector3.one * 9e9
+		flyBG.D = 0
+		flyBG.Parent = root
+		
+		flyConn = RunService.Stepped:Connect(function()
+			if not FLYING then StopAllFly(); return end
+			for _, part in pairs(getChar():GetDescendants()) do
+				if part:IsA("BasePart") then part.CanCollide = false end
+			end
+			local d = Vector3.zero
+			if UIS:IsKeyDown(Enum.KeyCode.W) then d = d + cam.CFrame.LookVector end
+			if UIS:IsKeyDown(Enum.KeyCode.S) then d = d - cam.CFrame.LookVector end
+			if UIS:IsKeyDown(Enum.KeyCode.A) then d = d - cam.CFrame.RightVector end
+			if UIS:IsKeyDown(Enum.KeyCode.D) then d = d + cam.CFrame.RightVector end
+			if UIS:IsKeyDown(Enum.KeyCode.Space) then d = d + Vector3.yAxis end
+			if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d = d - Vector3.yAxis end
+			flyBV.Velocity = d * S.FlySpeed
+			flyBG.CFrame = cam.CFrame
+		end)
+		
+	elseif mode == "Platform" then
+		flyPlatform = Instance.new("Part")
+		flyPlatform.Name = "NHPlatform"
+		flyPlatform.Size = Vector3.new(5, 1, 5)
+		flyPlatform.Transparency = 1
+		flyPlatform.Anchored = true
+		flyPlatform.CanCollide = true
+		flyPlatform.Parent = workspace
+		
+		flyConn = RunService.Heartbeat:Connect(function()
+			if not FLYING then StopAllFly(); return end
+			pcall(function()
+				local pos = root.Position
+				local d = Vector3.zero
+				if UIS:IsKeyDown(Enum.KeyCode.W) then d = d + cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.S) then d = d - cam.CFrame.LookVector end
+				if UIS:IsKeyDown(Enum.KeyCode.A) then d = d - cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.D) then d = d + cam.CFrame.RightVector end
+				if UIS:IsKeyDown(Enum.KeyCode.Space) then d = d + Vector3.yAxis end
+				if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then d = d - Vector3.yAxis end
+				
+				local newPos = pos + d * S.FlySpeed * 0.016
+				root.CFrame = CFrame.new(newPos)
+				flyPlatform.CFrame = CFrame.new(newPos - Vector3.new(0, 3.5, 0))
+			end)
 		end)
 	end
-
-	flyKeyDown = UIS.InputBegan:Connect(function(input, processed)
-		if processed then return end
-		if input.KeyCode == Enum.KeyCode.W then
-			CONTROL.F = iyflyspeed
-		elseif input.KeyCode == Enum.KeyCode.S then
-			CONTROL.B = -iyflyspeed
-		elseif input.KeyCode == Enum.KeyCode.A then
-			CONTROL.L = -iyflyspeed
-		elseif input.KeyCode == Enum.KeyCode.D then
-			CONTROL.R = iyflyspeed
-		elseif input.KeyCode == Enum.KeyCode.E and QEfly then
-			CONTROL.Q = iyflyspeed * 2
-		elseif input.KeyCode == Enum.KeyCode.Q and QEfly then
-			CONTROL.E = -iyflyspeed * 2
-		end
-	end)
-
-	flyKeyUp = UIS.InputEnded:Connect(function(input, processed)
-		if processed then return end
-		if input.KeyCode == Enum.KeyCode.W then
-			CONTROL.F = 0
-		elseif input.KeyCode == Enum.KeyCode.S then
-			CONTROL.B = 0
-		elseif input.KeyCode == Enum.KeyCode.A then
-			CONTROL.L = 0
-		elseif input.KeyCode == Enum.KeyCode.D then
-			CONTROL.R = 0
-		elseif input.KeyCode == Enum.KeyCode.E then
-			CONTROL.Q = 0
-		elseif input.KeyCode == Enum.KeyCode.Q then
-			CONTROL.E = 0
-		end
-	end)
-	FLY()
-end
-
-local function NOFLY()
-	FLYING = false
-	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
-	if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
-		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
-	end
-	pcall(function() 
-		local root = getRoot()
-		for _, v in pairs(root:GetChildren()) do
-			if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then
-				v:Destroy()
-			end
-		end
-	end)
 end
 
 -- ═══════════════════════════════════════════
@@ -3785,31 +3850,21 @@ do
 	local flyModeDD = Dropdown(p, L("fly_mode"), flyModes, function(val)
 		S.FlyMode = flyModeMap[val] or "Default"
 		if S.Fly then
-			-- Restart fly with new mode
-			NOFLY()
-			task.wait(0.1)
-			if S.FlyMode == "Default" then
-				iyflyspeed = S.FlySpeed / 50
-				sFLY()
-				S.Noclip = true
-				if ToggleRefs["Noclip"] then ToggleRefs["Noclip"].Set(true) end
-				Notify(L("hub_name"), L("noclip_enabled_auto"), 2)
-			end
+			iyflyspeed = S.FlySpeed / 50
+			StartFly(S.FlyMode)
 		end
 	end, "FlyMode")
 	
 	Toggle(p, L("fly"), S.Fly, function(on)
-	S.Fly = on
-	if on then
-		if S.FlyMode == "Default" or not S.FlyMode then
+		S.Fly = on
+		if on then
 			iyflyspeed = S.FlySpeed / 50
-			sFLY()
+			StartFly(S.FlyMode or "Default")
 			Notify(L("hub_name"), L("fly_enabled"), 2)
+		else
+			StopAllFly()
 		end
-	else
-		NOFLY()
-	end
-end, "Fly")
+	end, "Fly")
 	
 	SliderCompact(p, L("fly_speed"), 10, 300, S.FlySpeed, function(v) 
 		S.FlySpeed = v 
