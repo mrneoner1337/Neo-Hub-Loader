@@ -1466,6 +1466,19 @@ function CopyToClipboard(text)
     end)
 end
 -- ═══ BLUR BACKGROUND SYSTEM ═══
+-- Anti-Detect WalkSpeed & JumpPower
+local gm = getrawmetatable(game)
+local oldIndex = gm.__index
+setreadonly(gm, false)
+gm.__index = newcclosure(function(self, k)
+    if not checkcaller() and self:IsA("Humanoid") then
+        if S.Speed and k == "WalkSpeed" then return 16 end
+        if S.JumpBoost and k == "JumpPower" then return 50 end
+    end
+    return oldIndex(self, k)
+end)
+setreadonly(gm, true)
+
 local BlurEffect = nil
 
 function CreateBlur()
@@ -2097,7 +2110,7 @@ StartFlingIY = function()
     
     flinging = true
     
-    function flingDiedF()
+    local function flingDiedF()
         StopFlingIY()
     end
     
@@ -2263,7 +2276,7 @@ StopFlyFling = function()
 end
 
 -- ═══ CUSTOM CURSOR ═══
-local CursorGui = Create("ScreenGui", {Name = "NHCursor", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
+local CursorGui = Create("ScreenGui", {Name = "NHCursor", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, IgnoreGuiInset = true})
 pcall(ProtectGui, CursorGui); CursorGui.Parent = CoreGui
 local Cursor = Create("ImageLabel", {
     Size = UDim2.new(0, 24, 0, 24), BackgroundTransparency = 1,
@@ -2274,7 +2287,7 @@ RunService.RenderStepped:Connect(function()
     if guiVis then
         UIS.MouseIconEnabled = false
         Cursor.Visible = true
-        Cursor.Position = UDim2.new(0, UIS:GetMouseLocation().X - 12, 0, UIS:GetMouseLocation().Y - 12 - 36)
+        Cursor.Position = UDim2.new(0, UIS:GetMouseLocation().X - 12, 0, UIS:GetMouseLocation().Y - 12)
     else
         UIS.MouseIconEnabled = true
         Cursor.Visible = false
@@ -2820,9 +2833,55 @@ local tabData = {
     {key = "tab_credits", order = 6},
 }
 
-local tabButtons, tabPages, activeTab = {}, {}, nil
+local tabButtons, tabPages, activeTab = {}, {}, nil; local SwitchTab
 
 local ContentArea = Create("Frame", {Size = UDim2.new(1, -188, 1, -12), Position = UDim2.new(0, 184, 0, 6), BackgroundTransparency = 1, ClipsDescendants = true, Parent = Main})
+
+-- ═══ WELCOME SCREEN ═══
+local WelcomeOverlay = Create("Frame", {Size = UDim2.new(1, 0, 1, 0), BackgroundColor3 = TC(S.Theme.Bg), BackgroundTransparency = 0, BorderSizePixel = 0, ZIndex = 100, Parent = ContentArea})
+Create("UIGradient", {Color = ColorSequence.new({ColorSequenceKeypoint.new(0, TC(S.Theme.Sidebar)), ColorSequenceKeypoint.new(1, TC(S.Theme.Bg))}), Rotation = 45, Parent = WelcomeOverlay})
+
+Create("TextLabel", {
+    Size = UDim2.new(1, -40, 0, 40), Position = UDim2.new(0, 20, 0.2, 0), BackgroundTransparency = 1,
+    Text = "✨ Welcome to Neo's Hub ✨", TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBlack, TextSize = 32, TextXAlignment = Enum.TextXAlignment.Center, Parent = WelcomeOverlay
+})
+
+local WelcomeCard = Create("Frame", {
+    Size = UDim2.new(0, 300, 0, 180), Position = UDim2.new(0.5, -150, 0.5, -90), 
+    BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, Parent = WelcomeOverlay
+})
+Corner(WelcomeCard, 16)
+Create("UIStroke", {Color = TC(S.Theme.Accent), Thickness = 2, Transparency = 0.5, Parent = WelcomeCard})
+
+Create("TextLabel", {Size = UDim2.new(1, 0, 0, 30), Position = UDim2.new(0, 0, 0, 20), BackgroundTransparency = 1, Text = Player.DisplayName, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 22, Parent = WelcomeCard})
+Create("TextLabel", {Size = UDim2.new(1, 0, 0, 20), Position = UDim2.new(0, 0, 0, 50), BackgroundTransparency = 1, Text = "Version 4.0", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamMedium, TextSize = 14, Parent = WelcomeCard})
+Create("TextLabel", {Size = UDim2.new(1, -40, 0, 40), Position = UDim2.new(0, 20, 0, 75), BackgroundTransparency = 1, Text = "Press Right Control to toggle the menu.\nRight-click elements to set keybinds.", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamMedium, TextSize = 12, TextWrapped = true, Parent = WelcomeCard})
+
+local ContinueBtn = Create("TextButton", {
+    Size = UDim2.new(0.8, 0, 0, 40), Position = UDim2.new(0.1, 0, 1, -55), 
+    BackgroundColor3 = TC(S.Theme.Accent), Text = "Continue", TextColor3 = Color3.new(1,1,1), 
+    Font = Enum.Font.GothamBold, TextSize = 16, BorderSizePixel = 0, Parent = WelcomeCard
+})
+Corner(ContinueBtn, 10)
+
+local WelcomeClosed = false
+ContinueBtn.MouseButton1Click:Connect(function()
+    if WelcomeClosed then return end
+    WelcomeClosed = true
+    tween(WelcomeOverlay, {BackgroundTransparency = 1}, 0.4)
+    for _, desc in pairs(WelcomeOverlay:GetDescendants()) do
+        if desc:IsA("TextLabel") or desc:IsA("TextButton") then
+            tween(desc, {TextTransparency = 1}, 0.3)
+        elseif desc:IsA("Frame") then
+            tween(desc, {BackgroundTransparency = 1}, 0.3)
+        elseif desc:IsA("UIStroke") then
+            tween(desc, {Transparency = 1}, 0.3)
+        end
+    end
+    task.wait(0.5)
+    WelcomeOverlay.Visible = false
+    SwitchTab("tab_movement")
+end)
 
 local TitleBar = Create("Frame", {Size = UDim2.new(1, 0, 0, 44), BackgroundTransparency = 1, Parent = ContentArea})
 local PageTitleLabel = Create("TextLabel", {Size = UDim2.new(1, -100, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = "", TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBlack, TextSize = 22, TextXAlignment = Enum.TextXAlignment.Left, Parent = TitleBar})
@@ -3368,7 +3427,7 @@ function ShowColorPickerPopup(title, default, onApply)
     Create("UIStroke", {Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.5, Parent = preview})
 
     local rgbY = 42 + paletteSize + 12
-    function makeRGBBox(label, xOff, defVal)
+    local function makeRGBBox(label, xOff, defVal)
         Create("TextLabel", {Size = UDim2.new(0, 12, 0, 18), Position = UDim2.new(0, xOff, 0, rgbY), BackgroundTransparency = 1, Text = label, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 11, ZIndex = 202, Parent = popup})
         local box = Create("TextBox", {Size = UDim2.new(0, 42, 0, 24), Position = UDim2.new(0, xOff + 14, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = tostring(defVal), TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(box, 6)
         return box
@@ -3872,7 +3931,15 @@ do
     
     Section(p, L("sect_noclip"))
     Toggle(p, L("noclip"), S.Noclip, function(on) S.Noclip = on end, "Noclip")
-    RunService.Stepped:Connect(function() if S.Noclip then pcall(function() for _, p2 in pairs(getChar():GetDescendants()) do if p2:IsA("BasePart") then p2.CanCollide = false end end end) end end)
+    RunService.Stepped:Connect(function()
+        if S.Noclip and Player.Character then
+            for _, p2 in pairs(Player.Character:GetDescendants()) do
+                if p2:IsA("BasePart") then
+                    p2.CanCollide = false
+                end
+            end
+        end
+    end)
     
     Section(p, L("sect_fling"))
     
@@ -5014,11 +5081,9 @@ end)
 
 task.defer(function() pcall(function() workspace.CurrentCamera.FieldOfView = S.FOV or 70; Player.CameraMaxZoomDistance = S.MaxZoom or 128 end) end)
 
-game:BindToClose(function() SaveCurrentTheme() end)
+-- Сохранение конфигов убрано для избежания ошибок сервера
 
 task.wait(0.5)
-
-SwitchTab("tab_movement")
 
 if S.BlurBackground then ShowBlurImmediate() end
 
