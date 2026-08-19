@@ -63,7 +63,7 @@ local flyKeyUp = nil
 local Langs = {
     EN = {
         hub_name = "Neo's Hub",
-        version = "v3.0 — Universal Menu",
+        version = "v4.0 — Universal Menu",
         loading = "Loading...",
         loading_init = "Initializing modules...",
         loading_gui = "Building interface...",
@@ -320,7 +320,7 @@ local Langs = {
     },
     RU = {
         hub_name = "Neo's Hub",
-        version = "v3.0 — Универсальное меню",
+        version = "v4.0 — Универсальное меню",
         loading = "Загрузка...",
         loading_init = "Инициализация модулей...",
         loading_gui = "Построение интерфейса...",
@@ -577,7 +577,7 @@ local Langs = {
     },
     JP = {
         hub_name = "Neo's Hub",
-        version = "v3.0 — ユニバーサルメニュー",
+        version = "v4.0 — ユニバーサルメニュー",
         loading = "読み込み中...",
         loading_init = "モジュールを初期化中...",
         loading_gui = "インターフェースを構築中...",
@@ -834,7 +834,7 @@ local Langs = {
     },
     ES = {
         hub_name = "Neo's Hub",
-        version = "v3.0 — Menú Universal",
+        version = "v4.0 — Menú Universal",
         loading = "Cargando...",
         loading_init = "Inicializando módulos...",
         loading_gui = "Construyendo interfaz...",
@@ -2262,6 +2262,25 @@ StopFlyFling = function()
     end)
 end
 
+-- ═══ CUSTOM CURSOR ═══
+local CursorGui = Create("ScreenGui", {Name = "NHCursor", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling})
+pcall(ProtectGui, CursorGui); CursorGui.Parent = CoreGui
+local Cursor = Create("ImageLabel", {
+    Size = UDim2.new(0, 24, 0, 24), BackgroundTransparency = 1,
+    Image = "rbxassetid://6065775281", ZIndex = 999, ImageColor3 = TC(S.Theme.Accent),
+    Parent = CursorGui
+})
+RunService.RenderStepped:Connect(function()
+    if guiVis then
+        UIS.MouseIconEnabled = false
+        Cursor.Visible = true
+        Cursor.Position = UDim2.new(0, UIS:GetMouseLocation().X - 12, 0, UIS:GetMouseLocation().Y - 12 - 36)
+    else
+        UIS.MouseIconEnabled = true
+        Cursor.Visible = false
+    end
+end)
+
 -- ═══════════════════════════════════════════
 -- LOADING SCREEN (SYNCED WITH THEME)
 -- ═══════════════════════════════════════════
@@ -2347,7 +2366,7 @@ local VersionLabel = Create("TextLabel", {
     Size = UDim2.new(1, 0, 0, 16),
     Position = UDim2.new(0, 0, 0, 162),
     BackgroundTransparency = 1,
-    Text = "v3.0 — Universal Menu",
+    Text = "v4.0 — Universal Menu",
     TextColor3 = TC(S.Theme.SubText),
     Font = Enum.Font.GothamBold,
     TextSize = 12,
@@ -2750,7 +2769,7 @@ function ShowProfilePopup()
     Create("TextLabel", {Size = UDim2.new(1, 0, 0, 16), Position = UDim2.new(0, 0, 0, 150), BackgroundTransparency = 1, Text = "@" .. Player.Name, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamMedium, TextSize = 12, ZIndex = 201, Parent = popup})
     
     local infoY = 180
-    function addInfoRow(label, value)
+    local function addInfoRow(label, value)
         local row = Create("Frame", {Size = UDim2.new(1, -32, 0, 28), Position = UDim2.new(0, 16, 0, infoY), BackgroundColor3 = TC(S.Theme.Card), BorderSizePixel = 0, ZIndex = 201, Parent = popup})
         Corner(row, 6)
         Create("TextLabel", {Size = UDim2.new(0.5, 0, 1, 0), Position = UDim2.new(0, 10, 0, 0), BackgroundTransparency = 1, Text = label, TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamMedium, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 202, Parent = row})
@@ -2807,7 +2826,7 @@ local ContentArea = Create("Frame", {Size = UDim2.new(1, -188, 1, -12), Position
 
 local TitleBar = Create("Frame", {Size = UDim2.new(1, 0, 0, 44), BackgroundTransparency = 1, Parent = ContentArea})
 local PageTitleLabel = Create("TextLabel", {Size = UDim2.new(1, -100, 1, 0), Position = UDim2.new(0, 8, 0, 0), BackgroundTransparency = 1, Text = "", TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamBlack, TextSize = 22, TextXAlignment = Enum.TextXAlignment.Left, Parent = TitleBar})
-Create("TextLabel", {Size = UDim2.new(0, 140, 0, 14), Position = UDim2.new(0, 8, 1, -16), BackgroundTransparency = 1, Text = "Neo's Hub v3.0", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamMedium, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = TitleBar})
+Create("TextLabel", {Size = UDim2.new(0, 140, 0, 14), Position = UDim2.new(0, 8, 1, -16), BackgroundTransparency = 1, Text = "Neo's Hub v4.0", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamMedium, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left, Parent = TitleBar})
 
 local CloseBtn = Create("TextButton", {Size = UDim2.new(0, 34, 0, 34), Position = UDim2.new(1, -42, 0, 5), BackgroundColor3 = TC(S.Theme.Card), Text = "X", TextColor3 = TC(S.Theme.Danger), Font = Enum.Font.GothamBold, TextSize = 18, BorderSizePixel = 0, Parent = TitleBar})
 Corner(CloseBtn, 10)
@@ -3015,7 +3034,7 @@ function ShowKeybindPopup(name, callback)
     Corner(clearBtn, 10)
     
     local conn
-    function cleanup()
+    local function cleanup()
         keybindPopupOpen = false
         pcall(function() if conn then conn:Disconnect() end end)
         tween(popup, {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In)
@@ -3092,7 +3111,7 @@ function Toggle(parent, text, default, callback, keybindName)
     local enabled = default
     local btn = Create("TextButton", {Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", Parent = container})
     local kbName = keybindName or text:gsub("[^%w]", "")
-    function upd()
+    local function upd()
         tween(tbg, {BackgroundColor3 = enabled and TC(S.Theme.ToggleOn) or TC(S.Theme.ToggleOff)}, 0.25)
         tween(circ, {Position = enabled and UDim2.new(1, -21, 0.5, -9) or UDim2.new(0, 3, 0.5, -9)}, 0.25, Enum.EasingStyle.Back)
         SetKeybindState(kbName, enabled); UpdateKeybindPanel()
@@ -3118,7 +3137,7 @@ function Slider(parent, text, min, max, default, callback)
     local sliderDragging = false
     local currentVal = default
     
-    function update(pct)
+    local function update(pct)
         pct = math.clamp(pct, 0, 1)
         currentVal = math.floor(min + (max - min) * pct)
         fill.Size = UDim2.new(pct, 0, 1, 0)
@@ -3170,7 +3189,7 @@ function SliderCompact(parent, text, min, max, default, callback)
     local sliderDragging = false
     local currentVal = default
     
-    function update(pct)
+    local function update(pct)
         pct = math.clamp(pct, 0, 1)
         fill.Size = UDim2.new(pct, 0, 1, 0)
         currentVal = math.floor(min + (max - min) * pct)
@@ -3249,7 +3268,7 @@ function Dropdown(parent, text, options, callback, refName)
     Corner(listFrame, 8)
     Create("UIListLayout", {SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2), Parent = listFrame}); Pad(listFrame, 4, 4, 4, 4)
     
-    function buildOptions(opts)
+    local function buildOptions(opts)
         for _, ch in pairs(listFrame:GetChildren()) do if ch:IsA("TextButton") then ch:Destroy() end end
         for _, opt in ipairs(opts) do
             local ob = Create("TextButton", {Size = UDim2.new(1, 0, 0, 28), BackgroundColor3 = TC(S.Theme.Card), Text = opt, TextColor3 = TC(S.Theme.Text), Font = Enum.Font.GothamMedium, TextSize = 12, BorderSizePixel = 0, AutoButtonColor = false, Parent = listFrame}); Corner(ob, 6)
@@ -3362,7 +3381,7 @@ function ShowColorPickerPopup(title, default, onApply)
     Create("TextLabel", {Size = UDim2.new(0, 14, 0, 18), Position = UDim2.new(0, 200, 0, rgbY), BackgroundTransparency = 1, Text = "#", TextColor3 = TC(S.Theme.SubText), Font = Enum.Font.GothamBold, TextSize = 12, ZIndex = 202, Parent = popup})
     local hexBox = Create("TextBox", {Size = UDim2.new(0, 72, 0, 24), Position = UDim2.new(0, 216, 0, rgbY - 3), BackgroundColor3 = TC(S.Theme.Card), Text = string.format("%02X%02X%02X", math.floor(c.R*255), math.floor(c.G*255), math.floor(c.B*255)), TextColor3 = TC(S.Theme.Accent), Font = Enum.Font.GothamBold, TextSize = 12, BorderSizePixel = 0, ZIndex = 202, ClearTextOnFocus = false, Parent = popup}); Corner(hexBox, 6)
 
-    function updateFromHSV()
+    local function updateFromHSV()
         local col = Color3.fromHSV(currentH, currentS2, currentV)
         preview.BackgroundColor3 = col
         rBox.Text = tostring(math.floor(col.R * 255)); gBox.Text = tostring(math.floor(col.G * 255)); bBox.Text = tostring(math.floor(col.B * 255))
@@ -3385,7 +3404,7 @@ function ShowColorPickerPopup(title, default, onApply)
     UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then hueDragging = false end end)
     UIS.InputChanged:Connect(function(i) if hueDragging and i.UserInputType == Enum.UserInputType.MouseMovement then currentH = math.clamp((i.Position.Y - hueBar.AbsolutePosition.Y) / hueBar.AbsoluteSize.Y, 0, 1); updateFromHSV() end end)
 
-    function applyRGB()
+    local function applyRGB()
         local r = math.clamp(tonumber(rBox.Text) or 0, 0, 255); local g = math.clamp(tonumber(gBox.Text) or 0, 0, 255); local b = math.clamp(tonumber(bBox.Text) or 0, 0, 255)
         currentH, currentS2, currentV = Color3.fromRGB(r, g, b):ToHSV(); updateFromHSV()
     end
@@ -4836,6 +4855,7 @@ do
 
     Section(p, L("changelog"))
     local changelogItems = {
+        {"🚀 v4.0", "NextGen Update", {"Custom Menu Cursor", "Optimized Toggle System (Fixed bugs)", "Enhanced UI Stability", "Fixed BindToClose Error"}},
         {"🎉 v3.0", "Major Update", {"Complete UI redesign", "Multi-language support", "Theme sync with notifications", "Teleport to player feature", "FPS slider 5-360", "Speed/Jump loop toggles", "Fling modes: Walk/Fly/Spin", "Blur fix", "Profile popup on avatar click"}},
         {"✨ v2.5", "Polish Update", {"Animated loading screen", "Keybind panel", "10 theme presets"}},
         {"🔄 v2.0", "Rewrite", {"Tab-based navigation", "Config system", "Theme foundation"}},
@@ -5002,10 +5022,10 @@ SwitchTab("tab_movement")
 
 if S.BlurBackground then ShowBlurImmediate() end
 
-Notify("Neo's Hub v3.0", string.format(L("toggle_hint"), S.Keybinds.ToggleMenu or "RightControl") .. "\n" .. L("right_click_hint"), 6)
+Notify("Neo's Hub v4.0", string.format(L("toggle_hint"), S.Keybinds.ToggleMenu or "RightControl") .. "\n" .. L("right_click_hint"), 6)
 
 print("======================================")
-print(" Neo's Hub v3.0 - Loaded!")
+print(" Neo's Hub v4.0 - Loaded!")
 print(" @mrneoner | Discord: mrneoner")
 print(" Telegram: wantpepa")
 print(" GitHub: mrneoner1337")
